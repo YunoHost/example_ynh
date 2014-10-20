@@ -1,0 +1,38 @@
+#!/bin/bash
+app=ynhexample
+
+# Retrieve arguments
+domain=$1
+path=$2
+admin=$3
+is_public=$4
+
+# Save app settings
+sudo yunohost app setting $app admin -v "$admin"
+sudo yunohost app setting $app is_public -v "$is_public"
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a dokuwiki
+if [[ ! $? -eq 0 ]]; then
+    exit 1
+fi
+
+# Copy source files
+final_path=/var/www/$app
+sudo mkdir -p $final_path
+sudo cp -a ../sources/* $final_path
+
+# Modify Nginx configuration file and copy it to Nginx conf directory
+sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
+sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
+sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+# If app is public, add url to SSOWat conf as skipped_uris
+if [ "$is_public" = "Yes" ];
+then
+  sudo yunohost app setting $app skipped_uris -v "/"
+fi
+
+# Restart services
+sudo service nginx reload
+sudo yunohost app ssowatconf

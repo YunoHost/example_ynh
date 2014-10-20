@@ -1,0 +1,18 @@
+#!/bin/bash
+app=ynhexample
+
+# Retrieve arguments
+domain=$(sudo yunohost app setting $app domain)
+path=$(sudo yunohost app setting $app path)
+admin=$(sudo yunohost app setting $app admin)
+is_public=$(sudo yunohost app setting $app is_public)
+
+# Remove sources
+sudo rm -rf /var/www/$app
+
+# Remove configuration files
+sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+
+# Restart services
+sudo service nginx reload
+sudo yunohost app ssowatconf

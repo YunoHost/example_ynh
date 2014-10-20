@@ -1,0 +1,48 @@
+{
+    "name": "YunoHost application example",
+    "id": "ynhexample",
+    "description": {
+        "en": "Example package for Yunohost applications."
+    },
+    "licence": "GPL-2",
+    "developer": {
+        "name": "John doe",
+        "email": "john.doe@example.com",
+        "url": "http://example.com"
+    },
+    "multi_instance": "false",
+    "arguments": {
+        "install" : [
+            {
+                "name": "domain",
+                "ask": {
+                    "en": "Choose a domain for ynhexample"
+                },
+                "example": "example.com"
+            },
+            {
+                "name": "path",
+                "ask": {
+                    "en": "Choose a path for ynhexample"
+                },
+                "example": "/dokuwiki",
+                "default": "/dokuwiki"
+            },
+            {
+                "name": "admin",
+                "ask": {
+                    "en": "Choose an admin user"
+                },
+                "example": "johndoe"
+            },
+            {
+                "name": "is_public",
+                "ask": {
+                    "en": "Is it a public application ?"
+                },
+                "choices": ["Yes", "No"],
+                "default": "Yes"
+            }
+        ]
+    }
+}
