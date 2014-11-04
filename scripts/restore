@@ -13,4 +13,4 @@ domain=$(sudo yunohost app setting $app domain)
 sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 
 # Restart webserver
-sudo service nginx restart
+sudo service nginx reload
