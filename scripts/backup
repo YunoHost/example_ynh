@@ -1,0 +1,15 @@
+#!/bin/bash
+app=ynhexample
+
+# The parameter $1 is the backup directory location
+# which will be compressed afterward
+backup_dir=$1/apps/$app
+mkdir -p $backup_dir
+
+# Backup sources & data
+sudo cp -a /var/www/$app/. $backup_dir/sources
+
+# Copy Nginx and YunoHost parameters to make the script "standalone"
+sudo cp -a /etc/yunohost/apps/$app/. $backup_dir/yunohost
+domain=$(sudo yunohost app setting $app domain)
+sudo cp -a /etc/nginx/conf.d/$domain.d/$app.conf $backup_dir/nginx.conf

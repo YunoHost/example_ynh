@@ -1,0 +1,16 @@
+#!/bin/bash
+app=ynhexample
+
+# The parameter $1 is the uncompressed restore directory location
+backup_dir=$1/apps/$app
+
+# Restore sources & data
+sudo cp -a $backup_dir/sources/. /var/www/$app
+
+# Restore Nginx and YunoHost parameters
+sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
+domain=$(sudo yunohost app setting $app domain)
+sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+# Restart webserver
+sudo service nginx restart
