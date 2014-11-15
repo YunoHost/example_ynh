@@ -30,7 +30,8 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 # If app is public, add url to SSOWat conf as skipped_uris
 if [ "$is_public" = "Yes" ];
 then
-  sudo yunohost app setting $app skipped_uris -v "/"
+  # unprotected_uris allows SSO credentials to be passed anyway.
+  sudo yunohost app setting $app unprotected_uris -v "/"
 fi
 
 # Restart services
