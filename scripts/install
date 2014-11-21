@@ -12,7 +12,7 @@ sudo yunohost app setting $app admin -v "$admin"
 sudo yunohost app setting $app is_public -v "$is_public"
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a dokuwiki
+sudo yunohost app checkurl $domain$path -a $app
 if [[ ! $? -eq 0 ]]; then
     exit 1
 fi
