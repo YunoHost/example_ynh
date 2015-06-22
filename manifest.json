@@ -5,7 +5,7 @@
         "en": "Example package for Yunohost applications."
     },
     "licence": "GPL-2",
-    "developer": {
+    "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",
         "url": "http://example.com"
