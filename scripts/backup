@@ -4,7 +4,7 @@ app=ynhexample
 # The parameter $1 is the backup directory location
 # which will be compressed afterward
 backup_dir=$1/apps/$app
-mkdir -p $backup_dir
+sudo mkdir -p $backup_dir
 
 # Backup sources & data
 sudo cp -a /var/www/$app/. $backup_dir/sources
