@@ -1,16 +1,50 @@
 #!/bin/bash
-app=ynhexample
+# This restore script is adapted to Yunohost >=2.4
 
-# The parameter $1 is the uncompressed restore directory location
-backup_dir=$1/apps/$app
+# The parameter $1 is the backup directory location dedicated to the app
+backup_dir=$1
+
+# The parameter $2 is the id of the app instance ex: ynhexample__2
+app=$2
+
+# Get old parameter of the app
+domain=$(sudo yunohost app setting $app domain)
+path=$(sudo yunohost app setting $app path)
+is_public=$(sudo yunohost app setting $app is_public)
+
+# Check domain/path availability
+sudo yunohost app checkurl $domain$path -a $app
+if [[ ! $? -eq 0 ]]; then
+    echo "There is already an app on this URL : $domain$path" | sudo tee /dev/stderr
+    exit 1
+fi
 
 # Restore sources & data
-sudo cp -a $backup_dir/sources/. /var/www/$app
+final_path=/var/www/$app
 
-# Restore Nginx and YunoHost parameters
-sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
-domain=$(sudo yunohost app setting $app domain)
-sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+if [ -d $final_path ]; then
+    echo "There is already a directory: $final_path " | sudo tee /dev/stderr
+    exit 1
+fi
+sudo cp -a "${backup_dir}/www" $final_path 
+sudo chown -R www-data: $final_path
 
-# Restart webserver
+# Restore conf files
+conf=/etc/nginx/conf.d/$domain.d/$app.conf
+if [ -f $conf ]; then
+    echo "There is already a nginx conf file at this path: $conf " | sudo tee /dev/stderr
+    exit 1
+fi
+sudo cp -a "${backup_dir}/conf/nginx.conf" $conf
+
+# Reload Nginx
 sudo service nginx reload
+
+# Set ssowat config
+if [ "$is_public" = "Yes" ];
+then   
+    sudo yunohost app setting $app unprotected_uris -v "/"
+fi
+sudo yunohost app ssowatconf
+
+
