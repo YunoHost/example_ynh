@@ -13,6 +13,11 @@ sudo rm -rf /var/www/$app
 # Remove configuration files
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
+# If a dedicated php-fpm process is used :
+#
+#sudo rm -f /etc/php5/fpm/pool.d/$app.conf
+#sudo service php5-fpm reload
+
 # Restart services
 sudo service nginx reload
 sudo yunohost app ssowatconf

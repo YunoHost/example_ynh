@@ -25,7 +25,22 @@ sudo cp -a ../sources/* $final_path
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
 sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
+# If a dedicated php-fpm process is used :
+# Don't forget to modify ../conf/nginx.conf accordingly or your app will not work !
+#
+#sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+
+# If a dedicated php-fpm process is used :
+# Adjustment and copy dedicated php-fpm conf file
+# Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work !
+#
+#sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+#sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
+#finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+#sudo cp ../conf/php-fpm.conf $finalphpconf
+#sudo chown root: $finalphpconf
+#sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
 if [ "$is_public" = "Yes" ];
@@ -34,6 +49,13 @@ then
   sudo yunohost app setting $app unprotected_uris -v "/"
 fi
 
+
+# If dedicated php-fpm process :
+#
+#sudo service php5-fpm reload
+
 # Restart services
 sudo service nginx reload
 sudo yunohost app ssowatconf
+
+
