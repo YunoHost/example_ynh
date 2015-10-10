@@ -12,5 +12,12 @@ sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
 domain=$(sudo yunohost app setting $app domain)
 sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 
+# If a dedicated php-fpm process is used :
+# Copy dedicated php-fpm process from backup folder to the right location
+# And restart service
+#
+#sudo cp -a $backup_dir/php-fpm.conf /etc/php5/fpm/pool.d/$app.conf
+#sudo service php5-fpm reload
+
 # Restart webserver
 sudo service nginx reload
