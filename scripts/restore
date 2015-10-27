@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
 app=ynhexample
 
 # The parameter $1 is the uncompressed restore directory location
@@ -6,6 +10,14 @@ backup_dir=$1/apps/$app
 
 # Restore sources & data
 sudo cp -a $backup_dir/sources/. /var/www/$app
+
+# Restore permissions to app files
+# you may need to make some file and/or directory writeable by www-data (nginx user)
+sudo chown -R root:root $final_path
+
+# Restore mysql database if needed
+# db_pwd=$(sudo yunohost app setting $app mysqlpwd)
+# sudo mysql -u $app -p$db_pwd $app < $backup_dir/$app.dmp
 
 # Restore Nginx and YunoHost parameters
 sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
