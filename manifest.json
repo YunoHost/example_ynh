@@ -11,6 +11,11 @@
         "url": "http://example.com"
     },
     "multi_instance": "false",
+    "services": [
+        "nginx",
+        "php5-fpm",
+        "mysql"
+    ],
     "arguments": {
         "install" : [
             {
