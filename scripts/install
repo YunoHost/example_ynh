@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
 app=ynhexample
 
 # Retrieve arguments
@@ -12,15 +16,23 @@ sudo yunohost app setting $app admin -v "$admin"
 sudo yunohost app setting $app is_public -v "$is_public"
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app
-if [[ ! $? -eq 0 ]]; then
-    exit 1
-fi
+sudo yunohost app checkurl $domain$path -a $app \
+	|| (echo "Path not available: $domain$path" && exit 1)
 
 # Copy source files
 final_path=/var/www/$app
 sudo mkdir -p $final_path
-sudo cp -a ../sources/* $final_path
+sudo cp -a ../sources/. $final_path
+
+# Set permissions to app files
+# you may need to make some file and/or directory writeable by www-data (nginx user)
+sudo chown -R root:root $final_path
+
+# If your app use a MySQL database you can use these lines to bootstrap
+# a database, an associated user and save the password in app settings
+# db_pwd=$(openssl rand -hex 15)
+# sudo yunohost app initdb $app -p $db_pwd
+# sudo yunohost app setting $app mysqlpwd -v $db_pwd
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf

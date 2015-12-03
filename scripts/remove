@@ -13,6 +13,10 @@ sudo rm -rf /var/www/$app
 # Remove configuration files
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
+# If a database is used, remove it
+# root_pwd=$(sudo cat /etc/yunohost/mysql)
+# mysql -u root -p$root_pwd -e "DROP DATABASE $app ; DROP USER $app@localhost ;"
+
 # If a dedicated php-fpm process is used :
 #
 #sudo rm -f /etc/php5/fpm/pool.d/$app.conf

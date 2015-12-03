@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# causes the shell to exit if any subcommand or pipeline returns a non-zero status
+set -e
+
 app=ynhexample
 
 # Retrieve arguments
@@ -13,7 +17,11 @@ path=${path%/}
 # Copy source files
 final_path=/var/www/$app
 sudo mkdir -p $final_path
-sudo cp -a ../sources/* $final_path
+sudo cp -a ../sources/. $final_path
+
+# Set permissions to app files
+# you may need to make some file and/or directory writeable by www-data (nginx user)
+sudo chown -R root:root $final_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf

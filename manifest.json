@@ -2,7 +2,8 @@
     "name": "YunoHost example app",
     "id": "ynhexample",
     "description": {
-        "en": "Example package for Yunohost applications."
+        "en": "Example package for Yunohost applications.",
+        "fr": "Exemple de package d'application pour Yunohost."
     },
     "licence": "free",
     "maintainer": {
@@ -21,14 +22,16 @@
             {
                 "name": "domain",
                 "ask": {
-                    "en": "Choose a domain for ynhexample"
+                    "en": "Choose a domain for ynhexample",
+                    "fr": "Choisissez un domaine pour ynhexample"
                 },
                 "example": "example.com"
             },
             {
                 "name": "path",
                 "ask": {
-                    "en": "Choose a path for ynhexample"
+                    "en": "Choose a path for ynhexample",
+                    "fr": "Choisissez un chemin pour ynhexample"
                 },
                 "example": "/example",
                 "default": "/example"
@@ -36,14 +39,16 @@
             {
                 "name": "admin",
                 "ask": {
-                    "en": "Choose an admin user"
+                    "en": "Choose an admin user",
+                    "fr": "Choisissez l'administrateur"
                 },
                 "example": "johndoe"
             },
             {
                 "name": "is_public",
                 "ask": {
-                    "en": "Is it a public application ?"
+                    "en": "Is it a public application ?",
+                    "fr": "Est-ce une application publique ?"
                 },
                 "choices": ["Yes", "No"],
                 "default": "Yes"
