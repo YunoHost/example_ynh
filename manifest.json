@@ -5,7 +5,7 @@
         "en": "Example package for Yunohost applications.",
         "fr": "Exemple de package d'application pour Yunohost."
     },
-    "licence": "free",
+    "license": "free",
     "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",
