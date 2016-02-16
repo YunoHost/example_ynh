@@ -56,6 +56,15 @@
                 },
                 "choices": ["Yes", "No"],
                 "default": "Yes"
+            },
+            {
+    		"name": "my_boolean",
+    		"type": "boolean",
+    		"ask": {
+                    "en": "Do you want to check this boolean ?",
+                    "fr": "Tu veux cocher ce booléen ?"
+                },
+                "default": true
             }
         ]
     }
