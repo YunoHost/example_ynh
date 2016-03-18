@@ -12,7 +12,7 @@
         "email": "john.doe@example.com",
         "url": "http://example.com"
     },
-    "multi_instance": "false",
+    "multi_instance": "true",
     "services": [
         "nginx",
         "php5-fpm",
