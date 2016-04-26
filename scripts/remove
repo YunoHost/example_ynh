@@ -24,4 +24,3 @@ sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
 # Restart services
 sudo service nginx reload
-sudo yunohost app ssowatconf

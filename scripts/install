@@ -68,4 +68,3 @@ fi
 
 # Restart services
 sudo service nginx reload
-sudo yunohost app ssowatconf
