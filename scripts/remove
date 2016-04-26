@@ -1,5 +1,7 @@
 #!/bin/bash
-app=ynhexample
+
+# The last argument is the app instance name
+app=${!#}
 
 # Retrieve arguments
 domain=$(sudo yunohost app setting $app domain)

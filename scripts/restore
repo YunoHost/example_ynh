@@ -3,10 +3,12 @@
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
 set -e
 
-app=ynhexample
+# The last argument is the app instance name
+app=${!#}
 
-# The parameter $1 is the uncompressed restore directory location
-backup_dir=$1/apps/$app
+# The first argument is the backup directory location of the app
+# from where the script is executed
+backup_dir=$1
 
 # Restore sources & data
 sudo cp -a $backup_dir/sources/. /var/www/$app

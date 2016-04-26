@@ -3,7 +3,8 @@
 # causes the shell to exit if any subcommand or pipeline returns a non-zero status
 set -e
 
-app=ynhexample
+# The last argument is the app instance name
+app=${!#}
 
 # Retrieve arguments
 domain=$(sudo yunohost app setting $app domain)
