@@ -20,10 +20,12 @@ domain=$YNH_APP_ARG_DOMAIN
 path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
+language=$YNH_APP_ARG_LANGUAGE
 
 # Save app settings
 sudo yunohost app setting $app admin -v "$admin"
 sudo yunohost app setting $app is_public -v "$is_public"
+sudo yunohost app setting $app language -v "$language"
 
 # Check domain/path availability
 sudo yunohost app checkurl $domain$path -a $app \
@@ -65,7 +67,7 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 #sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
-if [ "$is_public" = "Yes" ];
+if [[ $is_public -eq 1 ]];
 then
   # unprotected_uris allows SSO credentials to be passed anyway.
   sudo yunohost app setting $app unprotected_uris -v "/"
@@ -78,4 +80,3 @@ fi
 
 # Restart services
 sudo service nginx reload
-sudo yunohost app ssowatconf

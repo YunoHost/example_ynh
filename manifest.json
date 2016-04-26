@@ -53,21 +53,21 @@
             },
             {
                 "name": "is_public",
+                "type": "boolean",
                 "ask": {
                     "en": "Is it a public application?",
                     "fr": "Est-ce une application publique ?"
                 },
-                "choices": ["Yes", "No"],
-                "default": "Yes"
+                "default": true
             },
             {
-    		"name": "my_boolean",
-    		"type": "boolean",
-    		"ask": {
-                    "en": "Do you want to check this boolean ?",
-                    "fr": "Tu veux cocher ce booléen ?"
+                "name": "language",
+                "ask": {
+                    "en": "Choose the application language",
+                    "fr": "Choisissez la langue de l'application"
                 },
-                "default": true
+                "choices": ["fr", "en"],
+                "default": "fr"
             }
         ]
     }

@@ -5,11 +5,13 @@ set -e
 
 app=$YNH_APP_INSTANCE_NAME
 
-# The parameter $1 is the uncompressed restore directory location
-backup_dir=$1/apps/$app
+# The first argument is the backup directory location of the app
+# from where the script is executed
+backup_dir=$1
 
 # Restore sources & data
-sudo cp -a $backup_dir/sources/. /var/www/$app
+final_path=/var/www/$app
+sudo cp -a $backup_dir/sources/. $final_path
 
 # Restore permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
