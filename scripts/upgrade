@@ -11,6 +11,7 @@ domain=$(sudo yunohost app setting $app domain)
 path=$(sudo yunohost app setting $app path)
 admin=$(sudo yunohost app setting $app admin)
 is_public=$(sudo yunohost app setting $app is_public)
+language=$(sudo yunohost app setting $app language)
 
 # Remove trailing "/" for next commands
 path=${path%/}
@@ -43,7 +44,7 @@ sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 #sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
-if [ "$is_public" = "Yes" ];
+if [[ $is_public -eq 1 ]];
 then
   # See install script
   sudo yunohost app setting $app unprotected_uris -v "/"
