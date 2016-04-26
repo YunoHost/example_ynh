@@ -11,7 +11,8 @@ app=${!#}
 backup_dir=$1
 
 # Restore sources & data
-sudo cp -a $backup_dir/sources/. /var/www/$app
+final_path=/var/www/$app
+sudo cp -a $backup_dir/sources/. $final_path
 
 # Restore permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
