@@ -1,6 +1,7 @@
 {
     "name": "YunoHost example app",
     "id": "ynhexample",
+    "packaging_format": 1,
     "description": {
         "en": "Example package for YunoHost application.",
         "fr": "Exemple de package d’application pour YunoHost."
