@@ -11,27 +11,26 @@ app=${!#}
 backup_dir=$1
 
 # Restore sources & data
-final_path=/var/www/$app
-sudo cp -a $backup_dir/sources/. $final_path
+final_path="/var/www/${app}"
+sudo cp -a ./sources "$final_path"
 
 # Restore permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root:root $final_path
+sudo chown -R root:root "$final_path"
 
 # Restore mysql database if needed
 # db_pwd=$(sudo yunohost app setting $app mysqlpwd)
-# sudo mysql -u $app -p$db_pwd $app < $backup_dir/$app.dmp
+# sudo mysql -u $app -p$db_pwd $app < ./dump.sql
 
-# Restore Nginx and YunoHost parameters
-sudo cp -a $backup_dir/yunohost/. /etc/yunohost/apps/$app
-domain=$(sudo yunohost app setting $app domain)
-sudo cp -a $backup_dir/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+# Restore NGINX configuration
+domain=$(sudo yunohost app setting "$app" domain)
+sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
 # If a dedicated php-fpm process is used :
 # Copy dedicated php-fpm process from backup folder to the right location
 # And restart service
 #
-#sudo cp -a $backup_dir/php-fpm.conf /etc/php5/fpm/pool.d/$app.conf
+#sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
 #sudo service php5-fpm reload
 
 # Restart webserver
