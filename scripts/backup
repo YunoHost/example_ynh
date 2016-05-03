@@ -7,7 +7,7 @@ app=$YNH_APP_INSTANCE_NAME
 
 # The first argument is the backup directory location for the app
 # from where the script is executed and which will be compressed afterward
-backup_dir=$1
+backup_dir=$YNH_APP_BACKUP_DIR
 
 # Backup sources & data
 sudo cp -a "/var/www/${app}" ./sources
