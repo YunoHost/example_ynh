@@ -1,6 +1,7 @@
 {
     "name": "YunoHost example app",
     "id": "ynhexample",
+    "packaging_format": 1,
     "description": {
         "en": "Example package for YunoHost application.",
         "fr": "Exemple de package d’application pour YunoHost."
@@ -12,7 +13,10 @@
         "email": "john.doe@example.com",
         "url": "http://example.com"
     },
-    "multi_instance": false,
+    "requirements": {
+        "yunohost": ">> 2.3.12.1"
+    },
+    "multi_instance": true,
     "services": [
         "nginx",
         "php5-fpm",
