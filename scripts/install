@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+# Exit on command errors and treat unset variables as an error
+set -eu
 
 # This is a multi-instance app, meaning it can be installed several times independently
 # The id of the app as stated in the manifest is available as $YNH_APP_ID
@@ -22,14 +22,17 @@ admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
 
+# Source YunoHost helpers
+. /usr/share/yunohost/helpers
+
 # Save app settings
-sudo yunohost app setting $app admin -v "$admin"
-sudo yunohost app setting $app is_public -v "$is_public"
-sudo yunohost app setting $app language -v "$language"
+ynh_app_setting_set "$app" admin "$admin"
+ynh_app_setting_set "$app" is_public "$is_public"
+ynh_app_setting_set "$app" language "$language"
 
 # Check domain/path availability
-sudo yunohost app checkurl $domain$path -a $app \
-	|| (echo "Path not available: $domain$path" && exit 1)
+sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+    || ynh_die "Path not available: ${domain}${path}"
 
 # Copy source files
 final_path=/var/www/$app
@@ -41,10 +44,18 @@ sudo cp -a ../sources/. $final_path
 sudo chown -R root:root $final_path
 
 # If your app use a MySQL database you can use these lines to bootstrap
-# a database, an associated user and save the password in app settings
-# db_pwd=$(openssl rand -hex 15)
-# sudo yunohost app initdb $app -p $db_pwd
-# sudo yunohost app setting $app mysqlpwd -v $db_pwd
+# a database, an associated user and save the password in app settings.
+#
+# # Generate MySQL password and create database
+# dbuser=$app
+# dbname=$app
+# dbpass=$(ynh_string_random 12)
+# ynh_app_setting_set "$app" mysqlpwd "$dbpass"
+# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
+#
+# # Load initial SQL into the new database
+# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" \
+#     < "../sources/sql/mysql.init.sql"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
@@ -52,31 +63,31 @@ sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
 # If a dedicated php-fpm process is used:
 # Don't forget to modify ../conf/nginx.conf accordingly or your app will not work!
 #
-#sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
+# sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 
 # If a dedicated php-fpm process is used:
-# Adjustment and copy dedicated php-fpm conf file
 # Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work!
 #
-#sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-#sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
-#finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-#sudo cp ../conf/php-fpm.conf $finalphpconf
-#sudo chown root: $finalphpconf
-#sudo chmod 644 $finalphpconf
+# # Modify PHP-FPM pool configuration and copy it to the pool directory
+# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+# sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
+# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+# sudo cp ../conf/php-fpm.conf $finalphpconf
+# sudo chown root: $finalphpconf
+# sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
 if [[ $is_public -eq 1 ]];
 then
   # unprotected_uris allows SSO credentials to be passed anyway.
-  sudo yunohost app setting $app unprotected_uris -v "/"
+  ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
 
-# If dedicated php-fpm process:
+# If a dedicated php-fpm process is used:
 #
-#sudo service php5-fpm reload
+# sudo service php5-fpm reload
 
 # Restart services
 sudo service nginx reload

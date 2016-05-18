@@ -1,13 +1,24 @@
 #!/bin/bash
 
-# causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+# Note: each files and directories you've saved using the ynh_backup helper
+# will be located in the current directory, regarding the last argument.
 
+# Exit on command errors and treat unset variables as an error
+set -eu
+
+# See comments in install script
 app=$YNH_APP_INSTANCE_NAME
 
-# The first argument is the backup directory location of the app
-# from where the script is executed
-backup_dir=$YNH_APP_BACKUP_DIR
+# Source YunoHost helpers
+. /usr/share/yunohost/helpers
+
+# Retrieve old app settings
+domain=$(ynh_app_setting_get "$app" domain)
+path=$(ynh_app_setting_get "$app" path)
+
+# Check domain/path availability
+sudo yunohost app checkurl "${domain}${path}" -a "$app" \
+    || ynh_die "Path not available: ${domain}${path}"
 
 # Restore sources & data
 final_path="/var/www/${app}"
@@ -17,20 +28,23 @@ sudo cp -a ./sources "$final_path"
 # you may need to make some file and/or directory writeable by www-data (nginx user)
 sudo chown -R root:root "$final_path"
 
-# Restore mysql database if needed
-# db_pwd=$(sudo yunohost app setting $app mysqlpwd)
-# sudo mysql -u $app -p$db_pwd $app < ./dump.sql
+# If a MySQL database is used:
+#
+# # Create and restore the database
+# dbname=$app
+# dbuser=$app
+# dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
+# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql
 
 # Restore NGINX configuration
-domain=$(sudo yunohost app setting "$app" domain)
 sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
-# If a dedicated php-fpm process is used :
-# Copy dedicated php-fpm process from backup folder to the right location
-# And restart service
+# If a dedicated php-fpm process is used:
 #
-#sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
-#sudo service php5-fpm reload
+# # Copy PHP-FPM pool configuration and reload the service
+# sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
+# sudo service php5-fpm reload
 
 # Restart webserver
 sudo service nginx reload

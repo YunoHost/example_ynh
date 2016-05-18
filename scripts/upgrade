@@ -1,17 +1,20 @@
 #!/bin/bash
 
-# causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+# Exit on command errors and treat unset variables as an error
+set -eu
 
 # See comments in install script
 app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting $app domain)
-path=$(sudo yunohost app setting $app path)
-admin=$(sudo yunohost app setting $app admin)
-is_public=$(sudo yunohost app setting $app is_public)
-language=$(sudo yunohost app setting $app language)
+# Source YunoHost helpers
+. /usr/share/yunohost/helpers
+
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
+path=$(ynh_app_setting_get "$app" path)
+admin=$(ynh_app_setting_get "$app" admin)
+is_public=$(ynh_app_setting_get "$app" is_public)
+language=$(ynh_app_setting_get "$app" language)
 
 # Remove trailing "/" for next commands
 path=${path%/}
@@ -28,33 +31,33 @@ sudo chown -R root:root $final_path
 # Modify Nginx configuration file and copy it to Nginx conf directory
 sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
 sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
-# If a dedicated php-fpm process is used :
+# If a dedicated php-fpm process is used:
 #
-#sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
+# sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
 sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
 
-# If a dedicated php-fpm process is used :
-# Adjustment and copy dedicated php-fpm conf file
+# If a dedicated php-fpm process is used:
 #
-#sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-#sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
-#finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-#sudo cp ../conf/php-fpm.conf $finalphpconf
-#sudo chown root: $finalphpconf
-#sudo chmod 644 $finalphpconf
+# # Modify PHP-FPM pool configuration and copy it to the pool directory
+# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+# sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
+# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+# sudo cp ../conf/php-fpm.conf $finalphpconf
+# sudo chown root: $finalphpconf
+# sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
 if [[ $is_public -eq 1 ]];
 then
   # See install script
-  sudo yunohost app setting $app unprotected_uris -v "/"
+  ynh_app_setting_set "$app" unprotected_uris "/"
   # Remove old settings
-  sudo yunohost app setting $app skipped_uris -d
+  ynh_app_setting_delete "$app" skipped_uris
 fi
 
-# If a dedicated php-fpm process is used :
+# If a dedicated php-fpm process is used:
 #
-#sudo service php5-fpm restart
+# sudo service php5-fpm restart
 
 # Restart services
 sudo service nginx reload

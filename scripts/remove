@@ -1,13 +1,13 @@
 #!/bin/bash
 
-# The last argument is the app instance name
-app=${!#}
+# See comments in install script
+app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting $app domain)
-path=$(sudo yunohost app setting $app path)
-admin=$(sudo yunohost app setting $app admin)
-is_public=$(sudo yunohost app setting $app is_public)
+# Source YunoHost helpers
+. /usr/share/yunohost/helpers
+
+# Retrieve app settings
+domain=$(ynh_app_setting_get "$app" domain)
 
 # Remove sources
 sudo rm -rf /var/www/$app
@@ -15,14 +15,18 @@ sudo rm -rf /var/www/$app
 # Remove configuration files
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
-# If a database is used, remove it
-# root_pwd=$(sudo cat /etc/yunohost/mysql)
-# mysql -u root -p$root_pwd -e "DROP DATABASE $app ; DROP USER $app@localhost ;"
-
-# If a dedicated php-fpm process is used :
+# If a dedicated php-fpm process is used:
 #
-#sudo rm -f /etc/php5/fpm/pool.d/$app.conf
-#sudo service php5-fpm reload
+# sudo rm -f /etc/php5/fpm/pool.d/$app.conf
+# sudo service php5-fpm reload
+
+# If a MySQL database is used:
+#
+# # Drop MySQL database and user
+# dbname=$app
+# dbuser=$app
+# ynh_mysql_drop_db "$dbname" || true
+# ynh_mysql_drop_user "$dbuser" || true
 
 # Restart services
 sudo service nginx reload
