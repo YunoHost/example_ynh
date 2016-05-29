@@ -51,8 +51,6 @@ if [[ $is_public -eq 1 ]];
 then
   # See install script
   ynh_app_setting_set "$app" unprotected_uris "/"
-  # Remove old settings
-  ynh_app_setting_delete "$app" skipped_uris
 fi
 
 # If a dedicated php-fpm process is used:
