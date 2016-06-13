@@ -21,12 +21,12 @@ sudo yunohost app checkurl "${domain}${path}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path}"
 
 # Restore sources & data
-final_path="/var/www/${app}"
-sudo cp -a ./sources "$final_path"
+src_path="/var/www/${app}"
+sudo cp -a ./sources "$src_path"
 
 # Restore permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root:root "$final_path"
+sudo chown -R root: "$src_path"
 
 # If a MySQL database is used:
 #

@@ -1,6 +1,6 @@
-# YunoHost example app #
+# YunoHost example app
 
-## Usage ##
+## Usage
 - Add application source files into `sources` subfolder.
 - Edit `conf/nginx.conf` file to match application prerequisites.
 - Edit manifest with application specific information.

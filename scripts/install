@@ -35,13 +35,13 @@ sudo yunohost app checkurl "${domain}${path}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path}"
 
 # Copy source files
-final_path=/var/www/$app
-sudo mkdir -p $final_path
-sudo cp -a ../sources/. $final_path
+src_path=/var/www/$app
+sudo mkdir -p $src_path
+sudo cp -a ../sources/. $src_path
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root:root $final_path
+sudo chown -R root: $src_path
 
 # If your app use a MySQL database you can use these lines to bootstrap
 # a database, an associated user and save the password in app settings.
@@ -58,36 +58,34 @@ sudo chown -R root:root $final_path
 #     < "../sources/sql/mysql.init.sql"
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
-sed -i "s@YNH_WWW_PATH@$path@g" ../conf/nginx.conf
-sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/nginx.conf
+nginx_conf=../conf/nginx.conf
+sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
+sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
 # If a dedicated php-fpm process is used:
 # Don't forget to modify ../conf/nginx.conf accordingly or your app will not work!
 #
-# sudo sed -i "s@YNH_WWW_APP@$app@g" ../conf/nginx.conf
-sudo cp ../conf/nginx.conf /etc/nginx/conf.d/$domain.d/$app.conf
+# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
 # If a dedicated php-fpm process is used:
 # Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work!
 #
 # # Modify PHP-FPM pool configuration and copy it to the pool directory
 # sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$final_path/@g" ../conf/php-fpm.conf
+# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
 # finalphpconf=/etc/php5/fpm/pool.d/$app.conf
 # sudo cp ../conf/php-fpm.conf $finalphpconf
 # sudo chown root: $finalphpconf
 # sudo chmod 644 $finalphpconf
 
 # If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]];
-then
+if [[ $is_public -eq 1 ]]; then
   # unprotected_uris allows SSO credentials to be passed anyway.
   ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
+# Reload services
+sudo service nginx reload
 
 # If a dedicated php-fpm process is used:
-#
 # sudo service php5-fpm reload
-
-# Restart services
-sudo service nginx reload

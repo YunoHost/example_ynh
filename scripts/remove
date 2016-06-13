@@ -28,5 +28,5 @@ sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 # ynh_mysql_drop_db "$dbname" || true
 # ynh_mysql_drop_user "$dbuser" || true
 
-# Restart services
+# Reload nginx service
 sudo service nginx reload
