@@ -37,8 +37,8 @@ sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
 # sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
 sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
+### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
-#
 # # Modify PHP-FPM pool configuration and copy it to the pool directory
 # sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
 # sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
@@ -46,16 +46,14 @@ sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 # sudo cp ../conf/php-fpm.conf $finalphpconf
 # sudo chown root: $finalphpconf
 # sudo chmod 644 $finalphpconf
+# sudo service php5-fpm restart
+### PHP end ###
 
 # If app is public, add url to SSOWat conf as skipped_uris
 if [[ $is_public -eq 1 ]]; then
   # See install script
   ynh_app_setting_set "$app" unprotected_uris "/"
 fi
-
-# If a dedicated php-fpm process is used:
-#
-# sudo service php5-fpm restart
 
 # Reload nginx service
 sudo service nginx reload

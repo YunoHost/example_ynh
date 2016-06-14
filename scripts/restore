@@ -28,23 +28,25 @@ sudo cp -a ./sources "$src_path"
 # you may need to make some file and/or directory writeable by www-data (nginx user)
 sudo chown -R root: "$src_path"
 
+### MySQL (remove if not used) ###
 # If a MySQL database is used:
-#
 # # Create and restore the database
 # dbname=$app
 # dbuser=$app
 # dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
 # ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
 # ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql
+### MySQL end ###
 
 # Restore NGINX configuration
 sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
+### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
-#
 # # Copy PHP-FPM pool configuration and reload the service
 # sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
 # sudo service php5-fpm reload
+### PHP end ###
 
 # Restart webserver
 sudo service nginx reload
