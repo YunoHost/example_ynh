@@ -23,7 +23,7 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 language=$YNH_APP_ARG_LANGUAGE
 
 # Source YunoHost helpers
-. /usr/share/yunohost/helpers
+source /usr/share/yunohost/helpers
 
 # Save app settings
 ynh_app_setting_set "$app" admin "$admin"

@@ -7,7 +7,7 @@ set -eu
 app=$YNH_APP_INSTANCE_NAME
 
 # Source YunoHost helpers
-. /usr/share/yunohost/helpers
+source /usr/share/yunohost/helpers
 
 # Backup sources & data
 # Note: the last argument is where to save this path, see the restore script.
