@@ -20,7 +20,7 @@ domain=$YNH_APP_ARG_DOMAIN
 path=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
-language=$YNH_APP_ARG_LANGUAGE
+#language=$YNH_APP_ARG_LANGUAGE
 
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
@@ -28,7 +28,7 @@ source /usr/share/yunohost/helpers
 # Save app settings
 ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" is_public "$is_public"
-ynh_app_setting_set "$app" language "$language"
+#ynh_app_setting_set "$app" language "$language"
 
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path}" -a "$app" \
@@ -37,7 +37,11 @@ sudo yunohost app checkurl "${domain}${path}" -a "$app" \
 # Copy source files
 src_path=/var/www/$app
 sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+sudo wget -P "$src_path" https://github.com/Laverna/static-laverna/archive/gh-pages.zip -O "$src_path"/laverna.zip
+sudo unzip "$src_path"/laverna.zip -d "$src_path"
+sudo cp -R "$src_path"/static-laverna-gh-pages/* "$src_path"
+sudo rm "$src_path"/laverna.zip
+sudo rm -rf "$src_path"/static-laverna-gh-pages
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
