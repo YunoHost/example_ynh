@@ -1,11 +1,5 @@
-# YunoHost example app
+# Cagette app
 
-## Usage
-- Add application source files into `sources` subfolder.
-- Edit `conf/nginx.conf` file to match application prerequisites.
-- Edit manifest with application specific information.
-- Edit the install, upgrade, remove, backup, restore scripts.
-- Add a LICENSE file for the package.
+##Premiers pas
 
-**More information on the documentation page:**    
-https://yunohost.org/packaging_apps
+- cette app est à létat de test, il s'agit des prmiers fichiers adapté pour la plupart de https://github.com/YunoHost-Apps/my_webapp_ynh et  de https://github.com/YunoHost/example_ynh
