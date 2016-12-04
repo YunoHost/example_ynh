@@ -1,34 +1,40 @@
 #!/bin/bash
 
-# See comments in install script
+# Get multi-instances specific variables
 app=$YNH_APP_INSTANCE_NAME
+app_nb=$YNH_APP_INSTANCE_NUMBER
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+# Source app helpers
+. /usr/share/yunohost/helpers
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
+with_mysql=$(ynh_app_setting_get "$app" with_mysql)
+user=$(ynh_app_setting_get "$app" user)
 
-# Remove sources
-sudo rm -rf /var/www/$app
+# Drop MySQL database and user as needed
+if [[ $with_mysql -eq 1 ]]; then
+    dbname=$app
+    dbuser=$app
+    dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+    ynh_mysql_drop_db $dbname || true
+    ynh_mysql_drop_user $dbuser || true
+fi
 
-# Remove nginx configuration file
-sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+# Delete app directory and configurations
+sudo rm -rf "/var/www/${app}"
+sudo rm -f "/etc/php5/fpm/pool.d/${app}.conf"
+[[ -n $domain ]] && sudo rm -f "/etc/nginx/conf.d/${domain}.d/${app}.conf"
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# sudo rm -f /etc/php5/fpm/pool.d/$app.conf
-# sudo service php5-fpm reload
-### PHP end ###
+# Remove custom SSH configuration
+sudo sed -i "/##-> ${app}/,/##<- ${app}/d" /etc/ssh/sshd_config
 
-### MySQL (remove if not used) ###
-# If a MySQL database is used:
-# # Drop MySQL database and user
-# dbname=$app
-# dbuser=$app
-# ynh_mysql_drop_db "$dbname" || true
-# ynh_mysql_drop_user "$dbuser" || true
-### MySQL end ###
+# Reload services
+sudo service php5-fpm restart || true
+sudo service nginx reload || true
+sudo service sshd reload
 
-# Reload nginx service
-sudo service nginx reload
+# Remove the user account
+id "$user" >/dev/null 2>&1 \
+  && sudo deluser --quiet --force "$user" >/dev/null \
+  || true

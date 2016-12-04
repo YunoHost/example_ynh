@@ -3,90 +3,103 @@
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# This is a multi-instance app, meaning it can be installed several times independently
-# The id of the app as stated in the manifest is available as $YNH_APP_ID
-# The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
-# The app instance name is available as $YNH_APP_INSTANCE_NAME
-#    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
-#    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-#    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-# The app instance name is probably what you are interested the most, since this is
-# guaranteed to be unique. This is a good unique identifier to define installation path,
-# db names, ...
+# Get instances specific variables
 app=$YNH_APP_INSTANCE_NAME
 
+
 # Retrieve arguments
-domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
-is_public=$YNH_APP_ARG_IS_PUBLIC
-language=$YNH_APP_ARG_LANGUAGE
+domain=$1
+path=${2%/}
+password=$3
+is_public=$4
+with_mysql=$5
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
-
-# Save app settings
-ynh_app_setting_set "$app" admin "$admin"
-ynh_app_setting_set "$app" is_public "$is_public"
-ynh_app_setting_set "$app" language "$language"
+# Source app helpers
+. /usr/share/yunohost/helpers
 
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
+  || exit 1
 
-# Copy source files
-src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+# Check password strength
+[[ ${#password} -gt 5 ]] || ynh_die \
+"The password is too weak, it must be longer than 5 characters"
 
-# Set permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: $src_path
+# Check destination directory
+DESTDIR="/var/www/${app}"
+[[ -d "$DESTDIR" ]] && ynh_die \
+"The destination directory '${DESTDIR}' already exists.\
+ You should safely delete it before installing this app."
 
-### MySQL (can be removed if not used) ###
-# If your app use a MySQL database you can use these lines to bootstrap
-# a database, an associated user and save the password in app settings.
-#
-# # Generate MySQL password and create database
-# dbuser=$app
-# dbname=$app
-# dbpass=$(ynh_string_random 12)
-# ynh_app_setting_set "$app" mysqlpwd "$dbpass"
-# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
-#
-# # Load initial SQL into the new database
-# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" \
-#     < "../sources/sql/mysql.init.sql"
-### MySQL end ###
+# Save app settings
+user="webapp${app_nb}"
+ynh_app_setting_set "$app" is_public "$is_public"
+ynh_app_setting_set "$app" with_mysql "$with_mysql"
+ynh_app_setting_set "$app" password "$password"
+ynh_app_setting_set "$app" user "$user"
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
-sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/nginx.conf accordingly or your app will not work!
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+# Create the user account
+sudo useradd -c "${app} user account" \
+    -d "$DESTDIR" -M -g www-data "$user" \
+  || ynh_die "Unable to create user account"
+sudo chpasswd <<< "${user}:${password}"
 
-### PHP (can be removed if not used) ###
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work!
-#
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm reload
-### PHP end ###
+# Harden SSH connection for the user
+echo "##-> ${app}
+# Hardening user connection
+Match User ${user}
+  ChrootDirectory %h
+  ForceCommand internal-sftp
+  AllowTcpForwarding no
+  PermitTunnel no
+  X11Forwarding no
+##<- ${app}" | sudo tee -a /etc/ssh/sshd_config >/dev/null
 
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # unprotected_uris allows SSO credentials to be passed anyway.
-  ynh_app_setting_set "$app" unprotected_uris "/"
+# Specify the user and the domain in the home page
+sed -i "s@{DOMAIN}@${domain}@g" ../sources/www/index.html
+sed -i "s@{USER}@${user}@g"     ../sources/www/index.html
+
+# Initialize database as needed
+if [[ $with_mysql -eq 1 ]]; then
+    dbname=$app
+    dbuser=$app
+    dbpass=$(ynh_string_random)
+    ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
+
+    # Store the database access
+    echo -e "# MySQL Database
+name: ${dbname}\nuser: ${dbuser}\npass: ${dbpass}" > ../sources/db_access.txt
+    ynh_app_setting_set "$app" mysqlpwd "$dbpass"
 fi
 
+# Copy files to the right place and set permissions
+sudo cp -r ../sources "$DESTDIR"
+sudo chown -hR "${user}:" "$DESTDIR"
+
+# Home directory of the user need to be owned by root to allow
+# SFTP connections
+sudo chown root: "$DESTDIR"
+
+# Set SSOwat rules
+[[ $is_public -eq 1 ]] \
+  && ynh_app_setting_set "$app" skipped_uris "/"
+
+# Copy and set nginx configuration
+nginx_conf="/etc/nginx/conf.d/${domain}.d/${app}.conf"
+sed -i "s@{PATH}@${path}@g"        ../conf/nginx.conf
+sed -i "s@{LOCATION}@${path:-/}@g" ../conf/nginx.conf
+sed -i "s@{DESTDIR}@${DESTDIR}@g"  ../conf/nginx.conf
+sed -i "s@{POOLNAME}@${app}@g"     ../conf/nginx.conf
+sudo cp ../conf/nginx.conf "$nginx_conf"
+
+# Copy and set php-fpm configuration
+phpfpm_conf="/etc/php5/fpm/pool.d/${app}.conf"
+sed -i "s@{USER}@${user}@g"       ../conf/php-fpm.conf
+sed -i "s@{POOLNAME}@${app}@g"    ../conf/php-fpm.conf
+sed -i "s@{DESTDIR}@${DESTDIR}@g" ../conf/php-fpm.conf
+sudo cp ../conf/php-fpm.conf "$phpfpm_conf"
+
 # Reload services
+sudo service php5-fpm reload
 sudo service nginx reload
+sudo service sshd reload

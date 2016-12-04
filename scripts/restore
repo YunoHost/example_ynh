@@ -1,52 +1,81 @@
 #!/bin/bash
 
-# Note: each files and directories you've saved using the ynh_backup helper
-# will be located in the current directory, regarding the last argument.
+set -e
 
-# Exit on command errors and treat unset variables as an error
-set -eu
-
-# See comments in install script
+# Get multi-instances specific variables
 app=$YNH_APP_INSTANCE_NAME
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+# Source app helpers
+. /usr/share/yunohost/helpers
 
 # Retrieve old app settings
 domain=$(ynh_app_setting_get "$app" domain)
 path=$(ynh_app_setting_get "$app" path)
+with_mysql=$(ynh_app_setting_get "$app" with_mysql)
+password=$(ynh_app_setting_get "$app" password)
+user=$(ynh_app_setting_get "$app" user)
 
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
+  || exit 1
 
-# Restore sources & data
-src_path="/var/www/${app}"
-sudo cp -a ./sources "$src_path"
+# Check destination directory
+DESTDIR="/var/www/$app"
+[[ -d $DESTDIR ]] && ynh_die \
+"The destination directory '$DESTDIR' already exists.\
+ You should safely delete it before restoring this app."
 
-# Restore permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: "$src_path"
+# Check configuration files
+nginx_conf="/etc/nginx/conf.d/${domain}.d/${app}.conf"
+[[ -f $nginx_conf ]] && ynh_die \
+"The NGINX configuration already exists at '${nginx_conf}'.
+ You should safely delete it before restoring this app."
+phpfpm_conf="/etc/php5/fpm/pool.d/${app}.conf"
+[[ -f $phpfpm_conf ]] && ynh_die \
+"The PHP FPM configuration already exists at '${phpfpm_conf}'.
+ You should safely delete it before restoring this app."
 
-### MySQL (remove if not used) ###
-# If a MySQL database is used:
-# # Create and restore the database
-# dbname=$app
-# dbuser=$app
-# dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
-# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
-# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql
-### MySQL end ###
+# Create the user account
+sudo useradd -c "${app} user account" \
+    -d "$DESTDIR" -M -g www-data "$user" \
+  || ynh_die "Unable to create user account"
+sudo chpasswd <<< "${user}:${password}"
 
-# Restore NGINX configuration
-sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+# Harden SSH connection for the user
+echo "##-> ${app}
+# Hardening user connection
+Match User ${user}
+  ChrootDirectory %h
+  ForceCommand internal-sftp
+  AllowTcpForwarding no
+  PermitTunnel no
+  X11Forwarding no
+##<- ${app}" | sudo tee -a /etc/ssh/sshd_config >/dev/null
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Copy PHP-FPM pool configuration and reload the service
-# sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
-# sudo service php5-fpm reload
-### PHP end ###
+# Restore the app files
+sudo cp -a ./sources "$DESTDIR"
+sudo chown -hR "${user}:" "$DESTDIR"
 
-# Restart webserver
-sudo service nginx reload
+# Home directory of the user need to be owned by root to allow
+# SFTP connections
+sudo chown root: "$DESTDIR"
+
+# Create and restore the database as needed
+if [[ $with_mysql -eq 1 ]]; then
+    dbname=$app
+    dbuser=$app
+    dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+    ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
+    [[ -f ./dump.sql ]] \
+      && ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql \
+      || echo "No MySQL dump has been found" >&2
+fi
+
+# Restore configuration files
+sudo cp -a ./conf/nginx.conf   "$nginx_conf"
+sudo cp -a ./conf/php-fpm.conf "$phpfpm_conf"
+
+# Reload services
+sudo service php5-fpm reload || true
+sudo service nginx reload || true
+sudo service sshd reload

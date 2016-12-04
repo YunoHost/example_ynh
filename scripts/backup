@@ -3,31 +3,29 @@
 # Exit on command errors and treat unset variables as an error
 set -eu
 
-# See comments in install script
+# Get multi-instances specific variables
 app=$YNH_APP_INSTANCE_NAME
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+# Source app helpers
+. /usr/share/yunohost/helpers
 
-# Backup sources & data
-# Note: the last argument is where to save this path, see the restore script.
-ynh_backup "/var/www/${app}" "sources"
-
-### MySQL (remove if not used) ###
-# If a MySQL database is used:
-# # Dump the database
-# dbname=$app
-# dbuser=$app
-# dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
-# mysqldump -u "$dbuser" -p"$dbpass" --no-create-db "$dbname" > ./dump.sql
-### MySQL end ###
-
-# Copy NGINX configuration
+# Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
-ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "nginx.conf"
+path=$(ynh_app_setting_get "$app" path)
+with_mysql=$(ynh_app_setting_get "$app" with_mysql)
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Copy PHP-FPM pool configuration
-# ynh_backup "/etc/php5/fpm/pool.d/${app}.conf" "php-fpm.conf"
-### PHP end ###
+# Copy the app files
+DESTDIR="/var/www/${app}"
+ynh_backup "$DESTDIR" "sources" 1
+
+# Copy the conf files
+ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "conf/nginx.conf"
+ynh_backup "/etc/php5/fpm/pool.d/${app}.conf" "conf/php-fpm.conf"
+
+# Dump the database
+if [[ $with_mysql -eq 1 ]]; then
+    dbname=$app
+    dbuser=$app
+    dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
+    mysqldump -u "$dbuser" -p"$dbpass" --no-create-db "$dbname" > ./dump.sql
+fi
