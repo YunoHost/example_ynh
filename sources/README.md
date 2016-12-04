@@ -1,3 +1,3 @@
-Place the sources of the webapp in this folder.
+The sources of the webapp are based on 
 
-This file can be removed.
+https://github.com/bablukid/cagette
