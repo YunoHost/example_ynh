@@ -1,59 +1,53 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
 set -eu
 
-# See comments in install script
+# Get multi-instances specific variables
 app=$YNH_APP_INSTANCE_NAME
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+# Source app helpers
+. /usr/share/yunohost/helpers
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
 path=$(ynh_app_setting_get "$app" path)
-admin=$(ynh_app_setting_get "$app" admin)
-is_public=$(ynh_app_setting_get "$app" is_public)
-language=$(ynh_app_setting_get "$app" language)
-
-# Remove trailing "/" for next commands
 path=${path%/}
+is_public=$(ynh_app_setting_get "$app" is_public)
+with_mysql=$(ynh_app_setting_get "$app" with_mysql)
+password=$(ynh_app_setting_get "$app" password)
+user=$(ynh_app_setting_get "$app" user)
 
-# Copy source files
-src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+([[ -n "$with_mysql" ]] && [[ -n "$password" ]] && [[ -n "$user" ]]) \
+  || ynh_die "The app changed and can not be automatically upgraded. \
+You will have to manually upgrade it following those instructions: \
+https://github.com/garwinch/Yuno_app_cagette#upgrade"
 
-# Set permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: $src_path
+# Check destination directory
+DESTDIR="/var/www/$app"
+[[ ! -d $DESTDIR ]] && ynh_die \
+"The destination directory '$DESTDIR' does not exist.\
+ The app is not correctly installed, you should remove it first."
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
-sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-#
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+# Harden SSH connection for the user
+sudo sed -i "/##-> ${app}/,/##<- ${app}/d" /etc/ssh/sshd_config
+echo "##-> ${app}
+# Hardening user connection
+Match User ${user}
+  ChrootDirectory %h
+  ForceCommand internal-sftp
+  AllowTcpForwarding no
+  PermitTunnel no
+  X11Forwarding no
+##<- ${app}" | sudo tee -a /etc/ssh/sshd_config >/dev/null
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm restart
-### PHP end ###
+# Fix permissions
+sudo chown -hR "${user}:" "$DESTDIR"
 
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # See install script
-  ynh_app_setting_set "$app" unprotected_uris "/"
-fi
+# Home directory of the user need to be owned by root to allow
+# SFTP connections
+sudo chown root: "$DESTDIR"
 
-# Reload nginx service
-sudo service nginx reload
+# Set SSOwat rules
+[[ $is_public -eq 1 ]] \
+  && ynh_app_setting_set "$app" skipped_uris "/"
+
