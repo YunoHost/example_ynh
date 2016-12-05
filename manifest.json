@@ -3,11 +3,11 @@
     "id": "cagette",
     "packaging_format": 1,
     "description": {
-        "en": "Package for Cagette;net application in YunoHost.",
+        "en": "Package for Cagette.net application in YunoHost.",
         "fr": "Package pour l’application Cagette.net pour YunoHost."
     },
     "url": "http://www.cagette.net",
-    "license": "CC Attribution-Share Alike 4.0 International",
+    "license": "free",
     "maintainer": {
         "name": "Forissier Gaspard",
         "email": "gaspard@garwinch.ddns.net",
