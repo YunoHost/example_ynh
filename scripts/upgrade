@@ -11,13 +11,13 @@ source /usr/share/yunohost/helpers
 
 # Retrieve app settings
 domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
+path_url=$(ynh_app_setting_get "$app" path_url)
 admin=$(ynh_app_setting_get "$app" admin)
 is_public=$(ynh_app_setting_get "$app" is_public)
 language=$(ynh_app_setting_get "$app" language)
 
 # Remove trailing "/" for next commands
-path=${path%/}
+path_url=${path_url%/}
 
 # Copy source files
 src_path=/var/www/$app
@@ -30,7 +30,7 @@ sudo chown -R root: $src_path
 
 # Modify Nginx configuration file and copy it to Nginx conf directory
 nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
+sed -i "s@YNH_WWW_PATH@$path_url@g" $nginx_conf
 sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
 # If a dedicated php-fpm process is used:
 #
