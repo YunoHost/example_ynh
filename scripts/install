@@ -30,14 +30,33 @@ ynh_app_setting_set "$app" admin "$admin"
 ynh_app_setting_set "$app" is_public "$is_public"
 ynh_app_setting_set "$app" language "$language"
 
+# Normalize the url path syntax
+if [ "${path_url:0:1}" != "/" ]; then    # If the first character is not a /
+	path_url="/$path_url"    # Add / at begin of path variable
+fi
+if [ "${path_url:${#path_url}-1}" == "/" ] && [ ${#path_url} -gt 1 ]; then    # If the last character is a / and that not the only character.
+	path_url="${path_url:0:${#path_url}-1}"	# Delete the last character
+fi
+
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path_url}"
 
-# Copy source files
+# Obtain and extract source files
+src_url=$(cat ../sources/app.src | grep SOURCE_URL | cut -d= -f2)
+src_checksum=$(cat ../sources/app.src | grep SOURCE_SUM | cut -d= -f2)
 src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+
+# Download sources from the upstream
+wget -nv -O source.tar.gz $src_url
+
+# Replace md5sum by sha1sum, sha256sum or whatever you use
+echo "$src_checksum source.tar.gz" | md5sum -c --status \
+|| ynh_die "Corrupt source"
+
+# Extract source into the app dir
+sudo mkdir $src_path || ynh_die "This path already contains a folder"
+tar -x -f source.tar.gz -C $src_path --strip-components 1
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
@@ -63,23 +82,19 @@ sudo chown -R root: $src_path
 nginx_conf=../conf/nginx.conf
 sed -i "s@YNH_WWW_PATH@$path_url@g" $nginx_conf
 sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/nginx.conf accordingly or your app will not work!
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+
 sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
 ### PHP (can be removed if not used) ###
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work!
-#
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm reload
+# Modify PHP-FPM pool configuration and copy it to the pool directory
+sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
+finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+sudo cp ../conf/php-fpm.conf $finalphpconf
+sudo chown root: $finalphpconf
+sudo chmod 644 $finalphpconf
+sudo service php5-fpm reload
 ### PHP end ###
 
 # If app is public, add url to SSOWat conf as skipped_uris
