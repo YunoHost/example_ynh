@@ -6,7 +6,7 @@
 Description of the app.
 
 ## Usage
-- Fork this app before work on it.
+- Copy this app before work on it.
 - Edit `conf/nginx.conf` file to match application prerequisites.
 - Edit `manifest.json` with application specific information.
 - Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
