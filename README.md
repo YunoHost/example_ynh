@@ -8,10 +8,10 @@ Description of the app.
 ## Usage
 - Fork this app before work on it.
 - Edit `conf/nginx.conf` file to match application prerequisites.
-- Edit manifest with application specific information.
-- Edit the install, upgrade, remove, backup, restore scripts.
+- Edit `manifest.json` with application specific information.
+- Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
 - Add a `LICENSE` file for the package.
-- Edit this readme.
+- Edit `README.md`.
 
 **More information on the documentation page:**    
 https://yunohost.org/packaging_apps
