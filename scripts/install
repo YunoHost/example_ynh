@@ -43,8 +43,8 @@ sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path_url}"
 
 # Obtain and extract source files
-src_url=$(cat ../sources/app.src | grep SOURCE_URL | cut -d= -f2)
-src_checksum=$(cat ../sources/app.src | grep SOURCE_SUM | cut -d= -f2)
+src_url=$(cat ../conf/app.src | grep SOURCE_URL | cut -d= -f2)
+src_checksum=$(cat ../conf/app.src | grep SOURCE_SUM | cut -d= -f2)
 src_path=/var/www/$app
 
 # Download sources from the upstream
