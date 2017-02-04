@@ -7,7 +7,6 @@ Description of the app.
 
 ## Usage
 - Fork this app before work on it.
-- Edit the source files into `sources` subfolder.
 - Edit `conf/nginx.conf` file to match application prerequisites.
 - Edit manifest with application specific information.
 - Edit the install, upgrade, remove, backup, restore scripts.
