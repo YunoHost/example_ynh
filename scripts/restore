@@ -20,6 +20,10 @@ path_url=$(ynh_app_setting_get "$app" path_url)
 sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path_url}"
 
+if [ -d $final_path ]; then
+    ynh_die "There is already a directory: $final_path"
+fi
+
 # Restore sources & data
 src_path="/var/www/${app}"
 sudo cp -a ./sources "$src_path"
@@ -39,14 +43,18 @@ sudo chown -R root: "$src_path"
 ### MySQL end ###
 
 # Restore NGINX configuration
-sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+nginx_conf=/etc/nginx/conf.d/${domain}.d/${app}.conf
+if [ -f $nginx_conf ]; then
+    ynh_die "There is already a nginx conf file at this path: $nginx_conf"
+fi
+sudo cp -a ./nginx.conf "$nginx_conf"
+
+# Reload Nginx
+sudo service nginx reload
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
 # # Copy PHP-FPM pool configuration and reload the service
-# sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
-# sudo service php5-fpm reload
+sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
+sudo service php5-fpm reload
 ### PHP end ###
-
-# Restart webserver
-sudo service nginx reload
