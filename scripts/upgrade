@@ -19,10 +19,21 @@ language=$(ynh_app_setting_get "$app" language)
 # Remove trailing "/" for next commands
 path_url=${path_url%/}
 
-# Copy source files
+# Obtain and extract source files
+src_url=$(cat ../conf/app.src | grep SOURCE_URL | cut -d= -f2)
+src_checksum=$(cat ../conf/app.src | grep SOURCE_SUM | cut -d= -f2)
 src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+
+# Download sources from the upstream
+wget -nv -O source.tar.gz $src_url
+
+# Replace md5sum by sha1sum, sha256sum or whatever you use
+# Check the checksum of the upstream source
+echo "$src_checksum source.tar.gz" | md5sum -c --status \
+|| ynh_die "Corrupt source"
+
+# Extract source into the app dir
+tar -x -f source.tar.gz -C $src_path --strip-components 1
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
@@ -32,26 +43,23 @@ sudo chown -R root: $src_path
 nginx_conf=../conf/nginx.conf
 sed -i "s@YNH_WWW_PATH@$path_url@g" $nginx_conf
 sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-#
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
+sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
 sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm restart
+### PHP (can be removed if not used) ###
+# Modify PHP-FPM pool configuration and copy it to the pool directory
+sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
+sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
+finalphpconf=/etc/php5/fpm/pool.d/$app.conf
+sudo cp ../conf/php-fpm.conf $finalphpconf
+sudo chown root: $finalphpconf
+sudo chmod 644 $finalphpconf
+sudo service php5-fpm reload
 ### PHP end ###
 
 # If app is public, add url to SSOWat conf as skipped_uris
 if [[ $is_public -eq 1 ]]; then
-  # See install script
+  # unprotected_uris allows SSO credentials to be passed anyway.
   ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
