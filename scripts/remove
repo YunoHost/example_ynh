@@ -10,15 +10,19 @@ source /usr/share/yunohost/helpers
 domain=$(ynh_app_setting_get "$app" domain)
 
 # Remove sources
-sudo rm -rf /var/www/$app
+if test -z "$app" || [ "$app" = "/" ]; then
+	echo "Variable app is empty, suppression of app directory cancelled." >&2
+else
+	sudo rm -rf /var/www/$app
+fi
 
 # Remove nginx configuration file
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
-# sudo rm -f /etc/php5/fpm/pool.d/$app.conf
-# sudo service php5-fpm reload
+sudo rm -f /etc/php5/fpm/pool.d/$app.conf
+sudo service php5-fpm reload
 ### PHP end ###
 
 ### MySQL (remove if not used) ###
