@@ -9,6 +9,8 @@ app=$YNH_APP_INSTANCE_NAME
 # Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
+domain=$(ynh_app_setting_get $app domain)
+
 # Backup sources & data
 # Note: the last argument is where to save this path, see the restore script.
 ynh_backup "/var/www/${app}" "sources"
@@ -23,11 +25,10 @@ ynh_backup "/var/www/${app}" "sources"
 ### MySQL end ###
 
 # Copy NGINX configuration
-domain=$(ynh_app_setting_get "$app" domain)
 ynh_backup "/etc/nginx/conf.d/${domain}.d/${app}.conf" "nginx.conf"
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
-# # Copy PHP-FPM pool configuration
-# ynh_backup "/etc/php5/fpm/pool.d/${app}.conf" "php-fpm.conf"
+# Copy PHP-FPM pool configuration
+ynh_backup "/etc/php5/fpm/pool.d/${app}.conf" "php-fpm.conf"
 ### PHP end ###
