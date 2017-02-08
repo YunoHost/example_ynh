@@ -10,14 +10,19 @@ source /usr/share/yunohost/helpers
 domain=$(ynh_app_setting_get "$app" domain)
 
 # Remove sources
-if test -z "$app" || [ "$app" = "/" ]; then
-	echo "Variable app is empty, suppression of app directory cancelled." >&2
+# Avoid removing important directory if $app is empty or equal to 
+# "/" "/var" "/var/www" "/opt" "/home" "/home/yunohost.app"
+src_path=/var/www/$app
+if test -z "$src_path" || [ "/var/www /opt /home/yunohost.app" =~ $src_path ]; then
+	echo "Variable src_path seems incomplete, suppression of app directory cancelled." >&2
 else
-	sudo rm -rf /var/www/$app
+	sudo rm -rf $src_path
 fi
 
 # Remove nginx configuration file
 sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+# Reload nginx service
+sudo service nginx reload
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
@@ -34,5 +39,3 @@ sudo service php5-fpm reload
 # ynh_mysql_drop_user "$dbuser" || true
 ### MySQL end ###
 
-# Reload nginx service
-sudo service nginx reload
