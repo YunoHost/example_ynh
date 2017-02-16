@@ -56,7 +56,7 @@ echo "$src_checksum source.tar.gz" | md5sum -c --status \
 
 # Extract source into the app dir
 sudo mkdir $src_path || ynh_die "This path already contains a folder"
-tar -x -f source.tar.gz -C $src_path --strip-components 1
+sudo tar -x -f source.tar.gz -C $src_path --strip-components 1
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
