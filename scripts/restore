@@ -15,13 +15,25 @@ source /usr/share/yunohost/helpers
 # Retrieve old app settings
 domain=$(ynh_app_setting_get "$app" domain)
 path_url=$(ynh_app_setting_get "$app" path_url)
+src_path="/var/www/${app}"
+nginx_conf="/etc/nginx/conf.d/${domain}.d/${app}.conf"
+php_conf="/etc/php5/fpm/pool.d/${app}.conf"
 
 # Check domain/path availability
 sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
     || ynh_die "Path not available: ${domain}${path_url}"
 
+if [ -d $src_path ]; then
+    ynh_die "There is already a directory: $src_path"
+fi
+if [ -f $nginx_conf ]; then
+    ynh_die "There is already a nginx conf file at this path: $nginx_conf"
+fi
+if [ -f $php_conf ]; then
+    ynh_die "There is already a php conf file at this path: $php_conf"
+fi
+
 # Restore sources & data
-src_path="/var/www/${app}"
 sudo cp -a ./sources "$src_path"
 
 # Restore permissions to app files
@@ -39,14 +51,15 @@ sudo chown -R root: "$src_path"
 ### MySQL end ###
 
 # Restore NGINX configuration
-sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+sudo cp -a ./nginx.conf "$nginx_conf"
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
 # # Copy PHP-FPM pool configuration and reload the service
-# sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
-# sudo service php5-fpm reload
+sudo cp -a ./php-fpm.conf "$php_conf"
+sudo service php5-fpm reload
 ### PHP end ###
 
-# Restart webserver
+# Reload Nginx
 sudo service nginx reload
+
