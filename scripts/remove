@@ -14,7 +14,7 @@ domain=$(ynh_app_setting_get "$app" domain)
 # "/" "/var" "/var/www" "/opt" "/home" "/home/yunohost.app"
 src_path=/var/www/$app
 if test -z "$app" || [ "/var/www /opt /home/yunohost.app" =~ $src_path ]; then
-	echo "Variable src_path seems incomplete, suppression of app directory cancelled." >&2
+	echo "Variable src_path seems uncomplete, deletion of app directory cancelled." >&2
 else
 	sudo rm -rf $src_path
 fi
