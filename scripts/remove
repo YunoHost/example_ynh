@@ -1,34 +1,114 @@
 #!/bin/bash
 
-# See comments in install script
-app=$YNH_APP_INSTANCE_NAME
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Retrieve app settings
-domain=$(ynh_app_setting_get "$app" domain)
+#=================================================
+# LOAD SETTINGS
+#=================================================
 
-# Remove sources
-sudo rm -rf /var/www/$app
+app=$YNH_APP_INSTANCE_NAME
 
-# Remove nginx configuration file
-sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+domain=$(ynh_app_setting_get $app domain)
+port=$(ynh_app_setting_get $app port)
+db_name=$(ynh_app_setting_get $app db_name)
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# sudo rm -f /etc/php5/fpm/pool.d/$app.conf
-# sudo service php5-fpm reload
-### PHP end ###
+#=================================================
+# STANDARD REMOVE
+#=================================================
+# STOP AND REMOVE SERVICE
+#=================================================
 
-### MySQL (remove if not used) ###
-# If a MySQL database is used:
-# # Drop MySQL database and user
-# dbname=$app
-# dbuser=$app
-# ynh_mysql_drop_db "$dbname" || true
-# ynh_mysql_drop_user "$dbuser" || true
-### MySQL end ###
+# Remove the dedicated systemd config
+ynh_remove_systemd_config
 
-# Reload nginx service
-sudo service nginx reload
+#=================================================
+# DISABLE SERVICE IN ADMIN PANEL
+#=================================================
+
+if sudo yunohost service status | grep -q $app
+then
+	echo "Remove $app service"
+	sudo yunohost service remove $app
+fi
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+
+# Remove fake package and its dependencies
+ynh_remove_app_dependencies
+
+#=================================================
+# REMOVE THE SQL BDD
+#=================================================
+
+# Remove a database if it exists, and the associated user
+ynh_mysql_remove_db $db_name $db_name
+
+#=================================================
+# REMOVE THE MAIN DIR OF THE APP
+#=================================================
+
+# Remove the app directory securely
+ynh_secure_remove "/var/www/$app"
+
+#=================================================
+# REMOVE THE NGINX CONFIGURATION
+#=================================================
+
+# Remove the dedicated nginx config
+ynh_remove_nginx_config
+
+#=================================================
+# REMOVE THE PHP-FPM CONFIGURATION
+#=================================================
+
+# Remove the dedicated php-fpm config
+ynh_remove_fpm_config
+
+#=================================================
+# REMOVE THE LOGROTATE CONFIG
+#=================================================
+
+# Remove the app's logrotate config.
+ynh_remove_logrotate
+
+#=================================================
+# CLOSE A PORT
+#=================================================
+
+if sudo yunohost firewall list | grep -q "\- $port$"
+then
+	echo "Close port $port"
+	QUIET sudo yunohost firewall disallow TCP $port
+fi
+
+#=================================================
+# SPECIFIC REMOVE
+#=================================================
+# REMOVE THE CRON FILE
+#=================================================
+
+# Remove a cron file
+ynh_secure_remove "/etc/cron.d/$app"
+
+# Remove a directory securely
+ynh_secure_remove "/etc/$app/"
+
+# Remove the log files
+ynh_secure_remove "/var/log/$app/"
+
+#=================================================
+# GENERIC FINALISATION
+#=================================================
+# REMOVE DEDICATED USER
+#=================================================
+
+# Delete a system user
+ynh_system_user_delete $app
