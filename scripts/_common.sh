@@ -638,3 +638,10 @@ ynh_remove_systemd_config () {
 		ynh_secure_remove "$finalsystemdconf"
 	fi
 }
+
+#####################################
+
+# This is not an official helper, just an abstract helper to prepare to the new one.
+ynh_restore_file () {
+	sudo cp -a "${backup_dir}$1" "$1"
+}
