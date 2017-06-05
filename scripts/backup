@@ -38,27 +38,27 @@ db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 # BACKUP OF THE MAIN DIR OF THE APP
 #=================================================
 
-new_ynh_backup "$final_path"
+ynh_backup "$final_path" "${backup_dir}$final_path"
 
 #=================================================
 # BACKUP OF THE NGINX CONFIGURATION
 #=================================================
 
-new_ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${backup_dir}/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP OF THE PHP-FPM CONFIGURATION
 #=================================================
 
-new_ynh_backup "/etc/php5/fpm/pool.d/$app.conf"
-new_ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini"
+ynh_backup "/etc/php5/fpm/pool.d/$app.conf" "${backup_dir}/etc/php5/fpm/pool.d/$app.conf"
+ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini" "${backup_dir}/etc/php5/fpm/conf.d/20-$app.ini"
 
 #=================================================
 # BACKUP OF THE SQL BDD
 #=================================================
 
 ynh_mysql_dump_db "$db_name" > db.sql
-new_ynh_backup "db.sql"
+ynh_backup "db.sql" "${backup_dir}/db.sql"
 
 #=================================================
 # SPECIFIC BACKUP
@@ -66,16 +66,16 @@ new_ynh_backup "db.sql"
 # BACKUP LOGROTATE
 #=================================================
 
-new_ynh_backup "/etc/logrotate.d/$app"
+ynh_backup "/etc/logrotate.d/$app" "${backup_dir}/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
 
-new_ynh_backup "/etc/systemd/system/$app.service"
+ynh_backup "/etc/systemd/system/$app.service" "${backup_dir}/etc/systemd/system/$app.service"
 
 #=================================================
 # BACKUP OF THE CRON FILE
 #=================================================
 
-new_ynh_backup "/etc/cron.d/$app"
+ynh_backup "/etc/cron.d/$app" "${backup_dir}/etc/cron.d/$app"
