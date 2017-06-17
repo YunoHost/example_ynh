@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC STARTING
+# GENERIC START
 #=================================================
-# MANAGE FAILURE OF THE SCRIPT
+# MANAGE SCRIPT FAILURE
 #=================================================
 
-# Exit on command errors and treat unset variables as an error
+# Exit on command errors and treat access to unset variables as an error
 set -eu
 
 #=================================================
@@ -42,21 +42,21 @@ test ! -d $final_path \
 	|| ynh_die "There is already a directory: $final_path "
 
 #=================================================
-# STANDARD RESTORE STEPS
+# STANDARD RESTORATION STEPS
 #=================================================
-# RESTORE OF THE NGINX CONFIGURATION
+# RESTORE THE NGINX CONFIGURATION
 #=================================================
 
 ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
-# RESTORE OF THE MAIN DIR OF THE APP
+# RESTORE THE APP MAIN DIR
 #=================================================
 
 ynh_restore_file "$final_path"
 
 #=================================================
-# RESTORE OF THE SQL BDD
+# RESTORE THE MYSQL DATABASE
 #=================================================
 
 db_pwd=$(ynh_app_setting_get $app mysqlpwd)
@@ -64,37 +64,37 @@ ynh_mysql_setup_db $db_name $db_name $db_pwd
 ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
 
 #=================================================
-# RECREATE OF THE DEDICATED USER
+# RECREATE THE DEDICATED USER
 #=================================================
 
-# Recreate the dedicated user, if not exist
+# Create the dedicated user (if not existing)
 ynh_system_user_create $app
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
 
-# Restore permissions to app files
+# Restore permissions on app files
 sudo chown -R root: $final_path
 
 #=================================================
-# RESTORE OF THE PHP-FPM CONFIGURATION
+# RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
 
 ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
 ynh_restore_file "/etc/php5/fpm/conf.d/20-$app.ini"
 
 #=================================================
-# SPECIFIC RESTORE
+# SPECIFIC RESTORATION
 #=================================================
 # REINSTALL DEPENDENCIES
 #=================================================
 
-# Define and install dependencies with a equivs control file
+# Define and install dependencies
 ynh_install_app_dependencies deb1 deb2
 
 #=================================================
-# ENABLE SERVICE IN ADMIN PANEL
+# ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
 sudo yunohost service add $app --log "/var/log/$app/APP.log"
@@ -107,19 +107,19 @@ ynh_restore_file "/etc/systemd/system/$app.service"
 sudo systemctl enable $app.service
 
 #=================================================
-# RESTORE OF THE CRON FILE
+# RESTORE THE CRON FILE
 #=================================================
 
 ynh_restore_file "/etc/cron.d/$app"
 
 #=================================================
-# BACKUP OF THE LOGROTATE CONFIGURATION
+# BACKUP THE LOGROTATE CONFIGURATION
 #=================================================
 
 ynh_restore_file "/etc/logrotate.d/$app"
 
 #=================================================
-# GENERIC FINALISATION
+# GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX AND PHP-FPM
 #=================================================
