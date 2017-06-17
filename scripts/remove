@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC STARTING
+# GENERIC START
 #=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
@@ -29,7 +29,7 @@ db_name=$(ynh_app_setting_get $app db_name)
 ynh_remove_systemd_config
 
 #=================================================
-# DISABLE SERVICE IN ADMIN PANEL
+# REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
 if sudo yunohost service status | grep -q $app
@@ -42,42 +42,42 @@ fi
 # REMOVE DEPENDENCIES
 #=================================================
 
-# Remove fake package and its dependencies
+# Remove metapackage and its dependencies
 ynh_remove_app_dependencies
 
 #=================================================
-# REMOVE THE SQL BDD
+# REMOVE THE MYSQL DATABASE
 #=================================================
 
-# Remove a database if it exists, and the associated user
+# Remove a database if it exists, along with the associated user
 ynh_mysql_remove_db $db_name $db_name
 
 #=================================================
-# REMOVE THE MAIN DIR OF THE APP
+# REMOVE APP MAIN DIR
 #=================================================
 
 # Remove the app directory securely
 ynh_secure_remove "/var/www/$app"
 
 #=================================================
-# REMOVE THE NGINX CONFIGURATION
+# REMOVE NGINX CONFIGURATION
 #=================================================
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
 
 #=================================================
-# REMOVE THE PHP-FPM CONFIGURATION
+# REMOVE PHP-FPM CONFIGURATION
 #=================================================
 
 # Remove the dedicated php-fpm config
 ynh_remove_fpm_config
 
 #=================================================
-# REMOVE THE LOGROTATE CONFIG
+# REMOVE LOGROTATE CONFIGURATION
 #=================================================
 
-# Remove the app's logrotate config.
+# Remove the app-specific logrotate config
 ynh_remove_logrotate
 
 #=================================================
@@ -106,7 +106,7 @@ ynh_secure_remove "/etc/$app/"
 ynh_secure_remove "/var/log/$app/"
 
 #=================================================
-# GENERIC FINALISATION
+# GENERIC FINALIZATION
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
