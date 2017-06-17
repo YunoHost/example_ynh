@@ -1,12 +1,12 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC STARTING
+# GENERIC START
 #=================================================
-# MANAGE FAILURE OF THE SCRIPT
+# MANAGE SCRIPT FAILURE
 #=================================================
 
-# Exit on command errors and treat unset variables as an error
+# Exit on command errors and treat access to unset variables as an error
 set -eu
 
 #=================================================
@@ -35,26 +35,26 @@ db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 #=================================================
 # STANDARD BACKUP STEPS
 #=================================================
-# BACKUP OF THE MAIN DIR OF THE APP
+# BACKUP THE APP MAIN DIR
 #=================================================
 
 ynh_backup "$final_path" "${backup_dir}$final_path"
 
 #=================================================
-# BACKUP OF THE NGINX CONFIGURATION
+# BACKUP THE NGINX CONFIGURATION
 #=================================================
 
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${backup_dir}/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
-# BACKUP OF THE PHP-FPM CONFIGURATION
+# BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
 
 ynh_backup "/etc/php5/fpm/pool.d/$app.conf" "${backup_dir}/etc/php5/fpm/pool.d/$app.conf"
 ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini" "${backup_dir}/etc/php5/fpm/conf.d/20-$app.ini"
 
 #=================================================
-# BACKUP OF THE SQL BDD
+# BACKUP THE MYSQL DATABASE
 #=================================================
 
 ynh_mysql_dump_db "$db_name" > db.sql
@@ -75,7 +75,7 @@ ynh_backup "/etc/logrotate.d/$app" "${backup_dir}/etc/logrotate.d/$app"
 ynh_backup "/etc/systemd/system/$app.service" "${backup_dir}/etc/systemd/system/$app.service"
 
 #=================================================
-# BACKUP OF THE CRON FILE
+# BACKUP THE CRON FILE
 #=================================================
 
 ynh_backup "/etc/cron.d/$app" "${backup_dir}/etc/cron.d/$app"
