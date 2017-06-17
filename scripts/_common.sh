@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# =============================================================================
+#                     YUNOHOST 2.6 FORTHCOMING HELPERS
+# (will be part of YunoHost 2.6, so won't be necessary any more after 
+#  YunoHost 2.6 gets widespread)
+# =============================================================================
+
 # Normalize the url path syntax
 # Handle the slash at the beginning of path and its absence at ending
 # Return a normalized url path
@@ -532,6 +538,19 @@ ynh_backup_if_checksum_is_different () {
 	fi
 }
 
+#####################################
+
+# This is not an official helper, just an abstract helper to prepare to the new one.
+ynh_restore_file () {
+	sudo cp -a "${backup_dir}$1" "$1"
+}
+
+# =============================================================================
+#                     YUNOHOST 2.6 FORTHCOMING HELPERS
+# (will be part of YunoHost 2.6, so won't be necessary any more after 
+#  YunoHost 2.6 gets widespread)
+# =============================================================================
+
 # Create a dedicated nginx config
 #
 # usage: ynh_add_nginx_config
@@ -637,11 +656,4 @@ ynh_remove_systemd_config () {
 		sudo systemctl disable $app
 		ynh_secure_remove "$finalsystemdconf"
 	fi
-}
-
-#####################################
-
-# This is not an official helper, just an abstract helper to prepare to the new one.
-ynh_restore_file () {
-	sudo cp -a "${backup_dir}$1" "$1"
 }
