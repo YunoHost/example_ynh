@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-#                     YUNOHOST 2.6 FORTHCOMING HELPERS
+#                     YUNOHOST 2.7 FORTHCOMING HELPERS
 # =============================================================================
 
 # Create a dedicated nginx config
