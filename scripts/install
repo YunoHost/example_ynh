@@ -72,7 +72,7 @@ ynh_app_setting_set $app language $language
 # Find a free port
 port=$(ynh_find_port 8095)
 # Open this port
-sudo yunohost firewall allow --no-upnp TCP $port 2>&1
+yunohost firewall allow --no-upnp TCP $port 2>&1
 ynh_app_setting_set $app port $port
 
 #=================================================
@@ -138,15 +138,15 @@ ynh_systemd_config
 #=================================================
 
 # Set right permissions for curl install
-sudo chown -R $app: $final_path
+chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
 ynh_app_setting_set $app unprotected_uris "/"
 # Reload SSOwat config
-sudo yunohost app ssowatconf
+yunohost app ssowatconf
 
 # Reload Nginx
-sudo systemctl reload nginx
+systemctl reload nginx
 
 # Installation with curl
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
@@ -165,7 +165,7 @@ ynh_store_file_checksum "$final_path/CONFIG_FILE"
 #=================================================
 
 # Set permissions to app files
-sudo chown -R root: $final_path
+chown -R root: $final_path
 
 #=================================================
 # SETUP LOGROTATE
@@ -178,7 +178,7 @@ ynh_use_logrotate
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-sudo yunohost service add NAME_INIT.D --log "/var/log/FILE.log"
+yunohost service add NAME_INIT.D --log "/var/log/FILE.log"
 
 #=================================================
 # SETUP SSOWAT
@@ -199,4 +199,4 @@ fi
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx

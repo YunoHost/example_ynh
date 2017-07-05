@@ -10,7 +10,7 @@
 ynh_add_nginx_config () {
 	finalnginxconf="/etc/nginx/conf.d/$domain.d/$app.conf"
 	ynh_backup_if_checksum_is_different "$finalnginxconf" 1
-	sudo cp ../conf/nginx.conf "$finalnginxconf"
+	cp ../conf/nginx.conf "$finalnginxconf"
 
 	# To avoid a break by set -u, use a void substitution ${var:-}. If the variable is not set, it's simply set with an empty variable.
 	# Substitute in a nginx config file only if the variable is not empty
@@ -31,7 +31,7 @@ ynh_add_nginx_config () {
 	fi
 	ynh_store_checksum_config "$finalnginxconf"
 
-	sudo systemctl reload nginx
+	systemctl reload nginx
 }
 
 # Remove the dedicated nginx config
@@ -39,7 +39,7 @@ ynh_add_nginx_config () {
 # usage: ynh_remove_nginx_config
 ynh_remove_nginx_config () {
 	ynh_secure_remove "/etc/nginx/conf.d/$domain.d/$app.conf"
-	sudo systemctl reload nginx
+	systemctl reload nginx
 }
 
 # Create a dedicated php-fpm config
@@ -48,23 +48,23 @@ ynh_remove_nginx_config () {
 ynh_add_fpm_config () {
 	finalphpconf="/etc/php5/fpm/pool.d/$app.conf"
 	ynh_backup_if_checksum_is_different "$finalphpconf" 1
-	sudo cp ../conf/php-fpm.conf "$finalphpconf"
+	cp ../conf/php-fpm.conf "$finalphpconf"
 	ynh_replace_string "__NAMETOCHANGE__" "$app" "$finalphpconf"
 	ynh_replace_string "__FINALPATH__" "$final_path" "$finalphpconf"
 	ynh_replace_string "__USER__" "$app" "$finalphpconf"
-	sudo chown root: "$finalphpconf"
+	chown root: "$finalphpconf"
 	ynh_store_file_checksum "$finalphpconf"
 
 	if [ -e "../conf/php-fpm.ini" ]
 	then
 		finalphpini="/etc/php5/fpm/conf.d/20-$app.ini"
 		ynh_compare_checksum_config "$finalphpini" 1
-		sudo cp ../conf/php-fpm.ini "$finalphpini"
-		sudo chown root: "$finalphpini"
+		cp ../conf/php-fpm.ini "$finalphpini"
+		chown root: "$finalphpini"
 		ynh_store_checksum_config "$finalphpini"
 	fi
 
-	sudo systemctl reload php5-fpm
+	systemctl reload php5-fpm
 }
 
 # Remove the dedicated php-fpm config
@@ -73,7 +73,7 @@ ynh_add_fpm_config () {
 ynh_remove_fpm_config () {
 	ynh_secure_remove "/etc/php5/fpm/pool.d/$app.conf"
 	ynh_secure_remove "/etc/php5/fpm/conf.d/20-$app.ini" 2>&1
-	sudo systemctl reload php5-fpm
+	systemctl reload php5-fpm
 }
 
 # Create a dedicated systemd config
@@ -82,7 +82,7 @@ ynh_remove_fpm_config () {
 ynh_add_systemd_config () {
 	finalsystemdconf="/etc/systemd/system/$app.service"
 	ynh_compare_checksum_config "$finalsystemdconf" 1
-	sudo cp ../conf/systemd.service "$finalsystemdconf"
+	cp ../conf/systemd.service "$finalsystemdconf"
 
 	# To avoid a break by set -u, use a void substitution ${var:-}. If the variable is not set, it's simply set with an empty variable.
 	# Substitute in a nginx config file only if the variable is not empty
@@ -94,9 +94,9 @@ ynh_add_systemd_config () {
 	fi
 	ynh_store_checksum_config "$finalsystemdconf"
 
-	sudo chown root: "$finalsystemdconf"
-	sudo systemctl enable $app
-	sudo systemctl daemon-reload
+	chown root: "$finalsystemdconf"
+	systemctl enable $app
+	systemctl daemon-reload
 }
 
 # Remove the dedicated systemd config
@@ -105,8 +105,8 @@ ynh_add_systemd_config () {
 ynh_remove_systemd_config () {
 	finalsystemdconf="/etc/systemd/system/$app.service"
 	if [ -e "$finalsystemdconf" ]; then
-		sudo systemctl stop $app
-		sudo systemctl disable $app
+		systemctl stop $app
+		systemctl disable $app
 		ynh_secure_remove "$finalsystemdconf"
 	fi
 }

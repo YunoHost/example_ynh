@@ -109,7 +109,7 @@ ynh_systemd_config
 #=================================================
 
 # Set right permissions for curl installation
-sudo chown -R root: $final_path
+chown -R root: $final_path
 
 #=================================================
 # SETUP SSOWAT
@@ -130,4 +130,4 @@ fi
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx
