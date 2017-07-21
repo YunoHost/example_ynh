@@ -15,8 +15,8 @@ set -eu
 
 if [ ! -e _common.sh ]; then
 	# Get the _common.sh file if it's not in the current directory
-	sudo cp ../settings/scripts/_common.sh ./_common.sh
-	sudo chmod a+rx _common.sh
+	cp ../settings/scripts/_common.sh ./_common.sh
+	chmod a+rx _common.sh
 fi
 source _common.sh
 source /usr/share/yunohost/helpers
@@ -36,7 +36,7 @@ db_name=$(ynh_app_setting_get $app db_name)
 # CHECK IF THE APP CAN BE RESTORED
 #=================================================
 
-sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
+yunohost app checkurl "${domain}${path_url}" -a "$app" \
 	|| ynh_die "Path not available: ${domain}${path_url}"
 test ! -d $final_path \
 	|| ynh_die "There is already a directory: $final_path "
@@ -75,7 +75,7 @@ ynh_system_user_create $app
 #=================================================
 
 # Restore permissions on app files
-sudo chown -R root: $final_path
+chown -R root: $final_path
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
@@ -97,14 +97,14 @@ ynh_install_app_dependencies deb1 deb2
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-sudo yunohost service add $app --log "/var/log/$app/APP.log"
+yunohost service add $app --log "/var/log/$app/APP.log"
 
 #=================================================
 # RESTORE SYSTEMD
 #=================================================
 
 ynh_restore_file "/etc/systemd/system/$app.service"
-sudo systemctl enable $app.service
+systemctl enable $app.service
 
 #=================================================
 # RESTORE THE CRON FILE
@@ -124,5 +124,5 @@ ynh_restore_file "/etc/logrotate.d/$app"
 # RELOAD NGINX AND PHP-FPM
 #=================================================
 
-sudo systemctl reload php5-fpm
-sudo systemctl reload nginx
+systemctl reload php5-fpm
+systemctl reload nginx

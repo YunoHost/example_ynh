@@ -32,10 +32,10 @@ ynh_remove_systemd_config
 # REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
-if sudo yunohost service status | grep -q $app
+if yunohost service status | grep -q $app
 then
 	echo "Remove $app service"
-	sudo yunohost service remove $app
+	yunohost service remove $app
 fi
 
 #=================================================
@@ -84,10 +84,10 @@ ynh_remove_logrotate
 # CLOSE A PORT
 #=================================================
 
-if sudo yunohost firewall list | grep -q "\- $port$"
+if yunohost firewall list | grep -q "\- $port$"
 then
 	echo "Close port $port"
-	QUIET sudo yunohost firewall disallow TCP $port
+	QUIET yunohost firewall disallow TCP $port
 fi
 
 #=================================================

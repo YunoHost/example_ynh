@@ -14,7 +14,7 @@
         "url": "http://example.com"
     },
     "requirements": {
-        "yunohost": ">> 2.5.6"
+        "yunohost": ">= 2.6.4"
     },
     "multi_instance": true,
     "services": [
