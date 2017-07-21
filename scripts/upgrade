@@ -61,7 +61,7 @@ ynh_setup_source "$final_path"
 #=================================================
 
 # Create a dedicated nginx config
-ynh_nginx_config
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
