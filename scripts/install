@@ -1,7 +1,30 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+admin=$YNH_APP_ARG_ADMIN
+is_public=$YNH_APP_ARG_IS_PUBLIC
+language=$YNH_APP_ARG_LANGUAGE
 
 # This is a multi-instance app, meaning it can be installed several times independently
 # The id of the app as stated in the manifest is available as $YNH_APP_ID
@@ -15,78 +38,165 @@ set -eu
 # db names, ...
 app=$YNH_APP_INSTANCE_NAME
 
-# Retrieve arguments
-domain=$YNH_APP_ARG_DOMAIN
-path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
-is_public=$YNH_APP_ARG_IS_PUBLIC
-language=$YNH_APP_ARG_LANGUAGE
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
 
-# Source YunoHost helpers
-source /usr/share/yunohost/helpers
+# Normalize the url path syntax
+path_url=$(ynh_normalize_url_path $path_url)
 
-# Save app settings
-ynh_app_setting_set "$app" admin "$admin"
-ynh_app_setting_set "$app" is_public "$is_public"
-ynh_app_setting_set "$app" language "$language"
+# Check web path availability
+ynh_webpath_available $domain $path_url
+# Register (book) web path
+ynh_webpath_register $app $domain $path_url
 
-# Check domain/path availability
-sudo yunohost app checkurl "${domain}${path_url}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path_url}"
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
-# Copy source files
-src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+
+ynh_app_setting_set $app domain $domain
+ynh_app_setting_set $app path $path_url
+ynh_app_setting_set $app admin $admin
+ynh_app_setting_set $app is_public $is_public
+ynh_app_setting_set $app language $language
+
+#=================================================
+# STANDARD MODIFICATIONS
+#=================================================
+# FIND AND OPEN A PORT
+#=================================================
+
+# Find a free port
+port=$(ynh_find_port 8095)
+# Open this port
+yunohost firewall allow --no-upnp TCP $port 2>&1
+ynh_app_setting_set $app port $port
+
+#=================================================
+# INSTALL DEPENDENCIES
+#=================================================
+
+ynh_install_app_dependencies deb1 deb2
+
+#=================================================
+# CREATE A MYSQL DATABASE
+#=================================================
+# If your app uses a MySQL database, you can use these lines to bootstrap
+# a database, an associated user and save the password in app settings
+
+db_name=$(ynh_sanitize_dbid $app)
+ynh_app_setting_set $app db_name $db_name
+ynh_mysql_setup_db $db_name $db_name
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+ynh_app_setting_set $app final_path $final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source "$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
+# CREATE DEDICATED USER
+#=================================================
+
+# Create a system user
+ynh_system_user_create $app
+
+#=================================================
+# PHP-FPM CONFIGURATION
+#=================================================
+
+# Create a dedicated php-fpm config
+ynh_fpm_config
+
+#=================================================
+# SPECIFIC SETUP
+#=================================================
+# ...
+#=================================================
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+
+# Create a dedicated systemd config
+ynh_systemd_config
+
+#=================================================
+# SETUP APPLICATION WITH CURL
+#=================================================
+
+# Set right permissions for curl install
+chown -R $app: $final_path
+
+# Set the app as temporarily public for curl call
+ynh_app_setting_set $app unprotected_uris "/"
+# Reload SSOwat config
+yunohost app ssowatconf
+
+# Reload Nginx
+systemctl reload nginx
+
+# Installation with curl
+ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+
+#=================================================
+# STORE THE CHECKSUM OF THE CONFIG FILE
+#=================================================
+
+# Calculate and store the config file checksum into the app settings
+ynh_store_file_checksum "$final_path/CONFIG_FILE"
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
 
 # Set permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: $src_path
+chown -R root: $final_path
 
-### MySQL (can be removed if not used) ###
-# If your app use a MySQL database you can use these lines to bootstrap
-# a database, an associated user and save the password in app settings.
-#
-# # Generate MySQL password and create database
-# dbuser=$app
-# dbname=$app
-# dbpass=$(ynh_string_random 12)
-# ynh_app_setting_set "$app" mysqlpwd "$dbpass"
-# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
-#
-# # Load initial SQL into the new database
-# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" \
-#     < "../sources/sql/mysql.init.sql"
-### MySQL end ###
+#=================================================
+# SETUP LOGROTATE
+#=================================================
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path_url@g" $nginx_conf
-sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/nginx.conf accordingly or your app will not work!
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+# Use logrotate to manage application logfile(s)
+ynh_use_logrotate
 
-### PHP (can be removed if not used) ###
-# If a dedicated php-fpm process is used:
-# Don't forget to modify ../conf/php-fpm.conf accordingly or your app will not work!
-#
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm reload
-### PHP end ###
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
 
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # unprotected_uris allows SSO credentials to be passed anyway.
-  ynh_app_setting_set "$app" unprotected_uris "/"
+yunohost service add NAME_INIT.D --log "/var/log/FILE.log"
+
+#=================================================
+# SETUP SSOWAT
+#=================================================
+
+if [ $is_public -eq 0 ]
+then	# Remove the public access
+	ynh_app_setting_delete $app skipped_uris
+fi
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway.
+	ynh_app_setting_set $app unprotected_uris "/"
 fi
 
-# Reload services
-sudo service nginx reload
+#=================================================
+# RELOAD NGINX
+#=================================================
+
+systemctl reload nginx

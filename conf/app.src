@@ -1,2 +1,6 @@
 SOURCE_URL=url of app's source
-SOURCE_SUM=md5 or sha1 checksum
+SOURCE_SUM=sha256 checksum
+SOURCE_SUM_PRG=sha256
+SOURCE_FORMAT=tar.gz
+SOURCE_IN_SUBDIR=true
+SOURCE_FILENAME=
