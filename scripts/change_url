@@ -63,7 +63,7 @@ fi
 # Change the domain for nginx
 if [ $change_domain -eq 1 ]
 then
-	sudo mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
+	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
 fi
 
 #=================================================
@@ -78,4 +78,4 @@ fi
 # RELOAD NGINX
 #=================================================
 
-sudo systemctl reload nginx
+systemctl reload nginx
