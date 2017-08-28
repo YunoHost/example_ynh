@@ -6,6 +6,7 @@
         "en": "Example package for YunoHost application.",
         "fr": "Exemple de package d’application pour YunoHost."
     },
+    "version": "1.0",
     "url": "https://example.com",
     "license": "free",
     "maintainer": {
@@ -14,7 +15,7 @@
         "url": "http://example.com"
     },
     "requirements": {
-        "yunohost": ">= 2.6.4"
+        "yunohost": ">= 2.7.2"
     },
     "multi_instance": true,
     "services": [
