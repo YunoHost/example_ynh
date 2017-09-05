@@ -44,7 +44,7 @@ fi
 
 # If final_path doesn't exist, create it
 if [ -z $final_path ]; then
-	final_path=$(ynh_sanitize_dbid $app)
+	final_path=/var/www/$app
 	ynh_app_setting_set $app final_path $final_path
 fi
 
@@ -52,11 +52,14 @@ fi
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
 
-ynh_backup_before_upgrade	# Backup the current version of the app
+# Backup the current version of the app
+ynh_backup_before_upgrade
 ynh_clean_setup () {
-	ynh_restore_upgradebackup	# restore it if the upgrade fails
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
 }
-ynh_abort_if_errors	# Exit if an error occurs during the execution of the script
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
 #=================================================
 # CHECK THE PATH

@@ -141,7 +141,7 @@ ynh_systemd_config
 chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
-ynh_app_setting_set $app unprotected_uris "/"
+ynh_app_setting_set $app skipped_uris "/"
 # Reload SSOwat config
 yunohost app ssowatconf
 
@@ -150,6 +150,12 @@ systemctl reload nginx
 
 # Installation with curl
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+
+ynh_replace_string "match_string" "replace_string" "$final_path/CONFIG_FILE"
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE
