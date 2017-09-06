@@ -60,9 +60,9 @@ then
   ynh_backup_if_checksum_is_different "$nginx_conf_path"
   # Replace locations starting with old_path
   # Look for every location possible patterns (see https://nginx.org/en/docs/http/ngx_http_core_module.html#location)
-  sudo sed --in-place "s@location\( \(=\|~\|~\*\|\^~\)\)\? $old_path@location\1 $new_path@"  "$nginx_conf_path"
+  ynh_replace_string "location\( \(=\|~\|~\*\|\^~\)\)\? $old_path" "location\1 $new_path"  "$nginx_conf_path"
   # Replace path in "return" directives
-  sudo sed --in-place "s@return \([[:digit:]]\{3\}\) $old_path@return \1 $new_path@"  "$nginx_conf_path"
+  ynh_replace_string "return \([[:digit:]]\{3\}\) $old_path" "return \1 $new_path"  "$nginx_conf_path"
   ynh_store_file_checksum "$nginx_conf_path"
 fi
 
