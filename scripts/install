@@ -42,6 +42,9 @@ app=$YNH_APP_INSTANCE_NAME
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die "This path already contains a folder"
+
 # Normalize the url path syntax
 path_url=$(ynh_normalize_url_path $path_url)
 
@@ -49,9 +52,6 @@ path_url=$(ynh_normalize_url_path $path_url)
 ynh_webpath_available $domain $path_url
 # Register (book) web path
 ynh_webpath_register $app $domain $path_url
-
-final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
@@ -118,7 +118,7 @@ ynh_system_user_create $app
 #=================================================
 
 # Create a dedicated php-fpm config
-ynh_fpm_config
+ynh_add_fpm_config
 
 #=================================================
 # SPECIFIC SETUP
@@ -141,7 +141,7 @@ ynh_systemd_config
 chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
-ynh_app_setting_set $app unprotected_uris "/"
+ynh_app_setting_set $app skipped_uris "/"
 # Reload SSOwat config
 yunohost app ssowatconf
 
@@ -150,6 +150,12 @@ systemctl reload nginx
 
 # Installation with curl
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+
+#=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+
+ynh_replace_string "match_string" "replace_string" "$final_path/CONFIG_FILE"
 
 #=================================================
 # STORE THE CHECKSUM OF THE CONFIG FILE

@@ -3,13 +3,6 @@
 #=================================================
 # GENERIC START
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit on command errors and treat access to unset variables as an error
-set -eu
-
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -22,6 +15,13 @@ source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
 # LOAD SETTINGS
 #=================================================
 
@@ -30,7 +30,6 @@ app=$YNH_APP_INSTANCE_NAME
 final_path=$(ynh_app_setting_get $app final_path)
 domain=$(ynh_app_setting_get $app domain)
 db_name=$(ynh_app_setting_get $app db_name)
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 
 #=================================================
 # STANDARD BACKUP STEPS
@@ -38,27 +37,26 @@ db_pwd=$(ynh_app_setting_get $app mysqlpwd)
 # BACKUP THE APP MAIN DIR
 #=================================================
 
-ynh_backup "$final_path" "${backup_dir}$final_path"
+ynh_backup "$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
 
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf" "${backup_dir}/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
 
-ynh_backup "/etc/php5/fpm/pool.d/$app.conf" "${backup_dir}/etc/php5/fpm/pool.d/$app.conf"
-ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini" "${backup_dir}/etc/php5/fpm/conf.d/20-$app.ini"
+ynh_backup "/etc/php5/fpm/pool.d/$app.conf"
+ynh_backup "/etc/php5/fpm/conf.d/20-$app.ini"
 
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
 
 ynh_mysql_dump_db "$db_name" > db.sql
-ynh_backup "db.sql" "${backup_dir}/db.sql"
 
 #=================================================
 # SPECIFIC BACKUP
@@ -66,16 +64,16 @@ ynh_backup "db.sql" "${backup_dir}/db.sql"
 # BACKUP LOGROTATE
 #=================================================
 
-ynh_backup "/etc/logrotate.d/$app" "${backup_dir}/etc/logrotate.d/$app"
+ynh_backup "/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
 
-ynh_backup "/etc/systemd/system/$app.service" "${backup_dir}/etc/systemd/system/$app.service"
+ynh_backup "/etc/systemd/system/$app.service"
 
 #=================================================
 # BACKUP THE CRON FILE
 #=================================================
 
-ynh_backup "/etc/cron.d/$app" "${backup_dir}/etc/cron.d/$app"
+ynh_backup "/etc/cron.d/$app"
