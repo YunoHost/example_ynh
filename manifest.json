@@ -6,9 +6,9 @@
         "en": "Example package for YunoHost application.",
         "fr": "Exemple de package d’application pour YunoHost."
     },
+    "version": "1.0",
     "url": "https://example.com",
     "license": "free",
-    "version": "1.0",
     "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",

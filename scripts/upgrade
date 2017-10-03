@@ -27,18 +27,39 @@ db_name=$(ynh_app_setting_get $app db_name)
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
 
+# Fix is_public as a boolean value
 if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set $app is_public 1	# Fix is_public as a boolean value
+	ynh_app_setting_set $app is_public 1
 	is_public=1
 elif [ "$is_public" = "No" ]; then
 	ynh_app_setting_set $app is_public 0
 	is_public=0
 fi
 
-if [ -z $db_name ]; then	# If db_name doesn't exist, create it
+# If db_name doesn't exist, create it
+if [ -z $db_name ]; then
 	db_name=$(ynh_sanitize_dbid $app)
 	ynh_app_setting_set $app db_name $db_name
 fi
+
+# If final_path doesn't exist, create it
+if [ -z $final_path ]; then
+	final_path=/var/www/$app
+	ynh_app_setting_set $app final_path $final_path
+fi
+
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
 #=================================================
 # CHECK THE PATH
@@ -75,7 +96,7 @@ ynh_system_user_create $app
 #=================================================
 
 # Create a dedicated php-fpm config
-ynh_fpm_config
+ynh_add_fpm_config
 
 #=================================================
 # SPECIFIC UPGRADE
