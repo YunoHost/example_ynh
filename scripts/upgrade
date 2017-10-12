@@ -121,7 +121,7 @@ ynh_use_logrotate
 #=================================================
 
 # Create a dedicated systemd config
-ynh_systemd_config
+ynh_add_systemd_config
 
 #=================================================
 # GENERIC FINALIZATION
