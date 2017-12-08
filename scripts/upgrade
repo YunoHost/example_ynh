@@ -114,7 +114,7 @@ ynh_store_file_checksum "$final_path/CONFIG_FILE"
 #=================================================
 
 # Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate
+ynh_use_logrotate --non-append
 
 #=================================================
 # SETUP SYSTEMD
