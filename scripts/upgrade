@@ -82,6 +82,10 @@ ynh_setup_source "$final_path"
 #=================================================
 
 # Create a dedicated nginx config
+if [ "$path_url" != "/" ]
+then
+	ynh_replace_string "^#sub_path_only" "" "../conf/nginx.conf"
+fi
 ynh_add_nginx_config
 
 #=================================================
