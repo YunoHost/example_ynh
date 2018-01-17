@@ -46,22 +46,22 @@ final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
 # Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
+path_url=$(ynh_normalize_url_path "$path_url")
 
 # Check web path availability
-ynh_webpath_available $domain $path_url
+ynh_webpath_available "$domain" "$path_url"
 # Register (book) web path
-ynh_webpath_register $app $domain $path_url
+ynh_webpath_register "$app" "$domain" "$path_url"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 
-ynh_app_setting_set $app domain $domain
-ynh_app_setting_set $app path $path_url
-ynh_app_setting_set $app admin $admin
-ynh_app_setting_set $app is_public $is_public
-ynh_app_setting_set $app language $language
+ynh_app_setting_set "$app" domain "$domain"
+ynh_app_setting_set "$app" path "$path_url"
+ynh_app_setting_set "$app" admin "$admin"
+ynh_app_setting_set "$app" is_public "$is_public"
+ynh_app_setting_set "$app" language "$language"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -73,7 +73,7 @@ ynh_app_setting_set $app language $language
 port=$(ynh_find_port 8095)
 # Open this port
 yunohost firewall allow --no-upnp TCP $port 2>&1
-ynh_app_setting_set $app port $port
+ynh_app_setting_set "$app" port "$port"
 
 #=================================================
 # INSTALL DEPENDENCIES
@@ -87,15 +87,15 @@ ynh_install_app_dependencies deb1 deb2
 # If your app uses a MySQL database, you can use these lines to bootstrap
 # a database, an associated user and save the password in app settings
 
-db_name=$(ynh_sanitize_dbid $app)
-ynh_app_setting_set $app db_name $db_name
-ynh_mysql_setup_db $db_name $db_name
+db_name=$(ynh_sanitize_dbid "$app")
+ynh_app_setting_set "$app" db_name "$db_name"
+ynh_mysql_setup_db "$db_name" "$db_name"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-ynh_app_setting_set $app final_path $final_path
+ynh_app_setting_set "$app" final_path "$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source "$final_path"
 
@@ -111,7 +111,7 @@ ynh_add_nginx_config
 #=================================================
 
 # Create a system user
-ynh_system_user_create $app
+ynh_system_user_create "$app"
 
 #=================================================
 # PHP-FPM CONFIGURATION
@@ -131,17 +131,17 @@ ynh_add_fpm_config
 #=================================================
 
 # Create a dedicated systemd config
-ynh_systemd_config
+ynh_add_systemd_config
 
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
 
 # Set right permissions for curl install
-chown -R $app: $final_path
+chown -R $app: "$final_path"
 
 # Set the app as temporarily public for curl call
-ynh_app_setting_set $app skipped_uris "/"
+ynh_app_setting_set "$app" skipped_uris "/"
 # Reload SSOwat config
 yunohost app ssowatconf
 
@@ -171,7 +171,7 @@ ynh_store_file_checksum "$final_path/CONFIG_FILE"
 #=================================================
 
 # Set permissions to app files
-chown -R root: $final_path
+chown -R root: "$final_path"
 
 #=================================================
 # SETUP LOGROTATE
@@ -192,13 +192,13 @@ yunohost service add NAME_INIT.D --log "/var/log/FILE.log"
 
 if [ $is_public -eq 0 ]
 then	# Remove the public access
-	ynh_app_setting_delete $app skipped_uris
+	ynh_app_setting_delete "$app" skipped_uris
 fi
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
 	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set $app unprotected_uris "/"
+	ynh_app_setting_set "$app" unprotected_uris "/"
 fi
 
 #=================================================
