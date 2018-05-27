@@ -59,13 +59,18 @@ if [ $change_path -eq 1 ]
 then
   # Make a backup of the original nginx config file if modified
   ynh_backup_if_checksum_is_different "$nginx_conf_path"
-  # Replace locations starting with old_path
-  # Look for every location possible patterns (see https://nginx.org/en/docs/http/ngx_http_core_module.html#location)
-  ynh_replace_string "location\( \(=\|~\|~\*\|\^~\)\)\? $old_path" "location\1 $new_path"  "$nginx_conf_path"
-  # Replace path in "return" directives
-  ynh_replace_string "return \([[:digit:]]\{3\}\) $old_path" "return \1 $new_path"  "$nginx_conf_path"
-  # Calculate and store the nginx config file checksum
-  ynh_store_file_checksum "$nginx_conf_path"
+	# Set global variables for nginx helper
+	domain="$old_domain"
+	path_url="$new_path"
+	# Store path_url setting
+	ynh_app_setting_set $app path_url "$path_url"
+	# Create a dedicated nginx config
+	ynh_add_nginx_config
+	if [ "$path_url" != "/" ]
+	then
+		ynh_replace_string "^#sub_path_only" "" "$nginx_conf_path"
+	fi
+	ynh_store_file_checksum "$nginx_conf_path"
 fi
 
 # Change the domain for nginx
