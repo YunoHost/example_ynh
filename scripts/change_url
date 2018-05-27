@@ -66,6 +66,11 @@ then
 	ynh_app_setting_set $app path_url "$path_url"
 	# Create a dedicated nginx config
 	ynh_add_nginx_config
+	if [ "$path_url" != "/" ]
+	then
+		ynh_replace_string "^#sub_path_only" "" "$nginx_conf_path"
+	fi
+	ynh_store_file_checksum "$nginx_conf_path"
 fi
 
 # Change the domain for nginx
