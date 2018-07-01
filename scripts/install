@@ -38,7 +38,7 @@ password=$YNH_APP_ARG_PASSWORD
 ###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
 ###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
 ###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-### The app instance name is probably what you are interested the most, since this is
+### The app instance name is probably what interests you most, since this is
 ### guaranteed to be unique. This is a good unique identifier to define installation path,
 ### db names, ...
 app=$YNH_APP_INSTANCE_NAME
@@ -75,7 +75,7 @@ ynh_app_setting_set $app language $language
 #=================================================
 
 ### Use these lines if you have to open a port for the application
-### `ynh_find_port` will find the first available port starting to the given port.
+### `ynh_find_port` will find the first available port starting from the given port.
 ### If you're not using these lines:
 ###		- Remove the section "CLOSE A PORT" in the remove script
 
@@ -89,7 +89,7 @@ ynh_app_setting_set $app port $port
 # INSTALL DEPENDENCIES
 #=================================================
 
-### `ynh_install_app_dependencies` allow you to add any "apt" dependencies to the package.
+### `ynh_install_app_dependencies` allows you to add any "apt" dependencies to the package.
 ### Those deb packages will be installed as dependencies of this package.
 ### If you're not using this helper:
 ###		- Remove the section "REMOVE DEPENDENCIES" in the remove script
@@ -120,7 +120,7 @@ ynh_mysql_setup_db $db_name $db_name
 #=================================================
 
 ### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
-### from an upstream source, like a git repository.
+### downloaded from an upstream source, like a git repository.
 ### `ynh_setup_source` use the file conf/app.src
 
 ynh_app_setting_set $app final_path $final_path
@@ -152,11 +152,11 @@ ynh_system_user_create $app
 # PHP-FPM CONFIGURATION
 #=================================================
 
-### `ynh_add_fpm_config` is used to set up an php config.
-### You can remove it if your app doesn't use php.
+### `ynh_add_fpm_config` is used to set up a PHP config.
+### You can remove it if your app doesn't use PHP.
 ### `ynh_add_fpm_config` will use the files conf/php-fpm.conf and conf/php-fpm.ini
 ### If you're not using these lines:
-###		- You can remove those files in conf/.
+###		- You can remove these files in conf/.
 ###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
 ###		- Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
 ###		- As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
@@ -177,8 +177,8 @@ ynh_add_fpm_config
 #=================================================
 
 ### `ynh_systemd_config` is used to configure a systemd script for an app.
-### It can be used for app would use sysvinit (with adaptation) or systemd.
-### Have a look to the app to be sure this app need a systemd script.
+### It can be used for apps that use sysvinit (with adaptation) or systemd.
+### Have a look at the app to be sure this app needs a systemd script.
 ### `ynh_systemd_config` will use the file conf/systemd.service
 ### If you're not using these lines:
 ###		- You can remove those files in conf/.
@@ -194,9 +194,10 @@ ynh_add_systemd_config
 # SETUP APPLICATION WITH CURL
 #=================================================
 
-### Use those lines only if the app need to be installed by a web application
-### Because, we don't want to ask the final user to it himself,
-### we're going to use curl to fill the field of the application.
+### Use these lines only if the app installation needs to be finalized through
+### web forms. We generally don't want to ask the final user,
+### so we're going to use curl to automatically fill the fields and submit the
+### forms.
 
 # Set right permissions for curl install
 chown -R $app: $final_path
@@ -222,12 +223,13 @@ fi
 # MODIFY A CONFIG FILE
 #=================================================
 
-### `ynh_replace_string` is used to replace string in a file.
+### `ynh_replace_string` is used to replace a string in a file.
+### (It's compatible with sed regular expressions syntax)
 
 ynh_replace_string "match_string" "replace_string" "$final_path/CONFIG_FILE"
 
 #=================================================
-# STORE THE CHECKSUM OF THE CONFIG FILE
+# STORE THE CONFIG FILE CHECKSUM
 #=================================================
 
 ### `ynh_store_file_checksum` is used to store the checksum of a file.
@@ -243,9 +245,9 @@ ynh_store_file_checksum "$final_path/CONFIG_FILE"
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
-### For security reason, any app should set the permission to root: before anything else.
-### Then, if write authorisation is needed, any access should be given only to directories
-### that really need such authorisations.
+### For security reason, any app should set the permissions to root: before anything else.
+### Then, if write authorization is needed, any access should be given only to directories
+### that really need such authorization.
 
 # Set permissions to app files
 chown -R root: $final_path
@@ -255,7 +257,7 @@ chown -R root: $final_path
 #=================================================
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
-### Use this helper only if there effectively a log for this app.
+### Use this helper only if there is effectively a log file for this app.
 ### If you're not using this helper:
 ###		- Remove the section "BACKUP LOGROTATE" in the backup script
 ###		- Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
@@ -269,11 +271,11 @@ ynh_use_logrotate
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-### `yunohost service add` is a cli yunohost command to add a service in the admin panel.
+### `yunohost service add` is a CLI yunohost command to add a service in the admin panel.
 ### You'll find the service in the 'services' section of YunoHost admin panel.
-### This cli command would be useless if the app does not have any services (systemd or sysvinit)
+### This CLI command would be useless if the app does not have any services (systemd or sysvinit)
 ### If you're not using these lines:
-###		- You can remove those files in conf/.
+###		- You can remove these files in conf/.
 ###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
 ###		- As well as the section ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
 

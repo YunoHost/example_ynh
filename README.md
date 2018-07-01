@@ -1,3 +1,11 @@
+# Usage of this package (REMOVE THIS SECTION BEFORE RELEASE)
+- Copy this app before working on it.
+- Edit `conf/nginx.conf` file to match application prerequisites.
+- Edit `manifest.json` with application specific information.
+- Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
+- Add a `LICENSE` file for the package.
+- Edit `README.md`.
+
 # Example app for YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/REPLACEBYYOURAPP.svg)](https://ci-apps.yunohost.org/jenkins/job/REPLACEBYYOURAPP%20%28Community%29/lastBuild/consoleFull)  
@@ -21,7 +29,7 @@ Quick description of this app.
 
 ## Configuration
 
-How to configure this app ? By an admin panel, an plain file with ssh, or any other way.
+How to configure this app: by an admin panel, a plain file with ssh, or any other way.
 
 ## Documentation
 
@@ -32,8 +40,8 @@ How to configure this app ? By an admin panel, an plain file with ssh, or any ot
 
 #### Multi-users support
 
-Is LDAP and HTTP auth supported ?
-Can the app be used by multiple users ?
+Are LDAP and HTTP auth supported?
+Can the app be used by multiple users?
 
 #### Supported architectures
 
@@ -45,17 +53,9 @@ Can the app be used by multiple users ?
 
 * Any known limitations.
 
-## Additionnal informations
+## Additional informations
 
 * Other informations you would add about this application
-
-### Usage of this package
-- Copy this app before working on it.
-- Edit `conf/nginx.conf` file to match application prerequisites.
-- Edit `manifest.json` with application specific information.
-- Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
-- Add a `LICENSE` file for the package.
-- Edit `README.md`.
 
 **More information on the documentation page:**  
 https://yunohost.org/packaging_apps
@@ -63,7 +63,7 @@ https://yunohost.org/packaging_apps
 ## Links
 
  * Report a bug: https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/issues
- * APP website: Link to the official website of this app
+ * App website: Link to the official website of this app
  * YunoHost website: https://yunohost.org/
 
 ---
@@ -76,7 +76,7 @@ Please do your pull request to the [testing branch](https://github.com/YunoHost-
 
 To try the testing branch, please proceed like that.
 ```
-sudo yunohost app install https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/tree/testing --verbose
+sudo yunohost app install https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/tree/testing
 or
-sudo yunohost app upgrade REPLACEBYYOURAPP -u https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/tree/testing --verbose
+sudo yunohost app upgrade REPLACEBYYOURAPP -u https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/tree/testing
 ```
