@@ -47,9 +47,8 @@ app=$YNH_APP_INSTANCE_NAME
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 
-### In case of an app wich use directly nginx as webserver wich is written in html, php the final path is "/var/www/$app"
-### For the app which has an internal webserver or which use uwsgi wich is written in python, java, go, ...
-### the final path is "/opt/yunohost/$app"
+### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
+### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
