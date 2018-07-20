@@ -22,6 +22,17 @@ new_path=$YNH_APP_NEW_PATH
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
+# LOAD SETTINGS
+#=================================================
+
+# Needed for helper "ynh_add_nginx_config"
+final_path=$(ynh_app_setting_get $app final_path)
+
+# Add settings here as needed by your application
+#db_name=$(ynh_app_setting_get "$app" db_name)
+#db_pwd=$(ynh_app_setting_get $app db_pwd)
+
+#=================================================
 # CHECK THE SYNTAX OF THE PATHS
 #=================================================
 
@@ -62,8 +73,6 @@ then
 	# Set global variables for nginx helper
 	domain="$old_domain"
 	path_url="$new_path"
-	# Store path_url setting
-	ynh_app_setting_set $app path_url "$path_url"
 	# Create a dedicated nginx config
 	ynh_add_nginx_config
 	if [ "$path_url" != "/" ]
