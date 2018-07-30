@@ -34,6 +34,7 @@ ynh_remove_systemd_config
 # REMOVE SERVICE FROM ADMIN PANEL
 #=================================================
 
+# Remove a service from the admin panel, added by `yunohost service add`
 if yunohost service status | grep -q $app
 then
 	echo "Remove $app service"
@@ -88,7 +89,7 @@ ynh_remove_logrotate
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	echo "Close port $port"
+	echo "Close port $port" >&2
 	yunohost firewall disallow TCP $port 2>&1
 fi
 

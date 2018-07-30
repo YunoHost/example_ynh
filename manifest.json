@@ -6,7 +6,7 @@
         "en": "Example package for YunoHost application.",
         "fr": "Exemple de package d’application pour YunoHost."
     },
-    "version": "1.0",
+    "version": "1.0~ynh1",
     "url": "https://example.com",
     "license": "free",
     "maintainer": {
@@ -15,7 +15,7 @@
         "url": "http://example.com"
     },
     "requirements": {
-        "yunohost": ">= 2.7.2"
+        "yunohost": ">= 2.7.14"
     },
     "multi_instance": true,
     "services": [
@@ -70,6 +70,19 @@
                 },
                 "choices": ["fr", "en"],
                 "default": "fr"
+            },
+            {
+                "name": "password",
+                "type": "password",
+                "ask": {
+                    "en": "Set the administrator password",
+                    "fr": "Définissez le mot de passe administrateur"
+                },
+                "help": {
+                    "en": "Use the help field to add an information for the admin about this question.",
+                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+                },
+                "example": "Choose a password"
             }
         ]
     }

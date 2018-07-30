@@ -75,11 +75,6 @@ then
 	path_url="$new_path"
 	# Create a dedicated nginx config
 	ynh_add_nginx_config
-	if [ "$path_url" != "/" ]
-	then
-		ynh_replace_string "^#sub_path_only " "" "$nginx_conf_path"
-	fi
-	ynh_store_file_checksum "$nginx_conf_path"
 fi
 
 # Change the domain for nginx
