@@ -29,12 +29,12 @@ Quick description of this app.
 
 ## Configuration
 
-How to configure this app: by an admin panel, a plain file with ssh, or any other way.
+How to configure this app: by an admin panel, a plain file with SSH, or any other way.
 
 ## Documentation
 
  * Official documentation: Link to the official documentation of this app
- * YunoHost documentation: There no other documentations, feel free to contribute.
+ * YunoHost documentation: If specific documentation is needed, feel free to contribute.
 
 ## YunoHost specific features
 
@@ -53,9 +53,9 @@ Can the app be used by multiple users?
 
 * Any known limitations.
 
-## Additional informations
+## Additional information
 
-* Other informations you would add about this application
+* Other information you would add about this application
 
 **More information on the documentation page:**  
 https://yunohost.org/packaging_apps
@@ -68,7 +68,7 @@ https://yunohost.org/packaging_apps
 
 ---
 
-Developers infos
+Developers info
 ----------------
 
 **Only if you want to use a testing branch for coding, instead of merging directly into master.**
