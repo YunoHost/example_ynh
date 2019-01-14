@@ -178,7 +178,7 @@ ynh_add_fpm_config
 ### If you're not using these lines:
 ###		- You can remove those files in conf/.
 ###		- Remove the section "BACKUP SYSTEMD" in the backup script
-###		- Remove also the section "STOP AND REMOVE SERVICE" in the remove script
+###		- Remove also the section "STOP AND REMOVE SYSTEMD SERVICE" in the remove script
 ###		- As well as the section "RESTORE SYSTEMD" in the restore script
 ###		- And the section "SETUP SYSTEMD" in the upgrade script
 

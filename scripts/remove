@@ -24,7 +24,7 @@ final_path=$(ynh_app_setting_get $app final_path)
 #=================================================
 # STANDARD REMOVE
 #=================================================
-# STOP AND REMOVE SERVICE
+# STOP AND REMOVE SYSTEMD SERVICE
 #=================================================
 
 # Remove the dedicated systemd config
