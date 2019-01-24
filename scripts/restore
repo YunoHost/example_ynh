@@ -92,17 +92,17 @@ ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
 ynh_install_app_dependencies deb1 deb2
 
 #=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
-#=================================================
-
-yunohost service add $app --log "/var/log/$app/APP.log"
-
-#=================================================
 # RESTORE SYSTEMD
 #=================================================
 
 ynh_restore_file "/etc/systemd/system/$app.service"
 systemctl enable $app.service
+
+#=================================================
+# ADVERTISE SERVICE IN ADMIN PANEL
+#=================================================
+
+yunohost service add $app --log "/var/log/$app/APP.log"
 
 #=================================================
 # RESTORE THE CRON FILE
