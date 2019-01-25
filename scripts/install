@@ -46,6 +46,7 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
+ynh_print_info "Validating arguments ..."
 
 ### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
 ### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
@@ -62,6 +63,7 @@ ynh_webpath_register $app $domain $path_url
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 
+ynh_print_info "Starting example app installation ..."
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app path $path_url
 ynh_app_setting_set $app admin $admin
@@ -79,6 +81,7 @@ ynh_app_setting_set $app language $language
 ### If you're not using these lines:
 ###		- Remove the section "CLOSE A PORT" in the remove script
 
+ynh_print_info "Configuring firewall ..."
 # Find a free port
 port=$(ynh_find_port 8095)
 # Open this port
@@ -96,6 +99,7 @@ ynh_app_setting_set $app port $port
 ###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
 ###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
 
+ynh_print_info "Installing dependencies ..."
 ynh_install_app_dependencies deb1 deb2
 
 #=================================================
@@ -111,6 +115,7 @@ ynh_install_app_dependencies deb1 deb2
 ###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
 
+ynh_print_info "Ininitializing database ..."
 db_name=$(ynh_sanitize_dbid $app)
 ynh_app_setting_set $app db_name $db_name
 ynh_mysql_setup_db $db_name $db_name
@@ -123,6 +128,7 @@ ynh_mysql_setup_db $db_name $db_name
 ### downloaded from an upstream source, like a git repository.
 ### `ynh_setup_source` use the file conf/app.src
 
+ynh_print_info "Setting up source files ..."
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source "$final_path"
@@ -133,6 +139,7 @@ ynh_setup_source "$final_path"
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
+ynh_print_info "Configuring nginx ..."
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
@@ -141,6 +148,7 @@ ynh_add_nginx_config
 #=================================================
 
 # Create a system user
+ynh_print_info "Configuring system user ..."
 ynh_system_user_create $app
 
 #=================================================
@@ -159,6 +167,7 @@ ynh_system_user_create $app
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated php-fpm config
+ynh_print_info "Configuring php-fpm ..."
 ynh_add_fpm_config
 
 #=================================================
@@ -183,6 +192,7 @@ ynh_add_fpm_config
 ###		- And the section "SETUP SYSTEMD" in the upgrade script
 
 # Create a dedicated systemd config
+ynh_print_info "Configuring systemd service ..."
 ynh_add_systemd_config
 
 #=================================================
@@ -198,6 +208,7 @@ ynh_add_systemd_config
 chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
+ynh_print_info "Configuring ssowat ..."
 ynh_app_setting_set $app skipped_uris "/"
 # Reload SSOwat config
 yunohost app ssowatconf
@@ -206,6 +217,7 @@ yunohost app ssowatconf
 systemctl reload nginx
 
 # Installation with curl
+ynh_print_info "Finalizing install ..."
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
@@ -260,6 +272,7 @@ chown -R root: $final_path
 ###		- And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
+ynh_print_info "Configuring log rotation ..."
 ynh_use_logrotate
 
 #=================================================
@@ -293,4 +306,5 @@ fi
 # RELOAD NGINX
 #=================================================
 
+ynh_print_info "Reloading nginx ..."
 systemctl reload nginx
