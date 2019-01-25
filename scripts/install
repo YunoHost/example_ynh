@@ -115,7 +115,7 @@ ynh_install_app_dependencies deb1 deb2
 ###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
 
-ynh_print_info "Ininitializing database ..."
+ynh_print_info "Initializing database ..."
 db_name=$(ynh_sanitize_dbid $app)
 ynh_app_setting_set $app db_name $db_name
 ynh_mysql_setup_db $db_name $db_name
