@@ -1,11 +1,3 @@
-# Usage of this package (REMOVE THIS SECTION BEFORE RELEASE)
-- Copy this app before working on it.
-- Edit `conf/nginx.conf` file to match application prerequisites.
-- Edit `manifest.json` with application specific information.
-- Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
-- Add a `LICENSE` file for the package.
-- Edit `README.md`.
-
 # App exemple pour YunoHost
 
 [![Integration level](https://dash.yunohost.org/integration/REPLACEBYYOURAPP.svg)](https://dash.yunohost.org/appci/app/REPLACEBYYOURAPP)  

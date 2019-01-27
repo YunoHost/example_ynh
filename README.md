@@ -4,7 +4,7 @@
 - Edit `manifest.json` with application specific information.
 - Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
 - Add a `LICENSE` file for the package.
-- Edit `README.md`.
+- Edit `README.md` and README_fr.md.
 
 # Example app for YunoHost
 
