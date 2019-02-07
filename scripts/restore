@@ -55,14 +55,6 @@ ynh_restore_file "/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_restore_file "$final_path"
 
 #=================================================
-# RESTORE THE MYSQL DATABASE
-#=================================================
-
-db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-ynh_mysql_setup_db $db_name $db_name $db_pwd
-ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
-
-#=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
 
@@ -90,6 +82,14 @@ ynh_restore_file "/etc/php5/fpm/pool.d/$app.conf"
 
 # Define and install dependencies
 ynh_install_app_dependencies deb1 deb2
+
+#=================================================
+# RESTORE THE MYSQL DATABASE
+#=================================================
+
+db_pwd=$(ynh_app_setting_get $app mysqlpwd)
+ynh_mysql_setup_db $db_name $db_name $db_pwd
+ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
 
 #=================================================
 # RESTORE SYSTEMD
