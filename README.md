@@ -19,6 +19,10 @@ Quick description of this app.
 
 **Shipped version:** 1.0
 
+## License
+
+**LICENSE:** license of the app
+
 ## Screenshots
 
 ![](Link to an screenshot for this app)
