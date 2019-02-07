@@ -42,18 +42,18 @@ fi
 ynh_remove_systemd_config
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE THE MYSQL DATABASE
 #=================================================
 
 # Remove a database if it exists, along with the associated user
 ynh_mysql_remove_db $db_user $db_name
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
 
 #=================================================
 # REMOVE APP MAIN DIR
