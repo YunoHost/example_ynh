@@ -53,7 +53,7 @@ fi
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_print_info "Backup the app before upgrading"
+ynh_print_info "Backup the app before upgrading (may take a while)"
 
 # Backup the current version of the app
 ynh_backup_before_upgrade
