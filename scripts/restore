@@ -102,7 +102,7 @@ systemctl enable $app.service
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/APP.log"
+yunohost service add $app --log "/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE THE CRON FILE
