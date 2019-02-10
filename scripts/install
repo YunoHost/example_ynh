@@ -23,6 +23,7 @@ ynh_abort_if_errors
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+ynh_print_info "Retrieve arguments from the manifest ..."
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
@@ -62,8 +63,8 @@ ynh_webpath_register $app $domain $path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
+ynh_print_info "Store settings from manifest ..."
 
-ynh_print_info "Starting example app installation ..."
 ynh_app_setting_set $app domain $domain
 ynh_app_setting_set $app path $path_url
 ynh_app_setting_set $app admin $admin
@@ -75,22 +76,23 @@ ynh_app_setting_set $app language $language
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
+ynh_print_info "Configuring firewall ..."
 
 ### Use these lines if you have to open a port for the application
 ### `ynh_find_port` will find the first available port starting from the given port.
 ### If you're not using these lines:
 ###		- Remove the section "CLOSE A PORT" in the remove script
 
-ynh_print_info "Configuring firewall ..."
 # Find a free port
 port=$(ynh_find_port 8095)
 # Open this port
-yunohost firewall allow --no-upnp TCP $port 2>&1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
 ynh_app_setting_set $app port $port
 
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
+ynh_print_info "Installing dependencies ..."
 
 ### `ynh_install_app_dependencies` allows you to add any "apt" dependencies to the package.
 ### Those deb packages will be installed as dependencies of this package.
@@ -99,12 +101,12 @@ ynh_app_setting_set $app port $port
 ###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
 ###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
 
-ynh_print_info "Installing dependencies ..."
 ynh_install_app_dependencies deb1 deb2
 
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
+ynh_print_info "Creating a mysql database ..."
 
 ### Use these lines if you need a database for the application.
 ### `ynh_mysql_setup_db` will create a database, an associated user and a ramdom password.
@@ -115,7 +117,6 @@ ynh_install_app_dependencies deb1 deb2
 ###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
 
-ynh_print_info "Initializing database ..."
 db_name=$(ynh_sanitize_dbid $app)
 ynh_app_setting_set $app db_name $db_name
 ynh_mysql_setup_db $db_name $db_name
@@ -123,12 +124,12 @@ ynh_mysql_setup_db $db_name $db_name
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
+ynh_print_info "Setting up source files ..."
 
 ### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
 ### downloaded from an upstream source, like a git repository.
 ### `ynh_setup_source` use the file conf/app.src
 
-ynh_print_info "Setting up source files ..."
 ynh_app_setting_set $app final_path $final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source "$final_path"
@@ -136,24 +137,25 @@ ynh_setup_source "$final_path"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Configuring nginx ..."
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
-ynh_print_info "Configuring nginx ..."
 # Create a dedicated nginx config
 ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
+ynh_print_info "Configuring system user ..."
 
 # Create a system user
-ynh_print_info "Configuring system user ..."
 ynh_system_user_create $app
 
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
+ynh_print_info "Configuring php-fpm ..."
 
 ### `ynh_add_fpm_config` is used to set up a PHP config.
 ### You can remove it if your app doesn't use PHP.
@@ -167,7 +169,6 @@ ynh_system_user_create $app
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated php-fpm config
-ynh_print_info "Configuring php-fpm ..."
 ynh_add_fpm_config
 
 #=================================================
@@ -179,6 +180,7 @@ ynh_add_fpm_config
 #=================================================
 # SETUP SYSTEMD
 #=================================================
+ynh_print_info "Configuring a systemd service ..."
 
 ### `ynh_systemd_config` is used to configure a systemd script for an app.
 ### It can be used for apps that use sysvinit (with adaptation) or systemd.
@@ -192,7 +194,6 @@ ynh_add_fpm_config
 ###		- And the section "SETUP SYSTEMD" in the upgrade script
 
 # Create a dedicated systemd config
-ynh_print_info "Configuring systemd service ..."
 ynh_add_systemd_config
 
 #=================================================
@@ -262,6 +263,7 @@ chown -R root: $final_path
 #=================================================
 # SETUP LOGROTATE
 #=================================================
+ynh_print_info "Configuring log rotation ..."
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
@@ -272,7 +274,6 @@ chown -R root: $final_path
 ###		- And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
-ynh_print_info "Configuring log rotation ..."
 ynh_use_logrotate
 
 #=================================================
@@ -294,6 +295,7 @@ yunohost service add $app --log "/var/log/$app/$app.log"
 #=================================================
 # SETUP SSOWAT
 #=================================================
+ynh_script_progression --message="Configuring SSOwat ..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
@@ -305,6 +307,12 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-
 ynh_print_info "Reloading nginx ..."
+
 systemctl reload nginx
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Installation completed"

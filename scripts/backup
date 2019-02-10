@@ -23,6 +23,7 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
+ynh_print_info "Load settings"
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -35,24 +36,28 @@ db_name=$(ynh_app_setting_get $app db_name)
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
+ynh_print_info "Backup the app main dir"
 
 ynh_backup "$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
+ynh_print_info "Backup nginx configuration"
 
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
+ynh_print_info "Backup php-fpm configuration"
 
 ynh_backup "/etc/php/7.0/fpm/pool.d/$app.conf"
 
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
+ynh_print_info "Backup the mysql database"
 
 ynh_mysql_dump_db "$db_name" > db.sql
 
@@ -61,12 +66,14 @@ ynh_mysql_dump_db "$db_name" > db.sql
 #=================================================
 # BACKUP LOGROTATE
 #=================================================
+ynh_print_info "Backup logrotate configuration"
 
 ynh_backup "/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
+ynh_print_info "Backup systemd configuration"
 
 ynh_backup "/etc/systemd/system/$app.service"
 
@@ -75,3 +82,9 @@ ynh_backup "/etc/systemd/system/$app.service"
 #=================================================
 
 ynh_backup "/etc/cron.d/$app"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info "Backup script completed. Please wait for YunoHost to create the backup."
