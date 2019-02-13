@@ -12,7 +12,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Load settings"
+ynh_print_info "Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
@@ -31,14 +31,14 @@ final_path=$(ynh_app_setting_get $app final_path)
 # Remove a service from the admin panel, added by `yunohost service add`
 if yunohost service status | grep -q $app
 then
-	ynh_print_info "Remove $app service"
+	ynh_print_info "Removing $app service"
 	yunohost service remove $app
 fi
 
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
-ynh_print_info "Stop and remove the service"
+ynh_print_info "Stopping and removing the service"
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
@@ -46,7 +46,7 @@ ynh_remove_systemd_config
 #=================================================
 # REMOVE THE MYSQL DATABASE
 #=================================================
-ynh_print_info "Remove the mysql database"
+ynh_print_info "Removing the mysql database"
 
 # Remove a database if it exists, along with the associated user
 ynh_mysql_remove_db $db_user $db_name
@@ -54,7 +54,7 @@ ynh_mysql_remove_db $db_user $db_name
 #=================================================
 # REMOVE DEPENDENCIES
 #=================================================
-ynh_print_info "Remove dependencies"
+ynh_print_info "Removing dependencies"
 
 # Remove metapackage and its dependencies
 ynh_remove_app_dependencies
@@ -62,7 +62,7 @@ ynh_remove_app_dependencies
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_print_info "Remove app main directory"
+ynh_print_info "Removing app main directory"
 
 # Remove the app directory securely
 ynh_secure_remove "$final_path"
@@ -70,7 +70,7 @@ ynh_secure_remove "$final_path"
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Remove nginx configuration"
+ynh_print_info "Removing nginx configuration"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
@@ -78,7 +78,7 @@ ynh_remove_nginx_config
 #=================================================
 # REMOVE PHP-FPM CONFIGURATION
 #=================================================
-ynh_print_info "Remove php-fpm configuration"
+ynh_print_info "Removing php-fpm configuration"
 
 # Remove the dedicated php-fpm config
 ynh_remove_fpm_config
@@ -86,7 +86,7 @@ ynh_remove_fpm_config
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
 #=================================================
-ynh_print_info "Remove logrotate configuration"
+ynh_print_info "Removing logrotate configuration"
 
 # Remove the app-specific logrotate config
 ynh_remove_logrotate
@@ -94,11 +94,10 @@ ynh_remove_logrotate
 #=================================================
 # CLOSE A PORT
 #=================================================
-ynh_print_info "Close ports"
 
 if yunohost firewall list | grep -q "\- $port$"
 then
-	ynh_print_info "Close port $port"
+	ynh_print_info "Closing port $port"
 	ynh_exec_warn_less yunohost firewall disallow TCP $port
 fi
 
@@ -122,7 +121,7 @@ ynh_secure_remove "/var/log/$app/"
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
-ynh_print_info "Remove the dedicated user"
+ynh_print_info "Removing the dedicated system user"
 
 # Delete a system user
 ynh_system_user_delete $app
@@ -131,4 +130,4 @@ ynh_system_user_delete $app
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Deletion completed"
+ynh_print_info "Removal completed"
