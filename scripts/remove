@@ -130,4 +130,4 @@ ynh_system_user_delete $app
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Removal completed"
+ynh_print_info "Removal of $app completed"

@@ -314,4 +314,4 @@ systemctl reload nginx
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Installation completed"
+ynh_print_info "Installation of $app completed"

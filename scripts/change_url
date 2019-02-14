@@ -108,4 +108,4 @@ systemctl reload nginx
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Change of url completed"
+ynh_print_info "Change of url completed for $app"

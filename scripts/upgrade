@@ -76,7 +76,7 @@ path_url=$(ynh_normalize_url_path $path_url)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_print_info "Downloading, checking and unpacking sources..."
+ynh_print_info "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source "$final_path"
@@ -172,4 +172,4 @@ systemctl reload nginx
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Upgrade completed"
+ynh_print_info "Upgrade of $app completed"
