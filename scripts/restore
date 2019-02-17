@@ -60,7 +60,7 @@ ynh_restore_file "$final_path"
 #=================================================
 # RECREATE THE DEDICATED USER
 #=================================================
-ynh_print_info "Recreating the dedicated systen user..."
+ynh_print_info "Recreating the dedicated system user..."
 
 # Create the dedicated user (if not existing)
 ynh_system_user_create $app
