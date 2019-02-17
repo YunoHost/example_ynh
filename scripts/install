@@ -294,7 +294,7 @@ yunohost service add $app --log "/var/log/$app/$app.log"
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..."
+ynh_print_info "Configuring SSOwat..."
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
