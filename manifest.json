@@ -15,7 +15,7 @@
         "url": "http://example.com"
     },
     "requirements": {
-        "yunohost": ">= 2.7.14"
+        "yunohost": ">= 3.4"
     },
     "multi_instance": true,
     "services": [
@@ -64,6 +64,7 @@
             },
             {
                 "name": "language",
+                "type": "string",
                 "ask": {
                     "en": "Choose the application language",
                     "fr": "Choisissez la langue de l'application"
