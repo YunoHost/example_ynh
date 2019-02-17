@@ -105,7 +105,7 @@ ynh_install_app_dependencies deb1 deb2
 #=================================================
 # CREATE A MYSQL DATABASE
 #=================================================
-ynh_print_info "Creating a mysql database..."
+ynh_print_info "Creating a MySQL database..."
 
 ### Use these lines if you need a database for the application.
 ### `ynh_mysql_setup_db` will create a database, an associated user and a ramdom password.
@@ -136,7 +136,7 @@ ynh_setup_source "$final_path"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Configuring nginx..."
+ynh_print_info "Configuring nginx web server..."
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
@@ -208,7 +208,7 @@ ynh_add_systemd_config
 chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
-ynh_print_info "Configuring ssowat..."
+ynh_print_info "Configuring SSOwat..."
 ynh_app_setting_set $app skipped_uris "/"
 # Reload SSOwat config
 yunohost app ssowatconf
@@ -217,7 +217,7 @@ yunohost app ssowatconf
 systemctl reload nginx
 
 # Installation with curl
-ynh_print_info "Finalizing install..."
+ynh_print_info "Finalizing installation..."
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
@@ -306,7 +306,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx..."
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
 

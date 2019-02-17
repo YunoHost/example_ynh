@@ -63,7 +63,7 @@ fi
 #=================================================
 # MODIFY URL IN NGINX CONF
 #=================================================
-ynh_print_info "Updating nginx configuration..."
+ynh_print_info "Updating nginx web server configuration..."
 
 nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
 
@@ -100,7 +100,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_print_info "Reloading nginx..."
+ynh_print_info "Reloading nginx web server..."
 
 systemctl reload nginx
 
@@ -108,4 +108,4 @@ systemctl reload nginx
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Change of url completed for $app"
+ynh_print_info "Change of URL completed for $app"

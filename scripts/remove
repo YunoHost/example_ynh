@@ -38,7 +38,7 @@ fi
 #=================================================
 # STOP AND REMOVE SERVICE
 #=================================================
-ynh_print_info "Stopping and removing the service"
+ynh_print_info "Stopping and removing the systemd service"
 
 # Remove the dedicated systemd config
 ynh_remove_systemd_config
@@ -46,7 +46,7 @@ ynh_remove_systemd_config
 #=================================================
 # REMOVE THE MYSQL DATABASE
 #=================================================
-ynh_print_info "Removing the mysql database"
+ynh_print_info "Removing the MySQL database"
 
 # Remove a database if it exists, along with the associated user
 ynh_mysql_remove_db $db_user $db_name
@@ -70,7 +70,7 @@ ynh_secure_remove "$final_path"
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Removing nginx configuration"
+ynh_print_info "Removing nginx web server configuration"
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
