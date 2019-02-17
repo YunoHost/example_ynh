@@ -21,6 +21,10 @@ Quick description of this app.
 
 **Shipped version:** 1.0
 
+## License of the packaged application
+
+**LICENSE:** provide the license of the upstream packaged application
+
 ## Screenshots
 
 ![](Link to an screenshot for this app)

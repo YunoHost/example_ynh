@@ -13,6 +13,10 @@ Description rapide de cette application.
 
 **Version incluse:** 1.0
 
+## Licence de l'application packagée
+
+**LICENCE:** indiquer la licence de l'application packagée
+
 ## Captures d'écran
 
 ![](Lien vers une capture d'écran pour cette application)
