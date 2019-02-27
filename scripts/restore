@@ -32,6 +32,7 @@ domain=$(ynh_app_setting_get $app domain)
 path_url=$(ynh_app_setting_get $app path)
 final_path=$(ynh_app_setting_get $app final_path)
 db_name=$(ynh_app_setting_get $app db_name)
+db_user=$(ynh_app_setting_get $app db_user)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -95,8 +96,8 @@ ynh_install_app_dependencies deb1 deb2
 ynh_print_info "Restoring the MySQL database..."
 
 db_pwd=$(ynh_app_setting_get $app mysqlpwd)
-ynh_mysql_setup_db $db_name $db_name $db_pwd
-ynh_mysql_connect_as $db_name $db_pwd $db_name < ./db.sql
+ynh_mysql_setup_db $db_user $db_name $db_pwd
+ynh_mysql_connect_as $db_user $db_pwd $db_name < ./db.sql
 
 #=================================================
 # RESTORE SYSTEMD

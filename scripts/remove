@@ -19,7 +19,7 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get $app domain)
 port=$(ynh_app_setting_get $app port)
 db_name=$(ynh_app_setting_get $app db_name)
-db_user=$db_name
+db_user=$(ynh_app_setting_get $app db_user)
 final_path=$(ynh_app_setting_get $app final_path)
 
 #=================================================
