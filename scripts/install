@@ -117,8 +117,9 @@ ynh_print_info "Creating a MySQL database..."
 ###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
 
 db_name=$(ynh_sanitize_dbid $app)
+# it is recommended to have db_user=db_name
+# if you made an other choice, you can set db_user with `ynh_app_setting_set $app db_user $db_user`
 db_user=$db_name
-ynh_app_setting_set $app db_user $db_user
 ynh_app_setting_set $app db_name $db_name
 ynh_mysql_setup_db $db_user $db_name
 
