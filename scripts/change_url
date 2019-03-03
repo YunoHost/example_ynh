@@ -33,7 +33,7 @@ final_path=$(ynh_app_setting_get $app final_path)
 #db_name=$(ynh_app_setting_get "$app" db_name)
 # it is recommended to have db_user=db_name
 # if you made an other choice, you can assign db_user with `db_user=$(ynh_app_setting_get $app db_user)`
-#db_user=db_name 
+#db_user=$db_name 
 #db_pwd=$(ynh_app_setting_get $app db_pwd)
 
 #=================================================
