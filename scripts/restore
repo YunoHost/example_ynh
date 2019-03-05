@@ -87,7 +87,7 @@ ynh_restore_file "/etc/php/7.0/fpm/pool.d/$app.conf"
 ynh_print_info "Reinstalling dependencies..."
 
 # Define and install dependencies
-ynh_install_app_dependencies deb1 deb2
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # RESTORE THE MYSQL DATABASE

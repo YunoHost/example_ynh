@@ -4,6 +4,9 @@
 # PERSONAL HELPERS
 #=================================================
 
+# dependencies used by the app
+pkg_dependencies="deb1 deb2"
+
 #=================================================
 # EXPERIMENTAL HELPERS
 #=================================================

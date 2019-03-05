@@ -94,7 +94,7 @@ ynh_add_nginx_config
 #=================================================
 ynh_print_info "Upgrading dependencies..."
 
-ynh_install_app_dependencies deb1 deb2
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE DEDICATED USER
