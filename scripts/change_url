@@ -34,15 +34,6 @@ final_path=$(ynh_app_setting_get $app final_path)
 #db_pwd=$(ynh_app_setting_get $app db_pwd)
 
 #=================================================
-# CHECK THE SYNTAX OF THE PATHS
-#=================================================
-
-test -n "$old_path" || old_path="/"
-test -n "$new_path" || new_path="/"
-new_path=$(ynh_normalize_url_path $new_path)
-old_path=$(ynh_normalize_url_path $old_path)
-
-#=================================================
 # CHECK WHICH PARTS SHOULD BE CHANGED
 #=================================================
 
