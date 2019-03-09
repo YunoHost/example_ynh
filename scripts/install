@@ -97,10 +97,11 @@ ynh_print_info "Installing dependencies..."
 ### Those deb packages will be installed as dependencies of this package.
 ### If you're not using this helper:
 ###		- Remove the section "REMOVE DEPENDENCIES" in the remove script
+###		- Remove the variable "pkg_dependencies" in _common.sh
 ###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
 ###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
 
-ynh_install_app_dependencies deb1 deb2
+ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
 # CREATE A MYSQL DATABASE
