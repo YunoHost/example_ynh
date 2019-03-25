@@ -53,9 +53,6 @@ ynh_print_info "Validating installation parameters..."
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die "This path already contains a folder"
 
-# Normalize the url path syntax
-path_url=$(ynh_normalize_url_path $path_url)
-
 # Register (book) web path
 ynh_webpath_register $app $domain $path_url
 

@@ -69,6 +69,11 @@ ynh_abort_if_errors
 #=================================================
 
 # Normalize the URL path syntax
+# N.B. : this is for app installations before YunoHost 2.7
+# where this value might be something like /foo/ or foo/
+# instead of /foo ....
+# If nobody installed your app before 2.7, then you may
+# safely remove this line
 path_url=$(ynh_normalize_url_path $path_url)
 
 #=================================================
