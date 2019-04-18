@@ -24,68 +24,68 @@ ynh_abort_if_errors
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_print_info "Loading installation settings..."
+ynh_print_info --message="Loading installation settings..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-final_path=$(ynh_app_setting_get $app final_path)
-domain=$(ynh_app_setting_get $app domain)
-db_name=$(ynh_app_setting_get $app db_name)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 
 #=================================================
 # STANDARD BACKUP STEPS
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
-ynh_print_info "Backing up the main app directory..."
+ynh_print_info --message="Backing up the main app directory..."
 
-ynh_backup "$final_path"
+ynh_backup --src_path="$final_path"
 
 #=================================================
 # BACKUP THE NGINX CONFIGURATION
 #=================================================
-ynh_print_info "Backing up nginx web server configuration..."
+ynh_print_info --message="Backing up nginx web server configuration..."
 
-ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # BACKUP THE PHP-FPM CONFIGURATION
 #=================================================
-ynh_print_info "Backing up php-fpm configuration..."
+ynh_print_info --message="Backing up php-fpm configuration..."
 
-ynh_backup "/etc/php/7.0/fpm/pool.d/$app.conf"
+ynh_backup --src_path="/etc/php/7.0/fpm/pool.d/$app.conf"
 
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
-ynh_print_info "Backing up the MySQL database..."
+ynh_print_info --message="Backing up the MySQL database..."
 
-ynh_mysql_dump_db "$db_name" > db.sql
+ynh_mysql_dump_db --database="$db_name" > db.sql
 
 #=================================================
 # SPECIFIC BACKUP
 #=================================================
 # BACKUP LOGROTATE
 #=================================================
-ynh_print_info "Backing up logrotate configuration..."
+ynh_print_info --message="Backing up logrotate configuration..."
 
-ynh_backup "/etc/logrotate.d/$app"
+ynh_backup --src_path="/etc/logrotate.d/$app"
 
 #=================================================
 # BACKUP SYSTEMD
 #=================================================
-ynh_print_info "Backing up systemd configuration..."
+ynh_print_info --message="Backing up systemd configuration..."
 
-ynh_backup "/etc/systemd/system/$app.service"
+ynh_backup --src_path="/etc/systemd/system/$app.service"
 
 #=================================================
 # BACKUP A CRON FILE
 #=================================================
 
-ynh_backup "/etc/cron.d/$app"
+ynh_backup --src_path="/etc/cron.d/$app"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
+ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
