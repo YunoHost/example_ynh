@@ -66,7 +66,7 @@ https://yunohost.org/packaging_apps
 
  * Report a bug: https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/issues
  * App website: Link to the official website of this app
- * App repository: Link to the official repository of this app
+ * Upstream app repository: Link to the official repository of the upstream app
  * YunoHost website: https://yunohost.org/
 
 ---
