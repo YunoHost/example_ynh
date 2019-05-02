@@ -54,7 +54,7 @@ L'application peut-elle être utilisée par plusieurs utilisateurs?
 **Plus d'informations sur la page de documentation:**  
 https://yunohost.org/packaging_apps
 
-## Links
+## Liens
 
  * Signaler un bug: https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/issues
  * Site de l'application: Lien vers le site officiel de cette application
