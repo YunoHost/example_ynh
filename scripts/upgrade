@@ -139,6 +139,10 @@ ynh_add_fpm_config
 # ...
 #=================================================
 
+#=================================================
+# STORE THE CONFIG FILE CHECKSUM
+#=================================================
+
 ### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
 ### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
 ynh_backup_if_checksum_is_different --file="$final_path/CONFIG_FILE"
