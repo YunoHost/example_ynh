@@ -51,13 +51,13 @@ elif [ "$is_public" = "No" ]; then
 fi
 
 # If db_name doesn't exist, create it
-if [ -z $db_name ]; then
+if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
 	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
 fi
 
 # If final_path doesn't exist, create it
-if [ -z $final_path ]; then
+if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
