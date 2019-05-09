@@ -123,6 +123,13 @@ systemctl enable $app.service
 yunohost service add $app --log "/var/log/$app/$app.log"
 
 #=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
+#=================================================
 # RESTORE THE CRON FILE
 #=================================================
 
