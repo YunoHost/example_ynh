@@ -27,18 +27,8 @@
 		port_already_use=0
 		change_url=1
 ;;; Levels
-	Level 1=auto
-	Level 2=auto
-	Level 3=auto
-# Level 4: If the app supports LDAP and SSOwat, turn level 4 to '1' and add a link to an issue or a part of your code to show it.
-# If the app does not use LDAP nor SSOwat, and can't use them, turn level 4 to 'na' and explain as well.
-	Level 4=0
+	# If the level 5 (Package linter) is forced to 1. Please add justifications here.
 	Level 5=auto
-	Level 6=auto
-	Level 7=auto
-	Level 8=0
-	Level 9=0
-	Level 10=0
 ;;; Options
 Email=
 Notification=none
