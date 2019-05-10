@@ -96,6 +96,7 @@ ynh_backup --src_path="/etc/systemd/system/$app.service"
 #=================================================
 # BACKUP A CRON FILE
 #=================================================
+ynh_script_progression --message="Backing up cron file..." --time --weight=1
 
 ynh_backup --src_path="/etc/cron.d/$app"
 

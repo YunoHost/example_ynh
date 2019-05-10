@@ -235,6 +235,7 @@ fi
 #=================================================
 # MODIFY A CONFIG FILE
 #=================================================
+ynh_script_progression --message="Modifying a config file..." --time --weight=1
 
 ### `ynh_replace_string` is used to replace a string in a file.
 ### (It's compatible with sed regular expressions syntax)
@@ -244,6 +245,7 @@ ynh_replace_string --match_string="match_string" --replace_string="replace_strin
 #=================================================
 # STORE THE CONFIG FILE CHECKSUM
 #=================================================
+ynh_script_progression --message="Storing the config file checksum..." --time --weight=1
 
 ### `ynh_store_file_checksum` is used to store the checksum of a file.
 ### That way, during the upgrade script, by using `ynh_backup_if_checksum_is_different`,
@@ -257,6 +259,7 @@ ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
+ynh_script_progression --message="Securing files and directories..." --time --weight=1
 
 ### For security reason, any app should set the permissions to root: before anything else.
 ### Then, if write authorization is needed, any access should be given only to directories
@@ -284,6 +287,7 @@ ynh_use_logrotate
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
+ynh_script_progression --message="Advertising service in admin panel..." --time --weight=1
 
 ### `yunohost service add` is a CLI yunohost command to add a service in the admin panel.
 ### You'll find the service in the 'services' section of YunoHost admin panel.

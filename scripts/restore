@@ -48,6 +48,7 @@ test ! -d $final_path \
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the nginx web server configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -69,6 +70,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
+ynh_script_progression --message="Restoring system user..." --time --weight=1
 
 # Restore permissions on app files
 chown -R root: $final_path
@@ -76,6 +78,7 @@ chown -R root: $final_path
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring php-fpm..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/php/7.0/fpm/pool.d/$app.conf"
 
@@ -118,6 +121,7 @@ systemctl enable $app.service
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
+ynh_script_progression --message="Advertising service in admin panel..." --time --weight=1
 
 yunohost service add $app --log "/var/log/$app/$app.log"
 
@@ -131,12 +135,14 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # RESTORE THE CRON FILE
 #=================================================
+ynh_script_progression --message="Restoring the cron file..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/cron.d/$app"
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the logrotate configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 
