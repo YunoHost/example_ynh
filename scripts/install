@@ -165,7 +165,7 @@ ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
 
 ### `ynh_add_fpm_config` is used to set up a PHP config.
 ### You can remove it if your app doesn't use PHP.
-### `ynh_add_fpm_config` will use the files conf/php-fpm.conf and conf/php-fpm.ini
+### `ynh_add_fpm_config` will use the files conf/php-fpm.conf
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
 ###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
