@@ -75,12 +75,6 @@ ynh_system_user_create --username=$app
 chown -R root: $final_path
 
 #=================================================
-# RESTORE THE PHP-FPM CONFIGURATION
-#=================================================
-
-ynh_restore_file --origin_path="/etc/php/7.0/fpm/pool.d/$app.conf"
-
-#=================================================
 # RESTORE FAIL2BAN CONFIGURATION
 #=================================================
 ynh_script_progression --message="Restoring the fail2ban configuration..." --time --weight=1
@@ -107,6 +101,12 @@ ynh_script_progression --message="Restoring the MySQL database..." --time --weig
 db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
 ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
 ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+
+#=================================================
+# RESTORE THE PHP-FPM CONFIGURATION
+#=================================================
+
+ynh_restore_file --origin_path="/etc/php/7.0/fpm/pool.d/$app.conf"
 
 #=================================================
 # RESTORE SYSTEMD

@@ -52,6 +52,14 @@ ynh_script_progression --message="Removing the MySQL database..." --time --weigh
 ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
+# REMOVE PHP-FPM CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing php-fpm configuration..." --time --weight=1
+
+# Remove the dedicated php-fpm config
+ynh_remove_fpm_config
+
+#=================================================
 # REMOVE DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Removing dependencies..." --time --weight=1
@@ -74,14 +82,6 @@ ynh_script_progression --message="Removing nginx web server configuration..." --
 
 # Remove the dedicated nginx config
 ynh_remove_nginx_config
-
-#=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing php-fpm configuration..." --time --weight=1
-
-# Remove the dedicated php-fpm config
-ynh_remove_fpm_config
 
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
