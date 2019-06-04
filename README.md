@@ -3,6 +3,7 @@
 - Edit `conf/nginx.conf` file to match application prerequisites.
 - Edit `manifest.json` with application specific information.
 - Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
+  - Using the [script helpers documentation.](https://helpers.yunohost.org/)
 - Add a `LICENSE` file for the package.
 - Edit `README.md` and README_fr.md.
 
