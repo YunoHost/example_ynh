@@ -28,10 +28,10 @@ ynh_script_progression --message="Loading settings..." --time --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+domain=$(ynh_app_setting_get --app="$app" --key=domain)
+path_url=$(ynh_app_setting_get --app="$app" --key=path)
+final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
+db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
 db_user=$db_name
 
 #=================================================
@@ -39,9 +39,9 @@ db_user=$db_name
 #=================================================
 ynh_script_progression --message="Validating restoration parameters..." --time --weight=1
 
-ynh_webpath_available --domain=$domain --path_url=$path_url \
+ynh_webpath_available --domain="$domain" --path_url="$path_url" \
 	|| ynh_die --message="Path not available: ${domain}${path_url}"
-test ! -d $final_path \
+test ! -d "$final_path" \
 	|| ynh_die --message="There is already a directory: $final_path "
 
 #=================================================
@@ -65,14 +65,14 @@ ynh_restore_file --origin_path="$final_path"
 ynh_script_progression --message="Recreating the dedicated system user..." --time --weight=1
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app
+ynh_system_user_create --username="$app"
 
 #=================================================
 # RESTORE USER RIGHTS
 #=================================================
 
 # Restore permissions on app files
-chown -R root: $final_path
+chown -R root: "$final_path"
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
@@ -97,16 +97,16 @@ ynh_systemd_action --action=restart --service_name=fail2ban
 ynh_script_progression --message="Reinstalling dependencies..." --time --weight=1
 
 # Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+ynh_install_app_dependencies "$pkg_dependencies"
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
 #=================================================
 ynh_script_progression --message="Restoring the MySQL database..." --time --weight=1
 
-db_pwd=$(ynh_app_setting_get --app=$app --key=mysqlpwd)
-ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name --db_pwd=$db_pwd
-ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+db_pwd=$(ynh_app_setting_get --app="$app" --key=mysqlpwd)
+ynh_mysql_setup_db --db_user="$db_user" --db_name="$db_name" --db_pwd="$db_pwd"
+ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" < ./db.sql
 
 #=================================================
 # RESTORE SYSTEMD
@@ -114,20 +114,20 @@ ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./
 ynh_script_progression --message="Restoring the systemd configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-systemctl enable $app.service
+systemctl enable "$app".service
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
 #=================================================
 
-yunohost service add $app --log "/var/log/$app/$app.log"
+yunohost service add "$app" --log "/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RESTORE THE CRON FILE
