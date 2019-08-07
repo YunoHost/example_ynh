@@ -37,7 +37,7 @@ Comment configurer cette application: via le panneau d'administration, un fichie
 L'authentification LDAP et HTTP est-elle prise en charge?
 L'application peut-elle être utilisée par plusieurs utilisateurs?
 
-#### Supported architectures
+#### Architectures supportées
 
 * x86-64b - [![Build Status](https://ci-apps.yunohost.org/ci/logs/REPLACEBYYOURAPP%20%28Apps%29.svg)](https://ci-apps.yunohost.org/ci/apps/REPLACEBYYOURAPP/)
 * ARMv8-A - [![Build Status](https://ci-apps-arm.yunohost.org/ci/logs/REPLACEBYYOURAPP%20%28Apps%29.svg)](https://ci-apps-arm.yunohost.org/ci/apps/REPLACEBYYOURAPP/)
