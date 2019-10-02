@@ -16,11 +16,11 @@ ynh_script_progression --message="Loading installation settings..." --time --wei
 
 app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-port=$(ynh_app_setting_get --app=$app --key=port)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
+#domain=$(ynh_app_setting_get --app="$app" --key=domain) If useful?
+port=$(ynh_app_setting_get --app="$app" --key=port)
+db_name=$(ynh_app_setting_get --app="$app" --key=db_name)
 db_user=$db_name
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
 
 #=================================================
 # STANDARD REMOVE
@@ -29,10 +29,10 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 #=================================================
 
 # Remove a service from the admin panel, added by `yunohost service add`
-if ynh_exec_warn_less yunohost service status $app >/dev/null
+if ynh_exec_warn_less yunohost service status "$app" >/dev/null
 then
 	ynh_script_progression --message="Removing $app service..." --time --weight=1
-	yunohost service remove $app
+	yunohost service remove "$app"
 fi
 
 #=================================================
@@ -49,7 +49,7 @@ ynh_remove_systemd_config
 ynh_script_progression --message="Removing the MySQL database..." --time --weight=1
 
 # Remove a database if it exists, along with the associated user
-ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
+ynh_mysql_remove_db --db_user="$db_user" --db_name="$db_name"
 
 #=================================================
 # REMOVE DEPENDENCIES
@@ -98,7 +98,7 @@ ynh_remove_logrotate
 if yunohost firewall list | grep -q "\- $port$"
 then
 	ynh_script_progression --message="Closing port $port..."
-	ynh_exec_warn_less yunohost firewall disallow TCP $port
+	ynh_exec_warn_less yunohost firewall disallow TCP "$port"
 fi
 
 #=================================================
@@ -132,7 +132,7 @@ ynh_secure_remove --file="/var/log/$app/"
 ynh_script_progression --message="Removing the dedicated system user..." --time --weight=1
 
 # Delete a system user
-ynh_system_user_delete --username=$app
+ynh_system_user_delete --username="$app"
 
 #=================================================
 # END OF SCRIPT
