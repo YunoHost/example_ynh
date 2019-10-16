@@ -8,7 +8,7 @@
     },
     "version": "1.0~ynh1",
     "url": "https://www.plex.tv/",
-    "license": "various",
+    "license": "non-free",
     "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",
