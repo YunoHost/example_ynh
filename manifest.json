@@ -1,14 +1,14 @@
 {
-    "name": "YunoHost example app",
-    "id": "ynhexample",
+    "name": "YunoHost Plexmediaserver",
+    "id": "plex",
     "packaging_format": 1,
     "description": {
-        "en": "Example package for YunoHost application.",
-        "fr": "Exemple de package d’application pour YunoHost."
+        "en": "Plex Mediaserver",
+        "fr": "Plex Mediaserver."
     },
     "version": "1.0~ynh1",
-    "url": "https://example.com",
-    "license": "free",
+    "url": "https://www.plex.tv/",
+    "license": "various",
     "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",
@@ -17,7 +17,7 @@
     "requirements": {
         "yunohost": ">= 3.5"
     },
-    "multi_instance": true,
+    "multi_instance": false,
     "services": [
         "nginx",
         "php7.0-fpm",
