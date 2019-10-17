@@ -3,8 +3,8 @@
     "id": "ynhexample",
     "packaging_format": 1,
     "description": {
-        "en": "Example package for YunoHost application.",
-        "fr": "Exemple de package d’application pour YunoHost."
+        "en": "Explain in *a few (10~15) words* what your app actually is or does (for god sake please don't just say it's '$app for Yunohost'! It is meant to be displayed in the app catalog to users who want a rough idea of what it is or does among 100+ others.)",
+        "fr": "Expliquez en *quelques* (10~15) mots ce que l'app est ou fait (par pitié ne dite pas juste '$app pour Yunohost'! Elle sera affichée sur le catalog d'app aux users qui veulent à savoir ce que fait l'app parmis une centaine d'autre...)"
     },
     "version": "1.0~ynh1",
     "url": "https://example.com",
