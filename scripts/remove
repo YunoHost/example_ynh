@@ -49,7 +49,7 @@ ynh_remove_systemd_config
 ynh_script_progression --message="Removing the MySQL database..." --time --weight=1
 
 # Remove a database if it exists, along with the associated user
-ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
+#sw. ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
 # REMOVE DEPENDENCIES
