@@ -81,7 +81,7 @@ ynh_remove_nginx_config
 ynh_script_progression --message="Removing php-fpm configuration..." --time --weight=1
 
 # Remove the dedicated php-fpm config
-ynh_remove_fpm_config
+#sw. ynh_remove_fpm_config
 
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
