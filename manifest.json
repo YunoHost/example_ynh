@@ -1,18 +1,18 @@
 {
-    "name": "YunoHost Plexmediaserver",
-    "id": "plex",
+    "name": "YunoHost einfachServer",
+    "id": "einfachServer",
     "packaging_format": 1,
     "description": {
-        "en": "Plex Mediaserver",
-        "fr": "Plex Mediaserver."
+        "en": "einfacher Server",
+        "fr": "easy server"
     },
     "version": "1.0~ynh1",
-    "url": "https://www.plex.tv/",
+    "url": "https://www.einfachServer.tv/",
     "license": "non-free",
     "maintainer": {
         "name": "John doe",
         "email": "john.doe@example.com",
-        "url": "http://example.com"
+        "url": "http://sohndoe.com"
     },
     "requirements": {
         "yunohost": ">= 3.5"
