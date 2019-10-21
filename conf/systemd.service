@@ -7,7 +7,6 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-#ExecStart=__FINALPATH__/script >> /var/log/__APP__/__APP__.log 2>&1
 ExecStart=/bin/sh -c '/usr/bin/python __FINALPATH__/serv.py >> /var/log/__APP__/__APP__.log 2>&1'
 
 [Install]
