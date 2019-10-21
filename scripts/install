@@ -144,8 +144,6 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 cp -a /home/admin/source/. "$final_path"
 #sw. sudo cp -a ../sources/. $final_path
 
-sleep 120s
-
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
@@ -208,6 +206,8 @@ ynh_script_progression --message="Configuring a systemd service..." --time --wei
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
+sleep 120s
+
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
@@ -218,26 +218,26 @@ ynh_add_systemd_config
 ### forms.
 
 # Set right permissions for curl install
-chown -R $app: $final_path
+#sw. chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
 #sw. ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
 #sw. ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
 # Reload SSOwat config
-yunohost app ssowatconf
+#sw. yunohost app ssowatconf
 
 # Reload Nginx
-ynh_systemd_action --service_name=nginx --action=reload
+#sw. ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
-ynh_script_progression --message="Finalizing installation..." --time --weight=1
-ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+#sw. ynh_script_progression --message="Finalizing installation..." --time --weight=1
+#sw. ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
-if [ $is_public -eq 0 ]
-then
-	ynh_app_setting_delete --app=$app --key=skipped_uris
-fi
+#sw. if [ $is_public -eq 0 ]
+#sw. then
+#sw. 	ynh_app_setting_delete --app=$app --key=skipped_uris
+#sw. fi
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -319,6 +319,8 @@ ynh_script_progression --message="Starting a systemd service..." --time --weight
 
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+
+sleep 120s
 
 #=================================================
 # SETUP FAIL2BAN
