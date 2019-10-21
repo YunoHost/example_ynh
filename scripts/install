@@ -152,7 +152,7 @@ ynh_script_progression --message="Configuring nginx web server..." --time --weig
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
 # Create a dedicated nginx config sw. muss wahrscheinlich nix gemacht werden, weil /conf/nginx.conf einfach stimmt
-#sw. ynh_add_nginx_config
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER
@@ -318,7 +318,6 @@ ynh_script_progression --message="Starting a systemd service..." --time --weight
 # Start a systemd service
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
-sleep 120s
 
 #=================================================
 # SETUP FAIL2BAN
