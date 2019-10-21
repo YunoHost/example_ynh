@@ -286,7 +286,9 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 ###		- And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
-#sw. ynh_use_logrotate
+ynh_use_logrotate
+
+sleep 120s
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
