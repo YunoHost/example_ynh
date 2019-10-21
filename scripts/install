@@ -13,10 +13,10 @@ source /usr/share/yunohost/helpers
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
+#sw. ynh_clean_setup () {
 	### Remove this function if there's nothing to clean before calling the remove script.
-	true
-}
+#sw. 	true
+#sw. }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
@@ -147,7 +147,7 @@ ynh_script_progression --message="Configuring nginx web server..." --time --weig
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
-# Create a dedicated nginx config
+# Create a dedicated nginx config sw. muss wahrscheinlich nix gemacht werden, weil /conf/nginx.conf einfach stimmt
 ynh_add_nginx_config
 
 #=================================================
@@ -225,7 +225,7 @@ ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
 ynh_script_progression --message="Finalizing installation..." --time --weight=1
-ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+#sw. ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
 if [ $is_public -eq 0 ]
