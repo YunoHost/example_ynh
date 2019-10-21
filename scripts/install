@@ -206,8 +206,6 @@ ynh_script_progression --message="Configuring a systemd service..." --time --wei
 # Create a dedicated systemd config
 ynh_add_systemd_config
 
-sleep 120s
-
 #=================================================
 # SETUP APPLICATION WITH CURL
 #=================================================
@@ -287,8 +285,6 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
-
-sleep 120s
 
 #=================================================
 # ADVERTISE SERVICE IN ADMIN PANEL
