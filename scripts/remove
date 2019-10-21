@@ -89,7 +89,7 @@ ynh_script_progression --message="Removing php-fpm configuration..." --time --we
 ynh_script_progression --message="Removing logrotate configuration..." --time --weight=1
 
 # Remove the app-specific logrotate config
-#sw. ynh_remove_logrotate
+ynh_remove_logrotate
 
 #=================================================
 # CLOSE A PORT
