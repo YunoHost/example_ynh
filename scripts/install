@@ -139,8 +139,12 @@ ynh_script_progression --message="Setting up source files..." --time --weight=1
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 #sw. ynh_setup_source --dest_dir="$final_path"
-sudo cp -a /home/admin/source/. "$final_path"
+
+# sudo mkdir -p "$final_path"
+cp -a /home/admin/source/. "$final_path"
 #sw. sudo cp -a ../sources/. $final_path
+
+sleep 120s
 
 #=================================================
 # NGINX CONFIGURATION
@@ -217,8 +221,8 @@ ynh_add_systemd_config
 chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
-ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
-ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+#sw. ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+#sw. ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
 # Reload SSOwat config
 yunohost app ssowatconf
 
@@ -227,7 +231,7 @@ ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
 ynh_script_progression --message="Finalizing installation..." --time --weight=1
-#sw. ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
+ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
 if [ $is_public -eq 0 ]
