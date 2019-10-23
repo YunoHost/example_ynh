@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us debug
+about: Create a report to help us debug, it would be nice to fill the template as much as you can to help us, help you and help us all.
 
 ---
 
