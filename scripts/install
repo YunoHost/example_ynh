@@ -283,20 +283,26 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 ynh_use_logrotate
 
 #=================================================
-# ADVERTISE SERVICE IN ADMIN PANEL
+# INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 
-### `yunohost service add` is a CLI yunohost command to add a service in the admin panel.
-### You'll find the service in the 'services' section of YunoHost admin panel.
-### This CLI command would be useless if the app does not have any services (systemd or sysvinit)
+### `yunohost service add` integrates a service in YunoHost. It then gets 
+### displayed in the admin interface and through the others `yunohost service` commands.
+### (N.B. : this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
 ###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
 ###		- As well as the section "ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
 
-yunohost service add $app --log "/var/log/$app/$app.log"
-# if using yunohost version 3.2 or more in the 'manifest.json', a description can be added
-#yunohost service add $app --description "$app daemon for XXX" --log "/var/log/$app/$app.log"
+yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
+
+### With YunoHost 3.8 you will then be able to: 
+### - specify a list of ports that needs to be publicly exposed (c.f. --needs_exposed_ports) 
+###   which will then be checked by YunoHost's diagnosis system
+### - specify a custom command to check the status of the service (c.f. --test_status)
+###   though it's only needed for weird cases where 'systemctl status' doesn't do a good job
+### - specify a custom command to check / validate the configuration of the service (c.f. --test_conf)
+###   for example, the command to check the configuration of nginx is "nginx -t"
 
 #=================================================
 # START SYSTEMD SERVICE
