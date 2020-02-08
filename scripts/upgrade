@@ -117,14 +117,6 @@ then
 fi
 
 #=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
-
-# Create a dedicated nginx config
-ynh_add_nginx_config php_version
-
-#=================================================
 # UPGRADE DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
@@ -146,6 +138,14 @@ ynh_script_progression --message="Upgrading php-fpm configuration..." --time --w
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config php_version
 
 #=================================================
 # SPECIFIC UPGRADE
