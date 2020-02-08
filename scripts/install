@@ -72,7 +72,6 @@ ynh_script_progression --message="Storing installation settings..." --time --wei
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=language --value=$language
 
 #=================================================
@@ -233,10 +232,7 @@ ynh_script_progression --message="Finalizing installation..." --time --weight=1
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
-if [ $is_public -eq 0 ]
-then
-	ynh_app_setting_delete --app=$app --key=skipped_uris
-fi
+ynh_app_setting_delete --app=$app --key=skipped_uris
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -336,14 +332,18 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failreg
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
+ynh_script_progression --message="Configuring permissions..." --time --weight=1
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
 then
-	# unprotected_uris allows SSO credentials to be passed anyway.
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission "main" --add "visitors"
 fi
+
+# Only the admin can access the admin panel of the app (if the app has an admin panel)
+ynh_permission_create --permission "admin" --url "/admin" --allowed $admin
 
 #=================================================
 # RELOAD NGINX

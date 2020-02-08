@@ -19,7 +19,6 @@ app=$YNH_APP_INSTANCE_NAME
 domain=$(ynh_app_setting_get --app=$app --key=domain)
 path_url=$(ynh_app_setting_get --app=$app --key=path)
 admin=$(ynh_app_setting_get --app=$app --key=admin)
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -41,15 +40,6 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
 
-# Fix is_public as a boolean value
-if [ "$is_public" = "Yes" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=1
-	is_public=1
-elif [ "$is_public" = "No" ]; then
-	ynh_app_setting_set --app=$app --key=is_public --value=0
-	is_public=0
-fi
-
 # If db_name doesn't exist, create it
 if [ -z "$db_name" ]; then
 	db_name=$(ynh_sanitize_dbid --db_name=$app)
@@ -60,6 +50,35 @@ fi
 if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+# If nobody installed your app before 3.7, then you may
+# safely remove these lines
+
+# Cleaning legacy permissions
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+skipped_uris=$(ynh_app_setting_get --app=$app --key=skipped_uris)
+unprotected_uris=$(ynh_app_setting_get --app=$app --key=unprotected_uris)
+protected_uris=$(ynh_app_setting_get --app=$app --key=protected_uris)
+
+# Remove is_public if exists
+if [ ! -z "$is_public" ]; then
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+# Remove skipped_uris if exists
+if [ ! -z "$skipped_uris" ]; then
+	ynh_app_setting_delete --app=$app --key=skipped_uris
+fi
+
+# Remove unprotected_uris if exists
+if [ ! -z "$unprotected_uris" ]; then
+	ynh_app_setting_delete --app=$app --key=unprotected_uris
+fi
+
+# Remove protected_uris if exists
+if [ ! -z "$protected_uris" ]; then
+	ynh_app_setting_delete --app=$app --key=protected_uris
 fi
 
 #=================================================
@@ -192,13 +211,11 @@ chown -R root: $final_path
 #=================================================
 # SETUP SSOWAT
 #=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading permissions configuration..." --time --weight=1
 
-# Make app public if necessary
-if [ $is_public -eq 1 ]
-then
-	# unprotected_uris allows SSO credentials to be passed anyway
-	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
+# Create the admin permission if needed
+if ! ynh_permission_exists --permission "admin"; then
+	ynh_permission_create --permission "admin" --url "/admin" --allowed $admin
 fi
 
 #=================================================
