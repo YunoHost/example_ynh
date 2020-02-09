@@ -75,8 +75,6 @@ ynh_app_setting_set --app=$app --key=admin --value=$admin
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 ynh_app_setting_set --app=$app --key=language --value=$language
 
-ynh_app_setting_set --app=$app --key=phpversion --value=$YNH_DEFAULT_PHP_VERSION
-
 #=================================================
 # STANDARD MODIFICATIONS
 #=================================================
@@ -155,7 +153,7 @@ ynh_script_progression --message="Configuring nginx web server..." --time --weig
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
 # Create a dedicated nginx config
-ynh_add_nginx_config php_version
+ynh_add_nginx_config
 
 #=================================================
 # CREATE DEDICATED USER

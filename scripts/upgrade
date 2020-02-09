@@ -23,7 +23,6 @@ is_public=$(ynh_app_setting_get --app=$app --key=is_public)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 language=$(ynh_app_setting_get --app=$app --key=language)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
 
 #=================================================
 # CHECK VERSION
@@ -61,12 +60,6 @@ fi
 if [ -z "$final_path" ]; then
 	final_path=/var/www/$app
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-fi
-
-# If phpversion doesn't exist, create it
-if [ -z "$phpversion" ]; then
-	phpversion=$YNH_DEFAULT_PHP_VERSION
-	ynh_app_setting_set --app=$app --key=phpversion --value=$phpversion
 fi
 
 #=================================================
@@ -124,6 +117,14 @@ ynh_script_progression --message="Upgrading dependencies..." --time --weight=1
 ynh_install_app_dependencies $pkg_dependencies
 
 #=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+
+# Create a dedicated nginx config
+ynh_add_nginx_config
+
+#=================================================
 # CREATE DEDICATED USER
 #=================================================
 ynh_script_progression --message="Making sure dedicated system user exists..." --time --weight=1
@@ -138,14 +139,6 @@ ynh_script_progression --message="Upgrading php-fpm configuration..." --time --w
 
 # Create a dedicated php-fpm config
 ynh_add_fpm_config
-
-#=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
-
-# Create a dedicated nginx config
-ynh_add_nginx_config php_version
 
 #=================================================
 # SPECIFIC UPGRADE
