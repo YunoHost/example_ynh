@@ -67,7 +67,7 @@
                 "type": "string",
                 "ask": {
                     "en": "Choose the application language",
-                    "fr": "Choisissez la langue de l'application"
+                    "fr": "Choisissez la langue de l’application"
                 },
                 "choices": ["fr", "en"],
                 "default": "fr"
@@ -81,7 +81,7 @@
                 },
                 "help": {
                     "en": "Use the help field to add an information for the admin about this question.",
-                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+                    "fr": "Utilisez le champ aide pour ajouter une information à l’intention de l’administrateur à propos de cette question."
                 },
                 "example": "Choose a password"
             }
