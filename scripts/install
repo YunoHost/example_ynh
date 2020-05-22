@@ -297,7 +297,7 @@ ynh_use_logrotate
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
 ###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
-###		- As well as the section "ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
+###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 
 yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
 
