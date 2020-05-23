@@ -301,13 +301,22 @@ ynh_use_logrotate
 
 yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
 
-### With YunoHost 3.8 you will then be able to: 
-### - specify a list of ports that needs to be publicly exposed (c.f. --needs_exposed_ports) 
-###   which will then be checked by YunoHost's diagnosis system
-### - specify a custom command to check the status of the service (c.f. --test_status)
-###   though it's only needed for weird cases where 'systemctl status' doesn't do a good job
-### - specify a custom command to check / validate the configuration of the service (c.f. --test_conf)
-###   for example, the command to check the configuration of nginx is "nginx -t"
+### Additional options starting with 3.8:
+###
+### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
+###                               which will then be checked by YunoHost's diagnosis system
+###                               (N.B. DO NOT USE THIS is the port is only internal !!!)
+###
+### --test_status "some command"  a custom command to check the status of the service
+###                               (only relevant if 'systemctl status' doesn't do a good job)
+###
+### --test_conf "some command"    some command similar to "nginx -t" that validates the conf of the service
+###
+### Re-calling 'yunohost service add' during the upgrade script is the right way
+### to proceed if you later realize that you need to enable some flags that
+### weren't enabled on old installs (be careful it'll override the existing
+### service though so you should re-provide all relevant flags when doing so)
+###
 
 #=================================================
 # START SYSTEMD SERVICE
