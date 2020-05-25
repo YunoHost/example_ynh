@@ -36,7 +36,7 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 # DECLARE DATA AND CONF FILES TO BACKUP
 #=================================================
 
-ynh_print_info --message="Declaring files to be backuped..."
+ynh_print_info --message="Declaring files to be backed up..."
 
 # N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
 # to be backuped and not an actual copy of any file. The actual backup that
