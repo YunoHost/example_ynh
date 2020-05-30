@@ -35,7 +35,6 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 #=================================================
 # DECLARE DATA AND CONF FILES TO BACKUP
 #=================================================
-
 ynh_print_info --message="Declaring files to be backed up..."
 
 # N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
@@ -91,8 +90,7 @@ ynh_backup --src_path="/etc/cron.d/$app"
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
-
-ynh_print_info --message="Backing up the database..."
+ynh_print_info --message="Backing up the MySQL database..."
 
 # (However, things like mysql dumps *do* take some time to run, though the
 # copy of the generated dump to the archive still happens later)
