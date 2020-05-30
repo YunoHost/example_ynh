@@ -38,10 +38,10 @@ db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 
 ynh_print_info --message="Declaring files to be backed up..."
 
-# N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
-# to be backuped and not an actual copy of any file. The actual backup that
-# creates and fill the archive with the files happens in the core after this
-# script is called. Hence ynh_backups calls takes basically 0 seconds to run.
+### N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
+### to be backuped and not an actual copy of any file. The actual backup that
+### creates and fill the archive with the files happens in the core after this
+### script is called. Hence ynh_backups calls takes basically 0 seconds to run.
 
 #=================================================
 # BACKUP THE APP MAIN DIR
@@ -94,8 +94,8 @@ ynh_backup --src_path="/etc/cron.d/$app"
 
 ynh_print_info --message="Backing up the database..."
 
-# (However, things like mysql dumps *do* take some time to run, though the
-# copy of the generated dump to the archive still happens later)
+### (However, things like mysql dumps *do* take some time to run, though the
+### copy of the generated dump to the archive still happens later)
 
 ynh_mysql_dump_db --database="$db_name" > db.sql
 
