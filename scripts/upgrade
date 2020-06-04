@@ -147,14 +147,6 @@ ynh_add_fpm_config
 #=================================================
 
 #=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..." --time --weight=1
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
 # MODIFY A CONFIG FILE
 #=================================================
 
@@ -168,15 +160,6 @@ ynh_replace_string --match_string="match_string" --replace_string="replace_strin
 ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
 
 #=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
-#=================================================
-
-# Set permissions on app files
-chown -R root: $final_path
-
-#=================================================
 # SETUP LOGROTATE
 #=================================================
 ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
@@ -185,12 +168,15 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --time -
 ynh_use_logrotate --non-append
 
 #=================================================
-# START SYSTEMD SERVICE
+# SETUP SYSTEMD
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+ynh_script_progression --message="Upgrading systemd configuration..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+# Create a dedicated systemd config
+ynh_add_systemd_config
 
+#=================================================
+# GENERIC FINALIZATION
 #=================================================
 # UPGRADE FAIL2BAN
 #=================================================
@@ -198,6 +184,13 @@ ynh_script_progression --message="Reconfiguring fail2ban..." --time --weight=1
 
 # Create a dedicated fail2ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions on app files
+chown -R root: $final_path
 
 #=================================================
 # SETUP SSOWAT
@@ -210,6 +203,13 @@ then
 	# unprotected_uris allows SSO credentials to be passed anyway
 	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
+
+#=================================================
+# START SYSTEMD SERVICE
+#=================================================
+ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+
+ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX
