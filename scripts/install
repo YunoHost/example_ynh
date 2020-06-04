@@ -290,13 +290,14 @@ ynh_use_logrotate
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets 
 ### displayed in the admin interface and through the others `yunohost service` commands.
 ### (N.B. : this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
+###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 
 yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
