@@ -299,6 +299,7 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- You can remove these files in conf/.
 ###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
+###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
 yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
 
