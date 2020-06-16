@@ -112,7 +112,7 @@ ynh_remove_fail2ban_config
 #=================================================
 # SPECIFIC REMOVE
 #=================================================
-# REMOVE THE CRON FILE
+# REMOVE VARIOUS FILES
 #=================================================
 
 # Remove a cron file
