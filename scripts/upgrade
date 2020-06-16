@@ -185,6 +185,13 @@ ynh_script_progression --message="Upgrading logrotate configuration..." --time -
 ynh_use_logrotate --non-append
 
 #=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+
+yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
+
+#=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
