@@ -71,8 +71,7 @@ https://yunohost.org/packaging_apps
 
 ---
 
-Developer info
-----------------
+## Developer info
 
 **Only if you want to use a testing branch for coding, instead of merging directly into master.**
 Please send your pull request to the [testing branch](https://github.com/YunoHost-Apps/REPLACEBYYOURAPP_ynh/tree/testing).
