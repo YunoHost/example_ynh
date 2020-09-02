@@ -7,7 +7,7 @@ about: Create a report to help us debug, it would be nice to fill the template a
 **How to post a meaningful bug report**
 1. *Read this whole template first.*
 2. *Determine if you are on the right place:*
-   - *If you were performing an action on the app from the webadmin or the CLI (install, update, backup, restore, change url...), you are on the right place!*
+   - *If you were performing an action on the app from the webadmin or the CLI (install, update, backup, restore, change_url...), you are on the right place!*
    - *Otherwise, the issue may be due to REPLACEBYYOURAPP itself. Refer to its documentation or repository for help.*
    - *If you have a doubt, post here, we will figure it out together.*
 3. *Delete the italic comments as you write over them below, and remove this guide.*
@@ -20,7 +20,7 @@ about: Create a report to help us debug, it would be nice to fill the template a
 - Hardware: *VPS bought online / Old laptop or computer / Raspberry Pi at home / Internet Cube with VPN / Other ARM board / ...*
 - YunoHost version: x.x.x
 - I have access to my server: *Through SSH | through the webadmin | direct access via keyboard / screen | ...*
-- Are you in a special context or did you perform some particular tweaking on your YunoHost instance ?: *no / yes*
+- Are you in a special context or did you perform some particular tweaking on your YunoHost instance?: *no / yes*
   - If yes, please explain:
 - Using, or trying to install package version/branch:
 - If upgrading, current package version: *can be found in the admin, or with `yunohost app info $app_id`*
@@ -34,8 +34,8 @@ about: Create a report to help us debug, it would be nice to fill the template a
 - *If you used the webadmin, please perform the equivalent command from the CLI first.*
 - *If the error occurs in your browser, explain what you did:*
    1. *Go to '...'*
-   2. *Click on '....'*
-   3. *Scroll down to '....'*
+   2. *Click on '...'*
+   3. *Scroll down to '...'*
    4. *See error*
 
 **Expected behavior**
