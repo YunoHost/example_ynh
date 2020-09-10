@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us debug, it would be nice to fill the template as much as you can to help us, help you and help us all.
+about: When creating a bug report, please use the following template to provide all the relevant information and help debugging efficiently.
 
 ---
 
@@ -13,10 +13,12 @@ about: Create a report to help us debug, it would be nice to fill the template a
 3. *Delete the italic comments as you write over them below, and remove this guide.*
 --- 
 
-**Describe the bug**
+### Describe the bug
+
 *A clear and concise description of what the bug is.*
 
-**Versions**
+### Context
+
 - Hardware: *VPS bought online / Old laptop or computer / Raspberry Pi at home / Internet Cube with VPN / Other ARM board / ...*
 - YunoHost version: x.x.x
 - I have access to my server: *Through SSH | through the webadmin | direct access via keyboard / screen | ...*
@@ -25,8 +27,8 @@ about: Create a report to help us debug, it would be nice to fill the template a
 - Using, or trying to install package version/branch:
 - If upgrading, current package version: *can be found in the admin, or with `yunohost app info $app_id`*
 
-**To Reproduce**
-*Steps to reproduce the behavior.*
+### Steps to reproduce
+
 - *If you performed a command from the CLI, the command itself is enough. For example:*
     ```sh
     sudo yunohost app install REPLACEBYYOURAPP
@@ -38,9 +40,16 @@ about: Create a report to help us debug, it would be nice to fill the template a
    3. *Scroll down to '...'*
    4. *See error*
 
-**Expected behavior**
+### Expected behavior
+
 *A clear and concise description of what you expected to happen. You can remove this section if the command above is enough to understand your intent.*
 
-**Logs**
-*After a failed command, YunoHost makes the log available to you, but also to others, thanks to `yunohost log display [log name] --share`. The actual command, with the correct log name, is displayed at the end of the failed attempt in the CLI. Execute it and copy here the share link it outputs.*
+### Logs
+
+*When an operation fails, YunoHost provides a simple way to share the logs.*
+- *In the webadmin, the error message contains a link to the relevant log page. On that page, you will be able to 'Share with Yunopaste'. If you missed it, the logs of previous operations are also available under Tools > Logs.*
+- *In command line, the command to share the logs is displayed at the end of the operation and looks like `yunohost log display [log name] --share`. If you missed it, you can find the log ID of a previous operation using `yunohost log list`.*
+
+*After sharing the log, please copypaste directly the link provided by YunoHost (to help readability, no need to copypaste the entire content of the log here, just the link is enough...)*
+
 *If applicable and useful, add screenshots to help explain your problem.*
