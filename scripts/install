@@ -338,9 +338,9 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring Fail2ban..." --time --weight=1
+ynh_script_progression --message="Configuring Fail2Ban..." --time --weight=1
 
-# Create a dedicated Fail2ban config
+# Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
