@@ -1,5 +1,4 @@
 version = "0.1"
-name = "APP configuration panel"
 
 [main]
 name = "Main configuration"
