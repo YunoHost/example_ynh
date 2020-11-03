@@ -1,0 +1,66 @@
+version = "0.1"
+name = "APP configuration panel"
+
+[main]
+name = "Main configuration"
+
+    [main.config_file]
+    name = ""
+        
+        [main.config_file.warning]
+        ask = "Here you can display a warning to user."
+        type = "warning"
+        
+        [main.config_file.outgoing_email]
+        ask = "Outgoing email From"
+        type = "string"
+        help = "Email from which comes email from this app"
+        
+        [main.config_file.expiration]
+        ask = "Default expiration"
+        type = "date"
+        
+        [main.config_file.logo]
+        ask = "Outgoing email From"
+        type = "file"
+        default = ""
+        optional = true
+        help = "You should upload a CA certificate to start"
+        source="__FINALPATH__/img/logo.png"
+
+    [main.auth]
+    name = "Authentication"
+        
+        [main.auth.user]
+        ask = "Username"
+        type = "string"
+        default = ""
+        optional = true
+        pattern = "^[^/ ]+$"
+        
+        [main.auth.passphrase]
+        ask = "Password"
+        type = "password"
+        default = ""
+        optional = true
+
+        
+[advanced]
+name = "Advanced configuration"
+
+    [manual.dns]
+    name = "DNS"
+
+        [manual.dns.dns0]
+        ask = "First resolver"
+        type = "string"
+        default = ""
+        optional = true
+        pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
+
+        [manual.dns.dns1]
+        ask = "Second resolver"
+        type = "string"
+        default = ""
+        optional = true
+        pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
