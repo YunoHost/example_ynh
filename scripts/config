@@ -1,20 +1,16 @@
 #!/bin/bash
 
-#=================================================
-# GENERIC STARTING
-#=================================================
-# IMPORT GENERIC HELPERS
-#=================================================
+# In most simple cases, you don't need a config script (or just to reload services). 
 
-source _common.sh
-source /usr/share/yunohost/helpers
+# With a simple config_panel.toml, you can write in the app settings, in the 
+# upstream config file or replace complete files (logo ...).
 
-#=================================================
-# RETRIEVE ARGUMENTS
-#=================================================
+# The config scripts allows you to go further, to handle specific cases 
+# (validation of several interdependent fields, specific getter/setter for a value,
+# pre-loading of config type .cube ).
 
-app=$YNH_APP_INSTANCE_NAME
-final_path=$(ynh_app_setting_get $app final_path)
+
+
 
 #=================================================
 # SPECIFIC GETTERS FOR TOML SHORT KEY
@@ -71,7 +67,7 @@ ynh_panel_apply() {
     
     _ynh_panel_apply
 
-    # Start vpn client
+    # Reload app service
     systemctl reload APP
 
 }
