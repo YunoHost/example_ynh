@@ -11,14 +11,18 @@ name = "Main configuration"
         ask = "Here you can display a warning to user."
         type = "warning"
         
-        [main.config_file.outgoing_email]
+        [main.config_file.from_email]
         ask = "Outgoing email From"
         type = "string"
         help = "Email from which comes email from this app"
+        pattern = "^[^@]+@[^@]+$"
+        source = "__FINALPATH__/conf/config.php"
         
         [main.config_file.expiration]
         ask = "Default expiration"
         type = "date"
+        pattern = "^\d\d\d\d-\d\d-\d\d$"
+        source = "__FINALPATH__/conf/config.php"
         
         [main.config_file.logo]
         ask = "Outgoing email From"
@@ -48,7 +52,7 @@ name = "Main configuration"
 [advanced]
 name = "Advanced configuration"
 
-    [manual.dns]
+    [advanced.dns]
     name = "DNS"
 
         [manual.dns.dns0]
