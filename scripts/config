@@ -1,0 +1,78 @@
+#!/bin/bash
+
+#=================================================
+# GENERIC STARTING
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source _common.sh
+source /usr/share/yunohost/helpers
+
+#=================================================
+# RETRIEVE ARGUMENTS
+#=================================================
+
+app=$YNH_APP_INSTANCE_NAME
+final_path=$(ynh_app_setting_get $app final_path)
+
+#=================================================
+# SPECIFIC GETTERS FOR TOML SHORT KEY
+#=================================================
+get__user() {
+    if [ -s $final_path/keys/credentials ]
+    then
+        sed -n 1p $final_path/keys/credentials 
+    fi
+}
+
+get__passphrase() {
+    if [ -s $final_path/keys/credentials ]
+    then
+        sed -n 2p $final_path/keys/credentials 
+    fi
+}
+
+
+#=================================================
+# SPECIFIC VALIDATORS FOR TOML SHORT KEYS
+#=================================================
+validate__user() {
+    [[ -n "$passphrase" && -z "$user" ]] &&
+        echo 'A Username is needed when you suggest a Password'
+}
+
+validate__passphrase() {
+    [[ -n "$user" && -z "$passphrase" ]] &&
+        echo 'A Password is needed when you suggest a Username'
+}
+
+#=================================================
+# SPECIFIC SETTERS FOR TOML SHORT KEYS
+#=================================================
+set__user() {
+    if [ -z "$user" ]
+    then
+        echo "$user\n$passphrase" > $final_path/keys/credentials 
+    else
+        echo "" > $final_path/keys/credentials
+    fi
+}
+
+set__passphrase() {
+    :
+}
+
+
+#=================================================
+# OVERWRITING APPLY STEP 
+#=================================================
+ynh_panel_apply() {
+    
+    _ynh_panel_apply
+
+    # Start vpn client
+    systemctl reload APP
+
+}
+
