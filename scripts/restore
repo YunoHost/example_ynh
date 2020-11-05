@@ -1,52 +1,82 @@
 #!/bin/bash
 
-# Note: each files and directories you've saved using the ynh_backup helper
-# will be located in the current directory, regarding the last argument.
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Exit on command errors and treat unset variables as an error
-set -eu
-
-# See comments in install script
-app=$YNH_APP_INSTANCE_NAME
-
-# Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Retrieve old app settings
-domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
 
-# Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
-# Restore sources & data
-src_path="/var/www/${app}"
-sudo cp -a ./sources "$src_path"
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading settings..." --weight=1
 
-# Restore permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: "$src_path"
+app=$YNH_APP_INSTANCE_NAME
 
-### MySQL (remove if not used) ###
-# If a MySQL database is used:
-# # Create and restore the database
-# dbname=$app
-# dbuser=$app
-# dbpass=$(ynh_app_setting_get "$app" mysqlpwd)
-# ynh_mysql_create_db "$dbname" "$dbuser" "$dbpass"
-# ynh_mysql_connect_as "$dbuser" "$dbpass" "$dbname" < ./dump.sql
-### MySQL end ###
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
-# Restore NGINX configuration
-sudo cp -a ./nginx.conf "/etc/nginx/conf.d/${domain}.d/${app}.conf"
+#=================================================
+# CHECK IF THE APP CAN BE RESTORED
+#=================================================
+ynh_script_progression --message="Validating restoration parameters..." --weight=1
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Copy PHP-FPM pool configuration and reload the service
-# sudo cp -a ./php-fpm.conf "/etc/php5/fpm/pool.d/${app}.conf"
-# sudo service php5-fpm reload
-### PHP end ###
+ynh_webpath_available --domain=$domain --path_url=$path_url \
+	|| ynh_die --message="Path not available: ${domain}${path_url}"
+test ! -d $final_path \
+	|| ynh_die --message="There is already a directory: $final_path "
 
-# Restart webserver
-sudo service nginx reload
+#=================================================
+# STANDARD RESTORATION STEPS
+#=================================================
+# RESTORE THE NGINX CONFIGURATION
+#=================================================
+
+ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
+# RESTORE THE APP MAIN DIR
+#=================================================
+ynh_script_progression --message="Restoring Laverna main directory..." --weight=2
+
+ynh_restore_file --origin_path="$final_path"
+
+#=================================================
+# RECREATE THE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Recreating the dedicated system user..." --weight=1
+
+# Create the dedicated user (if not existing)
+ynh_system_user_create --username=$app
+
+#=================================================
+# RESTORE USER RIGHTS
+#=================================================
+
+# Restore permissions on app files
+chown -R root: $final_path
+
+#=================================================
+# GENERIC FINALIZATION
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=3
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Restoration completed for Laverna" --last

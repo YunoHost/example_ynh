@@ -1,60 +1,95 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# The id of the app as stated in the manifest is available as $YNH_APP_ID
-# The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
-# The app instance name is available as $YNH_APP_INSTANCE_NAME
-#    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
-#    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-#    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
-# The app instance name is probably what you are interested the most, since this is
-# guaranteed to be unique. This is a good unique identifier to define installation path,
-# db names, ...
-app=$YNH_APP_INSTANCE_NAME
-
-# Retrieve arguments
-domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
-is_public=$YNH_APP_ARG_IS_PUBLIC
-
-# Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Save app settings
-ynh_app_setting_set "$app" admin "$admin"
-ynh_app_setting_set "$app" is_public "$is_public"
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
 
-# Check domain/path availability
-sudo yunohost app checkurl "${domain}${path}" -a "$app" \
-    || ynh_die "Path not available: ${domain}${path}"
+ynh_abort_if_errors
 
-# Copy source files
-src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo wget -P "$src_path" https://github.com/Laverna/static-laverna/archive/gh-pages.zip -O "$src_path"/laverna.zip
-sudo unzip "$src_path"/laverna.zip -d "$src_path"
-sudo cp -R "$src_path"/static-laverna-gh-pages/* "$src_path"
-sudo rm "$src_path"/laverna.zip
-sudo rm -rf "$src_path"/static-laverna-gh-pages
+#=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+domain=$YNH_APP_ARG_DOMAIN
+path_url=$YNH_APP_ARG_PATH
+is_public=$YNH_APP_ARG_IS_PUBLIC
+
+app=$YNH_APP_INSTANCE_NAME
+
+#=================================================
+# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+#=================================================
+ynh_script_progression --message="Validating installation parameters..." --weight=1
+
+final_path=/var/www/$app
+test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
+
+# Register (book) web path
+ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+ynh_script_progression --message="Storing installation settings..." --weight=1
+
+ynh_app_setting_set --app=$app --key=domain --value=$domain
+ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --weight=3
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Configuring NGINX web server..." --weight=2
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
 
 # Set permissions to app files
-sudo chown -R root: $src_path
+chown -R root: $final_path
 
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
-sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
-
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # unprotected_uris allows SSO credentials to be passed anyway.
-  ynh_app_setting_set "$app" unprotected_uris "/"
+# Make app public if necessary or protect it
+if [ $is_public -eq 1 ]
+then
+	# Everyone can access the app.
+	# The "main" permission is automatically created before the install script.
+	ynh_permission_update --permission "main" --add "visitors"
 fi
 
-# Reload services
-sudo service nginx reload
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=2
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Installation of Laverna completed" --last

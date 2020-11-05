@@ -1,59 +1,107 @@
 #!/bin/bash
 
-# Exit on command errors and treat unset variables as an error
-set -eu
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# See comments in install script
-app=$YNH_APP_INSTANCE_NAME
-
-# Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Retrieve app settings
-domain=$(ynh_app_setting_get "$app" domain)
-path=$(ynh_app_setting_get "$app" path)
-admin=$(ynh_app_setting_get "$app" admin)
-is_public=$(ynh_app_setting_get "$app" is_public)
-language=$(ynh_app_setting_get "$app" language)
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
-# Remove trailing "/" for next commands
-path=${path%/}
+app=$YNH_APP_INSTANCE_NAME
 
-# Copy source files
-src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+path_url=$(ynh_app_setting_get --app=$app --key=path)
+is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
-# Set permissions to app files
-# you may need to make some file and/or directory writeable by www-data (nginx user)
-sudo chown -R root: $src_path
+#=================================================
+# CHECK VERSION
+#=================================================
 
-# Modify Nginx configuration file and copy it to Nginx conf directory
-nginx_conf=../conf/nginx.conf
-sed -i "s@YNH_WWW_PATH@$path@g" $nginx_conf
-sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
-# If a dedicated php-fpm process is used:
-#
-# sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+upgrade_type=$(ynh_check_app_version_changed)
 
-### PHP (remove if not used) ###
-# If a dedicated php-fpm process is used:
-# # Modify PHP-FPM pool configuration and copy it to the pool directory
-# sed -i "s@YNH_WWW_APP@$app@g" ../conf/php-fpm.conf
-# sed -i "s@YNH_WWW_ALIAS@$src_path/@g" ../conf/php-fpm.conf
-# finalphpconf=/etc/php5/fpm/pool.d/$app.conf
-# sudo cp ../conf/php-fpm.conf $finalphpconf
-# sudo chown root: $finalphpconf
-# sudo chmod 644 $finalphpconf
-# sudo service php5-fpm restart
-### PHP end ###
+#=================================================
+# ENSURE DOWNWARD COMPATIBILITY
+#=================================================
+ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # See install script
-  ynh_app_setting_set "$app" unprotected_uris "/"
+# Fix is_public as a boolean value
+if [ "$is_public" = "Yes" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=1
+	is_public=1
+elif [ "$is_public" = "No" ]; then
+	ynh_app_setting_set --app=$app --key=is_public --value=0
+	is_public=0
 fi
 
-# Reload nginx service
-sudo service nginx reload
+# If final_path doesn't exist, create it
+if [ -z "$final_path" ]; then
+	final_path=/var/www/$app
+	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+fi
+
+#=================================================
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
+#=================================================
+ynh_script_progression --message="Backing up Laverna before upgrading..." --weight=3
+
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# CHECK THE PATH
+#=================================================
+
+path_url=$(ynh_normalize_url_path --path_url=$path_url)
+
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=4
+
+	# Download, check integrity, uncompress and patch the source from app.src
+	ynh_setup_source --dest_dir="$final_path"
+fi
+
+#=================================================
+# NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=2
+
+# Create a dedicated NGINX config
+ynh_add_nginx_config
+
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
+
+# Set permissions on app files
+chown -R root: $final_path
+
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade of Laverna completed" --last

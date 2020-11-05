@@ -1,0 +1,33 @@
+# See here for more information
+# https://github.com/YunoHost/package_check#syntax-check_process-file
+
+# Move this file from check_process.default to check_process when you have filled it.
+
+;; Test complet
+	; Manifest
+		domain="domain.tld"	(DOMAIN)
+		path="/path"	(PATH)
+		is_public=1	(PUBLIC|public=1|private=0)
+	; Checks
+		pkg_linter=1
+		setup_sub_dir=1
+		setup_root=1
+		setup_nourl=0
+		setup_private=1
+		setup_public=1
+		upgrade=1
+		backup_restore=1
+		multi_instance=1
+		port_already_use=0
+		change_url=0
+;;; Levels
+	# If the level 5 (Package linter) is forced to 1. Please add justifications here.
+	Level 5=auto
+;;; Options
+Email=
+Notification=none
+;;; Upgrade options
+	; commit=CommitHash
+		name=Name and date of the commit.
+		manifest_arg=domain=DOMAIN&path=PATH&is_public=1&
+

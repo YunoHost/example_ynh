@@ -1,19 +1,43 @@
 #!/bin/bash
 
-# See comments in install script
-app=$YNH_APP_INSTANCE_NAME
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Source YunoHost helpers
 source /usr/share/yunohost/helpers
 
-# Retrieve app settings
-domain=$(ynh_app_setting_get "$app" domain)
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
-# Remove sources
-sudo rm -rf /var/www/$app
+app=$YNH_APP_INSTANCE_NAME
 
-# Remove nginx configuration file
-sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
-# Reload nginx service
-sudo service nginx reload
+#=================================================
+# STANDARD REMOVE
+#=================================================
+# REMOVE APP MAIN DIR
+#=================================================
+ynh_script_progression --message="Removing Laverna main directory..." --weight=3
+
+# Remove the app directory securely
+ynh_secure_remove --file="$final_path"
+
+#=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
+
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Removal of Laverna completed" --last
