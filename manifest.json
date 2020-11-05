@@ -8,7 +8,7 @@
     },
         "version": "0.7.51~ynh1",
     "url": "https://laverna.cc/index.html",
-    "license": "free",
+    "license": "MPL-2.0",
     "maintainer": {
         "name": "Alex",
         "email": "apulido@free.fr"

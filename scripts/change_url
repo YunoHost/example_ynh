@@ -1,93 +1,102 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
+# GENERIC STARTING
 #=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
 source /usr/share/yunohost/helpers
 
-#=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit if an error occurs during the execution of the script
+# Stop script if errors
 ynh_abort_if_errors
 
 #=================================================
-# RETRIEVE ARGUMENTS FROM THE MANIFEST
+# RETRIEVE ARGUMENTS
 #=================================================
-# Retrieve arguments
 
-domain=$YNH_APP_ARG_DOMAIN
-path_url=$YNH_APP_ARG_PATH
-is_public=$YNH_APP_ARG_IS_PUBLIC
+old_domain=$YNH_APP_OLD_DOMAIN
+old_path=$YNH_APP_OLD_PATH
+
+new_domain=$YNH_APP_NEW_DOMAIN
+new_path=$YNH_APP_NEW_PATH
 
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
-# CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
+# LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..." --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
-# Copy files to the right place
-final_path=/var/www/$app
-test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
-
-# Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+# Needed for helper "ynh_add_nginx_config"
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
-# STORE SETTINGS FROM MANIFEST
+# BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --weight=2
+ynh_script_progression --message="Backing up Laverna before changing its URL..." --weight=2
 
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=is_public --value=$is_public
+# Backup the current version of the app
+ynh_backup_before_upgrade
+ynh_clean_setup () {
+	# Remove the new domain config file, the remove script won't do it as it doesn't know yet its location.
+	ynh_secure_remove --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 
-#=================================================
-# STANDARD MODIFICATIONS
-#=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
-#=================================================
-ynh_script_progression --message="Setting up source files..." --weight=1
-
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-
-# Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path"
+	# restore it if the upgrade fails
+	ynh_restore_upgradebackup
+}
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
 
 #=================================================
-# NGINX CONFIGURATION
-#=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --weight=2
-
-# Create a dedicated NGINX config
-ynh_add_nginx_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# SECURE FILES AND DIRECTORIES
+# CHECK WHICH PARTS SHOULD BE CHANGED
 #=================================================
 
-# Set permissions to app files
-chown -R root: $final_path
+change_domain=0
+if [ "$old_domain" != "$new_domain" ]
+then
+	change_domain=1
+fi
+
+change_path=0
+if [ "$old_path" != "$new_path" ]
+then
+	change_path=1
+fi
 
 #=================================================
-# SETUP SSOWAT
+# MODIFY URL IN NGINX CONF
 #=================================================
-ynh_script_progression --message="Configuring SSOwat..." --weight=1
+ynh_script_progression --message="Updating NGINX web server configuration..." --weight=3
 
-# Make app public if necessary or protect it
-[ $is_public -eq 0 ] || ynh_permission_update --permission "main" --add "visitors"
+nginx_conf_path=/etc/nginx/conf.d/$old_domain.d/$app.conf
+
+# Change the path in the NGINX config file
+if [ $change_path -eq 1 ]
+then
+	# Make a backup of the original NGINX config file if modified
+	ynh_backup_if_checksum_is_different --file="$nginx_conf_path"
+	# Set global variables for NGINX helper
+	domain="$old_domain"
+	path_url="$new_path"
+	# Create a dedicated NGINX config
+	ynh_add_nginx_config
+fi
+
+# Change the domain for NGINX
+if [ $change_domain -eq 1 ]
+then
+	# Delete file checksum for the old conf file location
+	ynh_delete_file_checksum --file="$nginx_conf_path"
+	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
+	# Store file checksum for the new config file location
+	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
+fi
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=2
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -95,4 +104,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --last
+ynh_script_progression --message="Change of URL completed for Laverna" --last

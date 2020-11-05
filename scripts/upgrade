@@ -94,14 +94,6 @@ ynh_add_nginx_config
 chown -R root: $final_path
 
 #=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading SSOwat configuration..." --weight=1
-
-# Make app public if necessary or protect it
-[ $is_public -eq 0 ] || ynh_permission_update --permission "main" --add "visitors"
-
-#=================================================
 # RELOAD NGINX
 #=================================================
 ynh_script_progression --message="Reloading NGINX web server..." --weight=1
@@ -112,4 +104,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression --message="Upgrade ofLaverna completed" --last
