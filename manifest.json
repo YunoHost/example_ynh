@@ -1,25 +1,25 @@
 {
-    "name": "YunoHost example app",
-    "id": "ynhexample",
+    "name": "Laverna",
+    "id": "laverna",
     "packaging_format": 1,
     "description": {
-        "en": "Example package for YunoHost application.",
-        "fr": "Exemple de package d’application pour YunoHost."
+        "en": "Taking note application with Markdown editor and encryption support.",
+        "fr": "Application de Prise de note avec éditeur Markdown et chiffrement."
     },
-    "url": "https://example.com",
-    "license": "free",
+        "version": "0.7.51~ynh1",
+    "url": "https://laverna.cc/index.html",
+    "license": "MPL-2.0",
     "maintainer": {
-        "name": "John doe",
-        "email": "john.doe@example.com",
-        "url": "http://example.com"
+        "name": "Alex",
+        "email": "apulido@free.fr"
     },
     "requirements": {
-        "yunohost": ">> 2.3.12.1"
+        "yunohost": ">> 4.0.0"
     },
     "multi_instance": true,
     "services": [
         "nginx",
-        "php5-fpm",
+        "php7.0-fpm",
         "mysql"
     ],
     "arguments": {
@@ -28,24 +28,24 @@
                 "name": "domain",
 		"type": "domain",
                 "ask": {
-                    "en": "Choose a domain name for ynhexample",
-                    "fr": "Choisissez un nom de domaine pour ynhexample"
+                    "en": "Choose a domain name for Laverna",
+                    "fr": "Choisissez un nom de domaine pour Laverna"
                 },
                 "example": "example.com"
             },
             {
-                "name": "path",
-		"type": "path",
+            "name": "path",
+            "type": "path",
                 "ask": {
-                    "en": "Choose a path for ynhexample",
-                    "fr": "Choisissez un chemin pour ynhexample"
+                    "en": "Choose a path for Laverna",
+                    "fr": "Choisissez un chemin pour Laverna"
                 },
-                "example": "/example",
-                "default": "/example"
+                "example": "/laverna",
+                "default": "/laverna"
             },
             {
-                "name": "admin",
-		"type": "user",
+            "name": "admin",
+            "type": "user",
                 "ask": {
                     "en": "Choose an admin user",
                     "fr": "Choisissez l’administrateur"
@@ -53,22 +53,13 @@
                 "example": "johndoe"
             },
             {
-                "name": "is_public",
-                "type": "boolean",
+            "name": "is_public",
+            "type": "boolean",
                 "ask": {
                     "en": "Is it a public application?",
                     "fr": "Est-ce une application publique ?"
                 },
                 "default": true
-            },
-            {
-                "name": "language",
-                "ask": {
-                    "en": "Choose the application language",
-                    "fr": "Choisissez la langue de l'application"
-                },
-                "choices": ["fr", "en"],
-                "default": "fr"
             }
         ]
     }

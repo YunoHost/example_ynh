@@ -1,26 +1,44 @@
 #!/bin/bash
 
-# causes the shell to exit if any subcommand or pipeline returns a non-zero status
-set -e
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
+
+source /usr/share/yunohost/helpers
+
+#=================================================
+# MANAGE SCRIPT FAILURE
+#=================================================
+
+# Exit if an error occurs during the execution of the script
+ynh_abort_if_errors
+
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_print_info --message="Backing up Laverna..."
 
 app=$YNH_APP_INSTANCE_NAME
 
-# The first argument is the backup directory location for the app
-# from where the script is executed and which will be compressed afterward
-backup_dir=$YNH_APP_BACKUP_DIR
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+domain=$(ynh_app_setting_get --app=$app --key=domain)
 
-# Backup sources & data
-sudo cp -a "/var/www/${app}" ./sources
+#=================================================
+# BACKUP THE APP MAIN DIR
+#=================================================
 
-# Backup mysql database if needed
-# db_pwd=$(sudo yunohost app setting $app mysqlpwd)
-# sudo mysqldump -u $app -p$db_pwd $app > ./dump.sql
+ynh_backup --src_path="$final_path"
 
-# Copy NGINX configuration
-domain=$(sudo yunohost app setting "$app" domain)
-sudo cp -a "/etc/nginx/conf.d/${domain}.d/${app}.conf" ./nginx.conf
+#=================================================
+# BACKUP THE NGINX CONFIGURATION
+#=================================================
 
-# If a dedicated php-fpm process is used :
-# Copy dedicated php-fpm process to backup folder
-#
-#sudo cp -a "/etc/php5/fpm/pool.d/${app}.conf" ./php-fpm.conf
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_print_info --message="Backup script completed for Laverna. (YunoHost will then actually copy those files to the archive)."

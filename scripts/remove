@@ -1,28 +1,43 @@
 #!/bin/bash
 
-# The last argument is the app instance name
-app=${!#}
+#=================================================
+# GENERIC START
+#=================================================
+# IMPORT GENERIC HELPERS
+#=================================================
 
-# Retrieve arguments
-domain=$(sudo yunohost app setting $app domain)
-path=$(sudo yunohost app setting $app path)
-admin=$(sudo yunohost app setting $app admin)
-is_public=$(sudo yunohost app setting $app is_public)
+source /usr/share/yunohost/helpers
 
-# Remove sources
-sudo rm -rf /var/www/$app
+#=================================================
+# LOAD SETTINGS
+#=================================================
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
-# Remove configuration files
-sudo rm -f /etc/nginx/conf.d/$domain.d/$app.conf
+app=$YNH_APP_INSTANCE_NAME
 
-# If a database is used, remove it
-# root_pwd=$(sudo cat /etc/yunohost/mysql)
-# mysql -u root -p$root_pwd -e "DROP DATABASE $app ; DROP USER $app@localhost ;"
+domain=$(ynh_app_setting_get --app=$app --key=domain)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
-# If a dedicated php-fpm process is used :
-#
-#sudo rm -f /etc/php5/fpm/pool.d/$app.conf
-#sudo service php5-fpm reload
+#=================================================
+# STANDARD REMOVE
+#=================================================
+# REMOVE APP MAIN DIR
+#=================================================
+ynh_script_progression --message="Removing $app main directory..." --weight=3
 
-# Restart services
-sudo service nginx reload
+# Remove the app directory securely
+ynh_secure_remove --file="$final_path"
+
+#=================================================
+# REMOVE NGINX CONFIGURATION
+#=================================================
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
+
+# Remove the dedicated NGINX config
+ynh_remove_nginx_config
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Removal of Laverna completed" --last
