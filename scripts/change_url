@@ -6,26 +6,22 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # MANAGE SCRIPT FAILURE
 #=================================================
 
-ynh_clean_setup () {
-	true
-}
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
 
 #=================================================
 # RETRIEVE ARGUMENTS FROM THE MANIFEST
 #=================================================
+# Retrieve arguments
 
 domain=$YNH_APP_ARG_DOMAIN
 path_url=$YNH_APP_ARG_PATH
-admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
 app=$YNH_APP_INSTANCE_NAME
@@ -33,8 +29,9 @@ app=$YNH_APP_INSTANCE_NAME
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
+# Copy files to the right place
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
@@ -44,29 +41,34 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --time --weight=1
+ynh_script_progression --message="Storing installation settings..." --weight=2
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=is_public --value=$is_public
 
 #=================================================
+# STANDARD MODIFICATIONS
+#=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Setting up source files..." --time --weight=1
+ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --time --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --weight=2
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
 
+#=================================================
+# GENERIC FINALIZATION
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
@@ -80,17 +82,12 @@ chown -R root: $final_path
 ynh_script_progression --message="Configuring SSOwat..." --weight=1
 
 # Make app public if necessary or protect it
-if [ $is_public -eq 1 ]
-then
-	# Everyone can access the app.
-	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission "main" --add "visitors"
-fi
+[ $is_public -eq 0 ] || ynh_permission_update --permission "main" --add "visitors"
 
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --weight=2
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 

@@ -11,7 +11,7 @@ If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/in
 ## Overview
 Laverna prebuilt package for Yunohost
 
-**Shipped version:** 1.0
+**Shipped version:** 0.7.51
 
 ## Screenshots
 
@@ -19,7 +19,7 @@ Laverna prebuilt package for Yunohost
 
 ## Demo
 
-* [Official demo](Link to a demo site for this app.)
+* [Official demo](https://laverna.cc/app/)
 
 ## Configuration
 
@@ -34,8 +34,8 @@ How to configure this app: From an admin panel, a plain file with SSH, or any ot
 
 #### Multi-user support
 
-Are LDAP and HTTP auth supported?
-Can the app be used by multiple users?
+ * Are LDAP and HTTP auth supported?
+ * Can the app be used by multiple users?
 
 #### Supported architectures
 
@@ -54,7 +54,7 @@ Can the app be used by multiple users?
 
  * Report a bug: https://github.com/YunoHost-Apps/laverna_ynh/issues
  * App website: https://laverna.cc/index.html
- * Upstream app repository: Link to the official repository of the upstream app.
+ * Upstream app repository: https://github.com/Laverna/laverna
  * YunoHost website: https://yunohost.org/
 
 ---

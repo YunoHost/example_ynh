@@ -6,42 +6,24 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-source _common.sh
 source /usr/share/yunohost/helpers
 
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --time --weight=1
+ynh_script_progression --message="Loading installation settings..." --weight=1
 
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$(ynh_app_setting_get --app=$app --key=domain)
-port=$(ynh_app_setting_get --app=$app --key=port)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
 #=================================================
-# REMOVE THE MYSQL DATABASE
-#=================================================
-ynh_script_progression --message="Removing the MySQL database..." --time --weight=1
-
-# Remove a database if it exists, along with the associated user
-ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
-
-#=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --time --weight=1
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
+# STANDARD REMOVE
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Removing app main directory..." --time --weight=1
+ynh_script_progression --message="Removing $app main directory..." --weight=3
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
@@ -49,32 +31,13 @@ ynh_secure_remove --file="$final_path"
 #=================================================
 # REMOVE NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Removing nginx web server configuration..." --time --weight=1
+ynh_script_progression --message="Removing NGINX web server configuration..." --weight=1
 
-# Remove the dedicated nginx config
+# Remove the dedicated NGINX config
 ynh_remove_nginx_config
-
-#=================================================
-# REMOVE PHP-FPM CONFIGURATION
-#=================================================
-ynh_script_progression --message="Removing php-fpm configuration..." --time --weight=1
-
-# Remove the dedicated php-fpm config
-ynh_remove_fpm_config
-
-#=================================================
-# GENERIC FINALIZATION
-#=================================================
-# REMOVE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Removing the dedicated system user..." --time --weight=1
-
-# Delete a system user
-ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Removal of $app completed" --time --last
-
+ynh_script_progression --message="Removal of $app completed" --last
