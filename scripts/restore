@@ -47,7 +47,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Restoring $app main directory..." --weight=2
+ynh_script_progression --message="Restoring Laverna main directory..." --weight=2
 
 ynh_restore_file --origin_path="$final_path"
 

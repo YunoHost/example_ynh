@@ -28,7 +28,7 @@ Comment configurer cette application : via le panneau d'administration, un fichi
 
 ## Documentation
 
- * Documentation officielle : Lien vers la documentation officielle de cette application.
+ * Documentation officielle : https://github.com/Laverna/laverna/wiki
  * Documentation YunoHost : Si une documentation spécifique est nécessaire, n'hésitez pas à contribuer.
 
 ## Caractéristiques spécifiques YunoHost

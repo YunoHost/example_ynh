@@ -23,7 +23,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 #=================================================
 # REMOVE APP MAIN DIR
 #=================================================
-ynh_script_progression --message="Removing $app main directory..." --weight=3
+ynh_script_progression --message="Removing Laverna main directory..." --weight=3
 
 # Remove the app directory securely
 ynh_secure_remove --file="$final_path"
