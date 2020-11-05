@@ -35,8 +35,8 @@ How to configure this app: From an admin panel, a plain file with SSH, or any ot
 
 #### Multi-user support
 
- * Are LDAP and HTTP auth supported?
- * Can the app be used by multiple users?
+ * Are LDAP and HTTP auth supported? **No**
+ * Can the app be used by multiple users? **Yes**
 
 #### Supported architectures
 
