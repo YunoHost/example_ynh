@@ -3,10 +3,10 @@
 [![Integration level](https://dash.yunohost.org/integration/laverna.svg)](https://dash.yunohost.org/appci/app/laverna) ![](https://ci-apps.yunohost.org/ci/badges/laverna.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/laverna.maintain.svg)  
 [![Install Laverna with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=laverna)
 
-*[Read this readme in english.](./README.md)* 
+*[Lire ce readme en français.](./README_fr.md)*
 
-> *Ce package vous permet d'installer Laverna rapidement et simplement sur un serveur YunoHost.  
-Si vous n'avez pas YunoHost, consultez [le guide](https://yunohost.org/#/install) pour apprendre comment l'installer.*
+> *This package allows you to install Laverna quickly and simply on a YunoHost server.  
+If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
 
 ## Overview
 Laverna is an anonymous system, encrypted and without registration required, it is accessible via a web browser (without software installation).
