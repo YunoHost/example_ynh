@@ -26,7 +26,7 @@ ynh_abort_if_errors
 app=$YNH_APP_INSTANCE_NAME
 
 domain=$YNH_APP_ARG_DOMAIN
-path=$YNH_APP_ARG_PATH
+path_url=$YNH_APP_ARG_PATH
 admin=$YNH_APP_ARG_ADMIN
 is_public=$YNH_APP_ARG_IS_PUBLIC
 
@@ -50,14 +50,27 @@ test ! -e "$final_path" || ynh_die --message="This path already contains a folde
 # Register (book) web path
 ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 
+#=================================================
+# DOWNLOAD, CHECK AND UNPACK SOURCE
+#=================================================
+ynh_script_progression --message="Setting up source files..." --time --weight=1
+
+ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+# Download, check integrity, uncompress and patch the source from app.src
+ynh_setup_source --dest_dir="$final_path"
 
 
-mkdir -p $final_path
-wget -P "$src_path" https://github.com/Laverna/static-laverna/archive/gh-pages.zip -O "$final_path"/laverna.zip
-unzip "$final_path"/laverna.zip -d "$final_path"
-cp -R "$final_path"/static-laverna-gh-pages/* "$final_path"
-rm "$final_path"/laverna.zip
-rm -rf "$final_path"/static-laverna-gh-pages
+
+# mkdir -p $final_path
+# wget -P "$src_path" https://github.com/Laverna/static-laverna/archive/gh-pages.zip -O "$final_path"/laverna.zip
+# unzip "$final_path"/laverna.zip -d "$final_path"
+# cp -R "$final_path"/static-laverna-gh-pages/* "$final_path"
+# rm "$final_path"/laverna.zip
+# rm -rf "$final_path"/static-laverna-gh-pages
+
+#=================================================
+# SECURE FILES AND DIRECTORIES
+#=================================================
 
 # Set permissions to app files
 chown -R root: $final_path

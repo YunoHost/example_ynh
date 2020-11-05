@@ -21,8 +21,8 @@ path=${path%/}
 
 # Copy source files
 src_path=/var/www/$app
-sudo mkdir -p $src_path
-sudo cp -a ../sources/. $src_path
+mkdir -p $src_path
+cp -a ../sources/. $src_path
 
 # Set permissions to app files
 # you may need to make some file and/or directory writeable by www-data (nginx user)
@@ -35,7 +35,7 @@ sed -i "s@YNH_WWW_ALIAS@$src_path/@g" $nginx_conf
 # If a dedicated php-fpm process is used:
 #
 # sed -i "s@YNH_WWW_APP@$app@g" $nginx_conf
-sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
+cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 
 ### PHP (remove if not used) ###
 # If a dedicated php-fpm process is used:
@@ -49,11 +49,28 @@ sudo cp $nginx_conf /etc/nginx/conf.d/$domain.d/$app.conf
 # sudo service php5-fpm restart
 ### PHP end ###
 
-# If app is public, add url to SSOWat conf as skipped_uris
-if [[ $is_public -eq 1 ]]; then
-  # See install script
-  ynh_app_setting_set "$app" unprotected_uris "/"
+#=================================================
+# SETUP SSOWAT
+#=================================================
+ynh_script_progression --message="Upgrading SSOwat configuration..." --time --weight=1
+
+# Make app public if necessary
+if [ $is_public -eq 1 ]
+then
+	# unprotected_uris allows SSO credentials to be passed anyway
+	ynh_app_setting_set --app=$app --key=unprotected_uris --value="/"
 fi
 
-# Reload nginx service
-sudo service nginx reload
+#=================================================
+# RELOAD NGINX
+#=================================================
+ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+
+ynh_systemd_action --service_name=nginx --action=reload
+
+#=================================================
+# END OF SCRIPT
+#=================================================
+
+ynh_script_progression --message="Upgrade of $app completed" --time --last
+
