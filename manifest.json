@@ -10,17 +10,15 @@
     "url": "https://laverna.cc/index.html",
     "license": "MPL-2.0",
     "maintainer": {
-        "name": "Alex",
-        "email": "apulido@free.fr"
+        "name": "",
+        "email": ""
     },
     "requirements": {
         "yunohost": ">> 4.0.0"
     },
     "multi_instance": true,
     "services": [
-        "nginx",
-        "php7.0-fpm",
-        "mysql"
+        "nginx"
     ],
     "arguments": {
         "install" : [
