@@ -3,19 +3,20 @@
 [![Integration level](https://dash.yunohost.org/integration/laverna.svg)](https://dash.yunohost.org/appci/app/laverna) ![](https://ci-apps.yunohost.org/ci/badges/laverna.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/laverna.maintain.svg)  
 [![Install Laverna with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=laverna)
 
-*[Lire ce readme en français.](./README_fr.md)*
+*[Read this readme in english.](./README.md)* 
 
-> *This package allows you to install Laverna quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
+> *Ce package vous permet d'installer Laverna rapidement et simplement sur un serveur YunoHost.  
+Si vous n'avez pas YunoHost, consultez [le guide](https://yunohost.org/#/install) pour apprendre comment l'installer.*
 
 ## Overview
-Laverna prebuilt package for Yunohost
+Laverna is an anonymous system, encrypted and without registration required, it is accessible via a web browser (without software installation).
+The data is private because it is stored by default on your machine (InnoDB and localstorage), it is a setting in the settings that will allow you to synchronize it via the cloud on your various devices.
 
 **Shipped version:** 0.7.51
 
 ## Screenshots
 
-![](Link to a screenshot of this app.)
+![](sources/laverna.png)
 
 ## Demo
 
