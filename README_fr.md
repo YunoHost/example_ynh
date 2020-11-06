@@ -1,5 +1,7 @@
 # Laverna pour YunoHost
 
+> :warning: Laverna n'est plus maintenue upstream. Vous devriez utiliser [Encryptic](https://github.com/YunoHost-Apps/encryptic_ynh).
+
 [![Integration level](https://dash.yunohost.org/integration/laverna.svg)](https://dash.yunohost.org/appci/app/laverna) ![](https://ci-apps.yunohost.org/ci/badges/laverna.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/laverna.maintain.svg)  
 [![Installer Laverna avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=laverna)
 
