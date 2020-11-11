@@ -9,5 +9,22 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__/
 ExecStart=__FINALPATH__/script >> /var/log/__APP__/__APP__.log 2>&1
 
+# Sandboxing options to harden security
+# Depending on specificities of your service/app, you may need to tweak these 
+# .. but this should be a good baseline
+# Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+NoNewPrivileges=yes
+PrivateTmp=yes
+PrivateDevices=yes
+DevicePolicy=closed
+ProtectSystem=full
+ProtectControlGroups=yes
+ProtectKernelModules=yes
+ProtectKernelTunables=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
 [Install]
 WantedBy=multi-user.target
