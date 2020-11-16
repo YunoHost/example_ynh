@@ -1,23 +1,23 @@
 {
-    "name": "YunoHost example app",
-    "id": "ynhexample",
+    "name": "WG Client",
+    "id": "wgclient",
     "packaging_format": 1,
     "description": {
-        "en": "Explain in *a few (10~15) words* the purpose of the app or what it actually does (it is meant to give a rough idea to users browsing a catalog of 100+ apps)",
-        "fr": "Expliquez en *quelques* (10~15) mots l'utilité de l'app ou ce qu'elle fait (l'objectif est de donner une idée grossière pour des utilisateurs qui naviguent dans un catalogue de 100+ apps)"
+        "en": "The wireguard client used by baioboite",
+        "fr": "Le client wireguard utilisé par la baioboite"
     },
     "version": "1.0~ynh1",
-    "url": "https://example.com",
+    "url": "https://baionet.fr",
     "license": "free",
     "maintainer": {
-        "name": "John doe",
-        "email": "john.doe@example.com",
-        "url": "http://example.com"
+        "name": "Asso BAIONET",
+        "email": "contact@baionet.fr",
+        "url": "https://baionet.fr"
     },
     "requirements": {
         "yunohost": ">= 3.5"
     },
-    "multi_instance": true,
+    "multi_instance": false,
     "services": [
         "nginx",
         "php7.0-fpm",
@@ -29,8 +29,8 @@
                 "name": "domain",
                 "type": "domain",
                 "ask": {
-                    "en": "Choose a domain name for ynhexample",
-                    "fr": "Choisissez un nom de domaine pour ynhexample"
+                    "en": "Choose a domain name for wgclient",
+                    "fr": "Choisissez un nom de domaine pour wgclient"
                 },
                 "example": "example.com"
             },
@@ -38,53 +38,13 @@
                 "name": "path",
                 "type": "path",
                 "ask": {
-                    "en": "Choose a path for ynhexample",
-                    "fr": "Choisissez un chemin pour ynhexample"
+                    "en": "Choose a path for wgclient",
+                    "fr": "Choisissez un chemin pour wgclient"
                 },
-                "example": "/example",
-                "default": "/example"
-            },
-            {
-                "name": "admin",
-                "type": "user",
-                "ask": {
-                    "en": "Choose an admin user",
-                    "fr": "Choisissez l'administrateur"
-                },
-                "example": "johndoe"
-            },
-            {
-                "name": "is_public",
-                "type": "boolean",
-                "ask": {
-                    "en": "Is it a public application?",
-                    "fr": "Est-ce une application publique ?"
-                },
-                "default": true
-            },
-            {
-                "name": "language",
-                "type": "string",
-                "ask": {
-                    "en": "Choose the application language",
-                    "fr": "Choisissez la langue de l'application"
-                },
-                "choices": ["fr", "en"],
-                "default": "fr"
-            },
-            {
-                "name": "password",
-                "type": "password",
-                "ask": {
-                    "en": "Set the administrator password",
-                    "fr": "Définissez le mot de passe administrateur"
-                },
-                "help": {
-                    "en": "Use the help field to add an information for the admin about this question.",
-                    "fr": "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
-                },
-                "example": "Choose a password"
+                "example": "/vpnadmin",
+                "default": "/vpnadmin"
             }
+            
         ]
     }
 }
