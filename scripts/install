@@ -301,7 +301,7 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
+yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 ### Additional options starting with 3.8:
 ###
