@@ -7,7 +7,9 @@ Type=simple
 User=__APP__
 Group=__APP__
 WorkingDirectory=__FINALPATH__/
-ExecStart=__FINALPATH__/script >> /var/log/__APP__/__APP__.log 2>&1
+ExecStart=__FINALPATH__/script
+StandardOutput=append:/var/log/__APP__/__APP__.log
+StandardError=inherit
 
 [Install]
 WantedBy=multi-user.target
