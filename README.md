@@ -3,7 +3,7 @@
 > :warning: Laverna is no longer maintained upstream. You should use [Encryptic](https://github.com/YunoHost-Apps/encryptic_ynh) instead.
 
 [![Integration level](https://dash.yunohost.org/integration/laverna.svg)](https://dash.yunohost.org/appci/app/laverna) ![](https://ci-apps.yunohost.org/ci/badges/laverna.status.svg) ![](https://ci-apps.yunohost.org/ci/badges/laverna.maintain.svg)  
-[![Install Laverna with YunoHost](https://install-app.yunohost.org/install-with-yunohost.png)](https://install-app.yunohost.org/?app=laverna)
+[![Install Laverna with YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=laverna)
 
 *[Lire ce readme en français.](./README_fr.md)*
 
