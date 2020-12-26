@@ -6,7 +6,7 @@
         "en": "Taking note application with Markdown editor and encryption support.",
         "fr": "Application de Prise de note avec éditeur Markdown et chiffrement."
     },
-        "version": "0.7.51~ynh3",
+        "version": "0.7.51~ynh4",
     "url": "https://laverna.cc/index.html",
     "license": "MPL-2.0",
     "maintainer": {
@@ -14,7 +14,7 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">> 4.0.0"
+        "yunohost": ">> 3.8.1"
     },
     "multi_instance": true,
     "services": [
