@@ -220,7 +220,8 @@ chown -R $app: $final_path
 
 # Set the app as temporarily public for curl call
 ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
-ynh_app_setting_set --app=$app --key=skipped_uris --value="/"
+# Making the app public for curl
+ynh_permission_update --permission="main" --add="visitors"
 # Reload SSOwat config
 yunohost app ssowatconf
 
@@ -232,7 +233,7 @@ ynh_script_progression --message="Finalizing installation..." --time --weight=1
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 # Remove the public access
-ynh_app_setting_delete --app=$app --key=skipped_uris
+ynh_permission_update --permission="main" --remove="visitors"
 
 #=================================================
 # MODIFY A CONFIG FILE
@@ -339,11 +340,16 @@ if [ $is_public -eq 1 ]
 then
 	# Everyone can access the app.
 	# The "main" permission is automatically created before the install script.
-	ynh_permission_update --permission "main" --add "visitors"
+	ynh_permission_update --permission="main" --add="visitors"
 fi
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
-ynh_permission_create --permission "admin" --url "/admin" --allowed $admin
+ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+
+# Everyone can access to the api part
+# We don't want to display the tile in the sso so we put --show_tile="false"
+# And we don't want that the YunoHost Admin can remove visitors group to this permission, so we put --protected="true"
+ynh_permission_create --permission="api" --url "/api" --allowed="visitors" --show_tile="false" --protected="true"
 
 #=================================================
 # RELOAD NGINX

@@ -52,28 +52,22 @@ if [ -z "$final_path" ]; then
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
-### If nobody installed your app before 3.7,
+### If nobody installed your app before 4.1,
 ### then you may safely remove these lines
 
 # Cleaning legacy permissions
-is_public=$(ynh_app_setting_get --app=$app --key=is_public)
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
 
-if [ -n "$is_public" ]; then
-	# Remove unprotected_uris
-	ynh_app_setting_delete --app=$app --key=unprotected_uris
-	# Remove protected_uris
-	ynh_app_setting_delete --app=$app --key=protected_uris
-
-	# Removing skipped/unprotected_uris under certain conditions, remove the visitors group added during the migration process of 3.7
-	# Remove skipped_uris. If the app was public, add visitors again to the main permission
-	if ynh_permission_has_user --permission=main --user=visitors
-	then
-		ynh_app_setting_delete --app=$app --key=skipped_uris
-		ynh_permission_update --permission "main" --add "visitors"
-	else
-		ynh_app_setting_delete --app=$app --key=skipped_uris
-	fi
 	ynh_app_setting_delete --app=$app --key=is_public
+
+	# Create the required permissions
+	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+fi
+
+# Create a permission if needed
+if ! ynh_permission_exists --permission="api"; then
+	ynh_permission_create --permission="api" --url "/api" --allowed="visitors" --show_tile="false" --protected="true"
 fi
 
 #=================================================
@@ -202,16 +196,6 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failreg
 
 # Set permissions on app files
 chown -R root: $final_path
-
-#=================================================
-# SETUP SSOWAT
-#=================================================
-ynh_script_progression --message="Upgrading permissions configuration..." --time --weight=1
-
-# Create the admin permission if needed
-if ! ynh_permission_exists --permission "admin"; then
-	ynh_permission_create --permission "admin" --url "/admin" --allowed $admin
-fi
 
 #=================================================
 # START SYSTEMD SERVICE
