@@ -40,22 +40,28 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
 
+#
+# N.B. : the followings setting migrations snippets are provided as *EXAMPLES*
+# of what you may want to do in some cases (e.g. a setting was not defined on
+# some legacy installs and you therefore want to initiaze stuff during upgrade)
+#
+
 # If db_name doesn't exist, create it
-if [ -z "$db_name" ]; then
-	db_name=$(ynh_sanitize_dbid --db_name=$app)
-	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-fi
+#if [ -z "$db_name" ]; then
+#	db_name=$(ynh_sanitize_dbid --db_name=$app)
+#	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+#fi
 
 # If final_path doesn't exist, create it
-if [ -z "$final_path" ]; then
-	final_path=/var/www/$app
-	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-fi
+#if [ -z "$final_path" ]; then
+#	final_path=/var/www/$app
+#	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+#fi
 
 ### If nobody installed your app before 4.1,
 ### then you may safely remove these lines
 
-# Cleaning legacy permissions
+## Cleaning legacy permissions
 if ynh_legacy_permissions_exists; then
 	ynh_legacy_permissions_delete_all
 
@@ -78,23 +84,11 @@ ynh_script_progression --message="Backing up the app before upgrading (may take 
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
-	# restore it if the upgrade fails
+	# Restore it if the upgrade fails
 	ynh_restore_upgradebackup
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
-
-#=================================================
-# CHECK THE PATH
-#=================================================
-
-# Normalize the URL path syntax
-# N.B. : this is for app installations before YunoHost 2.7
-# where this value might be something like /foo/ or foo/
-# instead of /foo ....
-# If nobody installed your app before 2.7, then you may
-# safely remove this line
-path_url=$(ynh_normalize_url_path --path_url=$path_url)
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -120,9 +114,9 @@ fi
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading nginx web server configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading NGINX web server configuration..." --time --weight=1
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -143,9 +137,9 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Upgrading php-fpm configuration..." --time --weight=1
+ynh_script_progression --message="Upgrading PHP-FPM configuration..." --time --weight=1
 
-# Create a dedicated php-fpm config
+# Create a dedicated PHP-FPM config
 ynh_add_fpm_config
 
 #=================================================
@@ -153,24 +147,6 @@ ynh_add_fpm_config
 #=================================================
 # ...
 #=================================================
-
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
-ynh_backup_if_checksum_is_different --file="$final_path/CONFIG_FILE"
-# Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
-
-#=================================================
-# SETUP LOGROTATE
-#=================================================
-ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
-
-# Use logrotate to manage app-specific logfile(s)
-ynh_use_logrotate --non-append
 
 #=================================================
 # SETUP SYSTEMD
@@ -181,21 +157,41 @@ ynh_script_progression --message="Upgrading systemd configuration..." --time --w
 ynh_add_systemd_config
 
 #=================================================
+# MODIFY A CONFIG FILE
+#=================================================
+
+### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
+### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
+ynh_backup_if_checksum_is_different --file="$final_path/CONFIG_FILE"
+
+ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/CONFIG_FILE"
+
+# Recalculate and store the checksum of the file for the next upgrade.
+ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
+
+#=================================================
 # GENERIC FINALIZATION
-#=================================================
-# UPGRADE FAIL2BAN
-#=================================================
-ynh_script_progression --message="Reconfiguring fail2ban..." --time --weight=1
-
-# Create a dedicated fail2ban config
-ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
-
 #=================================================
 # SECURE FILES AND DIRECTORIES
 #=================================================
 
 # Set permissions on app files
 chown -R root: $final_path
+
+#=================================================
+# SETUP LOGROTATE
+#=================================================
+ynh_script_progression --message="Upgrading logrotate configuration..." --time --weight=1
+
+# Use logrotate to manage app-specific logfile(s)
+ynh_use_logrotate --non-append
+
+#=================================================
+# INTEGRATE SERVICE IN YUNOHOST
+#=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+
+yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -205,9 +201,17 @@ ynh_script_progression --message="Starting a systemd service..." --time --weight
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
+# UPGRADE FAIL2BAN
+#=================================================
+ynh_script_progression --message="Reconfiguring Fail2Ban..." --time --weight=1
+
+# Create a dedicated Fail2Ban config
+ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+
+#=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 

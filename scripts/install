@@ -33,14 +33,14 @@ password=$YNH_APP_ARG_PASSWORD
 
 ### If it's a multi-instance app, meaning it can be installed several times independently
 ### The id of the app as stated in the manifest is available as $YNH_APP_ID
-### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2", ...)
+### The instance number is available as $YNH_APP_INSTANCE_NUMBER (equals "1", "2"...)
 ### The app instance name is available as $YNH_APP_INSTANCE_NAME
 ###    - the first time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample
 ###    - the second time the app is installed, YNH_APP_INSTANCE_NAME = ynhexample__2
-###    - ynhexample__{N} for the subsequent installations, with N=3,4, ...
+###    - ynhexample__{N} for the subsequent installations, with N=3,4...
 ### The app instance name is probably what interests you most, since this is
 ### guaranteed to be unique. This is a good unique identifier to define installation path,
-### db names, ...
+### db names...
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -56,8 +56,8 @@ app=$YNH_APP_INSTANCE_NAME
 ### The execution time is given for the duration since the previous call. So the weight should be applied to this previous call.
 ynh_script_progression --message="Validating installation parameters..." --time --weight=1
 
-### If the app uses nginx as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
-### If the app provides an internal web server (or uses another application server such as uwsgi), the final path should be "/opt/yunohost/$app"
+### If the app uses NGINX as web server (written in HTML/PHP in most cases), the final path should be "/var/www/$app".
+### If the app provides an internal web server (or uses another application server such as uWSGI), the final path should be "/opt/yunohost/$app"
 final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
@@ -91,7 +91,7 @@ port=$(ynh_find_port --port=8095)
 ynh_app_setting_set --app=$app --key=port --value=$port
 
 # Optional: Expose this port publicly
-# (N.B. : you only need to do this if the app actually needs to expose the port publicly.
+# (N.B.: you only need to do this if the app actually needs to expose the port publicly.
 # If you do this and the app doesn't actually need you are CREATING SECURITY HOLES IN THE SERVER !)
 
 # Open the port
@@ -147,11 +147,11 @@ ynh_setup_source --dest_dir="$final_path"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring nginx web server..." --time --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --time --weight=1
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
-# Create a dedicated nginx config
+# Create a dedicated NGINX config
 ynh_add_nginx_config
 
 #=================================================
@@ -165,7 +165,7 @@ ynh_system_user_create --username=$app
 #=================================================
 # PHP-FPM CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
+ynh_script_progression --message="Configuring PHP-FPM..." --time --weight=1
 
 ### `ynh_add_fpm_config` is used to set up a PHP config.
 ### You can remove it if your app doesn't use PHP.
@@ -175,10 +175,10 @@ ynh_script_progression --message="Configuring php-fpm..." --time --weight=1
 ###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
 ###		- Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
 ###		- As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
-###		With the reload at the end of the script.
+###		  with the reload at the end of the script.
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
-# Create a dedicated php-fpm config
+# Create a dedicated PHP-FPM config
 ynh_add_fpm_config
 
 #=================================================
@@ -225,7 +225,7 @@ ynh_permission_update --permission="main" --add="visitors"
 # Reload SSOwat config
 yunohost app ssowatconf
 
-# Reload Nginx
+# Reload NGINX
 ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
@@ -287,24 +287,34 @@ ynh_use_logrotate
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
+ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets 
 ### displayed in the admin interface and through the others `yunohost service` commands.
-### (N.B. : this line only makes sense if the app adds a service to the system!)
+### (N.B.: this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE FROM ADMIN PANEL" in the remove script
-###		- As well as the section "ADVERTISE SERVICE IN ADMIN PANEL" in the restore script
+###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
+###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
+###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description "A short description of the app" --log "/var/log/$app/$app.log"
+yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
 
-### With YunoHost 3.8 you will then be able to: 
-### - specify a list of ports that needs to be publicly exposed (c.f. --needs_exposed_ports) 
-###   which will then be checked by YunoHost's diagnosis system
-### - specify a custom command to check the status of the service (c.f. --test_status)
-###   though it's only needed for weird cases where 'systemctl status' doesn't do a good job
-### - specify a custom command to check / validate the configuration of the service (c.f. --test_conf)
-###   for example, the command to check the configuration of nginx is "nginx -t"
+### Additional options starting with 3.8:
+###
+### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
+###                               which will then be checked by YunoHost's diagnosis system
+###                               (N.B. DO NOT USE THIS is the port is only internal!!!)
+###
+### --test_status "some command"  a custom command to check the status of the service
+###                               (only relevant if 'systemctl status' doesn't do a good job)
+###
+### --test_conf "some command"    some command similar to "nginx -t" that validates the conf of the service
+###
+### Re-calling 'yunohost service add' during the upgrade script is the right way
+### to proceed if you later realize that you need to enable some flags that
+### weren't enabled on old installs (be careful it'll override the existing
+### service though so you should re-provide all relevant flags when doing so)
 
 #=================================================
 # START SYSTEMD SERVICE
@@ -325,9 +335,9 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # SETUP FAIL2BAN
 #=================================================
-ynh_script_progression --message="Configuring fail2ban..." --time --weight=1
+ynh_script_progression --message="Configuring Fail2Ban..." --time --weight=1
 
-# Create a dedicated fail2ban config
+# Create a dedicated Fail2Ban config
 ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
@@ -354,7 +364,7 @@ ynh_permission_create --permission="api" --url "/api" --allowed="visitors" --sho
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading nginx web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
