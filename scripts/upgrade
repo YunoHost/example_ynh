@@ -61,7 +61,7 @@ ynh_script_progression --message="Ensuring downward compatibility..." --time --w
 ### If nobody installed your app before 4.1,
 ### then you may safely remove these lines
 
-## Cleaning legacy permissions
+# Cleaning legacy permissions
 if ynh_legacy_permissions_exists; then
 	ynh_legacy_permissions_delete_all
 
