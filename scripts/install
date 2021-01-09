@@ -80,7 +80,7 @@ ynh_app_setting_set --app=$app --key=language --value=$language
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Configuring firewall..." --time --weight=1
+ynh_script_progression --message="Finding an available port..." --time --weight=1
 
 ### Use these lines if you have to open a port for the application
 ### `ynh_find_port` will find the first available port starting from the given port.
@@ -96,6 +96,7 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 # If you do this and the app doesn't actually need you are CREATING SECURITY HOLES IN THE SERVER !)
 
 # Open the port
+# ynh_script_progression --message="Configuring firewall..." --time --weight=1
 # ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
 
 #=================================================
