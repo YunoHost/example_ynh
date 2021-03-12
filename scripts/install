@@ -287,7 +287,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-### `yunohost service add` integrates a service in YunoHost. It then gets 
+### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
 ### (N.B.: this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
@@ -350,6 +350,9 @@ then
 	# The "main" permission is automatically created before the install script.
 	ynh_permission_update --permission="main" --add="visitors"
 fi
+
+### N.B. : the following extra permissions only make sense if your app
+### does have for example an admin interface or an api.
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
 ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
