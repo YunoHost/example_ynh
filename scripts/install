@@ -216,9 +216,6 @@ ynh_add_systemd_config
 ### so we're going to use curl to automatically fill the fields and submit the
 ### forms.
 
-# Set right permissions for curl install
-chown -R $app: $final_path
-
 # Set the app as temporarily public for curl call
 ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
 # Making the app public for curl
