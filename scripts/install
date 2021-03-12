@@ -220,11 +220,6 @@ ynh_add_systemd_config
 ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
 # Making the app public for curl
 ynh_permission_update --permission="main" --add="visitors"
-# Reload SSOwat config
-yunohost app ssowatconf
-
-# Reload NGINX
-ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
 ynh_script_progression --message="Finalizing installation..." --time --weight=1
