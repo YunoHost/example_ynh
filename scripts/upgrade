@@ -159,17 +159,22 @@ ynh_script_progression --message="Upgrading systemd configuration..." --time --w
 ynh_add_systemd_config
 
 #=================================================
-# MODIFY A CONFIG FILE
+# UPDATE A CONFIG FILE
 #=================================================
 
-### Verify the checksum of a file, stored by `ynh_store_file_checksum` in the install script.
-### And create a backup of this file if the checksum is different. So the file will be backed up if the admin had modified it.
-ynh_backup_if_checksum_is_different --file="$final_path/CONFIG_FILE"
+### Same as during install
+###
+### The file will automatically be backed-up if it's found to be manually modified (because
+### ynh_add_config keeps track of the file's checksum)
 
-ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/CONFIG_FILE"
+ynh_add_config --template="some_config_file" --destination="$final_path/some_config_file"
 
-# Recalculate and store the checksum of the file for the next upgrade.
-ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
+### For more complex cases where you want to replace stuff using regexes,
+### you shoud rely on ynh_replace_string (which is basically a wrapper for sed)
+### When doing so, you also need to manually call ynh_store_file_checksum
+###
+### ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/some_config_file"
+### ynh_store_file_checksum --file="$final_path/some_config_file"
 
 #=================================================
 # GENERIC FINALIZATION

@@ -216,18 +216,10 @@ ynh_add_systemd_config
 ### so we're going to use curl to automatically fill the fields and submit the
 ### forms.
 
-# Set right permissions for curl install
-chown -R $app: $final_path
-
 # Set the app as temporarily public for curl call
 ynh_script_progression --message="Configuring SSOwat..." --time --weight=1
 # Making the app public for curl
 ynh_permission_update --permission="main" --add="visitors"
-# Reload SSOwat config
-yunohost app ssowatconf
-
-# Reload NGINX
-ynh_systemd_action --service_name=nginx --action=reload
 
 # Installation with curl
 ynh_script_progression --message="Finalizing installation..." --time --weight=1
@@ -237,24 +229,29 @@ ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 ynh_permission_update --permission="main" --remove="visitors"
 
 #=================================================
-# MODIFY A CONFIG FILE
+# ADD A CONFIGURATION
 #=================================================
 
-### `ynh_replace_string` is used to replace a string in a file.
-### (It's compatible with sed regular expressions syntax)
+### You can add specific configuration files.
+###
+### Typically, put your template conf file in ../conf/your_config_file
+### The template may contain strings such as __FOO__ or __FOO_BAR__,
+### which will automatically be replaced by the values of $foo and $foo_bar
+###
+### ynh_add_config will also keep track of the config file's checksum,
+### which later during upgrade may allow to automatically backup the config file
+### if it's found that the file was manually modified
+###
+### Check the documentation of `ynh_add_config` for more info.
 
-ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/CONFIG_FILE"
+ynh_add_config --template="some_config_file" --destination="$final_path/some_config_file"
 
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-
-### `ynh_store_file_checksum` is used to store the checksum of a file.
-### That way, during the upgrade script, by using `ynh_backup_if_checksum_is_different`,
-### you can make a backup of this file before modifying it again if the admin had modified it.
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/CONFIG_FILE"
+### For more complex cases where you want to replace stuff using regexes,
+### you shoud rely on ynh_replace_string (which is basically a wrapper for sed)
+### When doing so, you also need to manually call ynh_store_file_checksum
+###
+### ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/some_config_file"
+### ynh_store_file_checksum --file="$final_path/some_config_file"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -290,7 +287,7 @@ ynh_use_logrotate
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-### `yunohost service add` integrates a service in YunoHost. It then gets 
+### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
 ### (N.B.: this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
@@ -353,6 +350,9 @@ then
 	# The "main" permission is automatically created before the install script.
 	ynh_permission_update --permission="main" --add="visitors"
 fi
+
+### N.B. : the following extra permissions only make sense if your app
+### does have for example an admin interface or an api.
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
 ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
