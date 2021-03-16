@@ -99,6 +99,14 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 # ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $port
 
 #=================================================
+# CREATE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Configuring system user..." --time --weight=1
+
+# Create a system user
+ynh_system_user_create --username=$app
+
+#=================================================
 # INSTALL DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --time --weight=1
@@ -154,14 +162,6 @@ ynh_script_progression --message="Configuring NGINX web server..." --time --weig
 
 # Create a dedicated NGINX config
 ynh_add_nginx_config
-
-#=================================================
-# CREATE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Configuring system user..." --time --weight=1
-
-# Create a system user
-ynh_system_user_create --username=$app
 
 #=================================================
 # PHP-FPM CONFIGURATION

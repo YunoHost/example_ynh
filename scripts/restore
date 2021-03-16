@@ -48,6 +48,14 @@ test ! -d $final_path \
 #=================================================
 # STANDARD RESTORATION STEPS
 #=================================================
+# RECREATE THE DEDICATED USER
+#=================================================
+ynh_script_progression --message="Recreating the dedicated system user..." --time --weight=1
+
+# Create the dedicated user (if not existing)
+ynh_system_user_create --username=$app
+
+#=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
 
@@ -59,14 +67,6 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Restoring the app main directory..." --time --weight=1
 
 ynh_restore_file --origin_path="$final_path"
-
-#=================================================
-# RECREATE THE DEDICATED USER
-#=================================================
-ynh_script_progression --message="Recreating the dedicated system user..." --time --weight=1
-
-# Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app
 
 #=================================================
 # RESTORE USER RIGHTS
