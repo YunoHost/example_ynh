@@ -6,7 +6,7 @@
         "en": "Taking note application with Markdown editor and encryption support.",
         "fr": "Application de Prise de note avec éditeur Markdown et chiffrement."
     },
-        "version": "0.7.51~ynh4",
+        "version": "0.7.51~ynh5",
     "url": "https://laverna.cc/index.html",
     "license": "MPL-2.0",
     "maintainer": {
@@ -14,7 +14,7 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">> 3.8.1"
+        "yunohost": ">> 4.1.7"
     },
     "multi_instance": true,
     "services": [
@@ -24,30 +24,18 @@
         "install" : [
             {
                 "name": "domain",
-		"type": "domain",
-                "ask": {
-                    "en": "Choose a domain name for Laverna",
-                    "fr": "Choisissez un nom de domaine pour Laverna"
-                },
+                "type": "domain",
                 "example": "example.com"
             },
             {
-            "name": "path",
-            "type": "path",
-                "ask": {
-                    "en": "Choose a path for Laverna",
-                    "fr": "Choisissez un chemin pour Laverna"
-                },
+                "name": "path",
+                "type": "path",
                 "example": "/laverna",
                 "default": "/laverna"
             },
             {
-            "name": "is_public",
-            "type": "boolean",
-                "ask": {
-                    "en": "Is it a public application?",
-                    "fr": "Est-ce une application publique ?"
-                },
+                "name": "is_public",
+                "type": "boolean",
                 "help": {
                     "en": "If enabled, Laverna will be accessible by people who do not have an account. This can be changed later via the webadmin.",
                     "fr": "Si cette case est cochée, Laverna sera accessible aux personnes n’ayant pas de compte. Vous pourrez changer ceci plus tard via la webadmin."
