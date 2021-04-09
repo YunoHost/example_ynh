@@ -75,7 +75,7 @@ fi
 
 # Create a permission if needed
 if ! ynh_permission_exists --permission="api"; then
-	ynh_permission_create --permission="api" --url "/api" --allowed="visitors" --show_tile="false" --protected="true"
+	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
 fi
 
 #=================================================
