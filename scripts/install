@@ -366,7 +366,7 @@ ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
 # Everyone can access to the api part
 # We don't want to display the tile in the sso so we put --show_tile="false"
 # And we don't want that the YunoHost Admin can remove visitors group to this permission, so we put --protected="true"
-ynh_permission_create --permission="api" --url "/api" --allowed="visitors" --show_tile="false" --protected="true"
+ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
 
 #=================================================
 # RELOAD NGINX
