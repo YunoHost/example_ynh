@@ -162,14 +162,6 @@ ynh_add_fpm_config
 #=================================================
 
 #=================================================
-# SETUP SYSTEMD
-#=================================================
-ynh_script_progression --message="Upgrading systemd configuration..." --time --weight=1
-
-# Create a dedicated systemd config
-ynh_add_systemd_config
-
-#=================================================
 # UPDATE A CONFIG FILE
 #=================================================
 
@@ -192,6 +184,14 @@ chown $app:$app "$final_path/some_config_file"
 ###
 ### ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$final_path/some_config_file"
 ### ynh_store_file_checksum --file="$final_path/some_config_file"
+
+#=================================================
+# SETUP SYSTEMD
+#=================================================
+ynh_script_progression --message="Upgrading systemd configuration..." --time --weight=1
+
+# Create a dedicated systemd config
+ynh_add_systemd_config
 
 #=================================================
 # GENERIC FINALIZATION
