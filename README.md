@@ -3,7 +3,7 @@
 - Edit the `conf/nginx.conf` file to match app prerequisites.
 - Edit the `manifest.json` with app specific info.
 - Edit the `install`, `upgrade`, `remove`, `backup`, and `restore` scripts.
-  - Using the [script helpers documentation.](https://yunohost.org/#/packaging_apps_helpers)
+  - Using the [script helpers documentation.](https://yunohost.org/packaging_apps_helpers)
 - Add a `LICENSE` file for the package.
 - Edit `README.md` and `README_fr.md`.
 
@@ -15,7 +15,7 @@
 *[Lire ce readme en français.](./README_fr.md)*
 
 > *This package allows you to install REPLACEBYYOURAPP quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
+If you don't have YunoHost, please consult [the guide](https://yunohost.org/install) to learn how to install it.*
 
 ## Overview
 Quick description of this app.
