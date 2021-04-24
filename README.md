@@ -15,7 +15,7 @@
 *[Lire ce readme en français.](./README_fr.md)*
 
 > *This package allows you to install REPLACEBYYOURAPP quickly and simply on a YunoHost server.  
-If you don't have YunoHost, please consult [the guide](https://yunohost.org/#/install) to learn how to install it.*
+If you don't have YunoHost, please consult [the guide](https://yunohost.org/en/install) to learn how to install it.*
 
 ## Overview
 Quick description of this app.
