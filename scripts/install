@@ -199,6 +199,33 @@ ynh_add_fpm_config
 #=================================================
 
 #=================================================
+# CREATE DATA DIRECTORY
+#=================================================
+ynh_script_progression --message="Creating a data directory..." --time --weight=1
+
+### Use these lines if you need to create a directory to store "persistent files" for the application.
+### Usually this directory is used to store uploaded files or any file that won't be updated during 
+### an upgrade and that won't be deleted during app removal
+### If you're not using these lines:
+###		- Remove the section "BACKUP THE DATA DIR" in the backup script
+###		- As well as the section "RESTORE THE DATA DIRECTORY" in the restore script
+
+datadir=/home/yunohost.app/$app
+ynh_app_setting_set --app=$app --key=datadir --value=$datadir
+
+mkdir -p $datadir
+
+# FIXME: this should be managed by the core in the future
+# Here, as a packager, you may have to tweak the ownerhsip/permissions
+# such that the appropriate users (e.g. maybe www-data) can access
+# files in some cases.
+# But FOR THE LOVE OF GOD, do not allow r/x for "others" on the entire folder -
+# this will be treated as a security issue.
+chmod 750 "$datadir"
+chmod -R o-rwx "$datadir"
+chown -R $app:www-data "$datadir"
+
+#=================================================
 # ADD A CONFIGURATION
 #=================================================
 
