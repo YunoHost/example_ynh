@@ -201,6 +201,7 @@ ynh_add_fpm_config
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
+ynh_script_progression --message="Adding a configuration file..." --time --weight=1
 
 ### You can add specific configuration files.
 ###

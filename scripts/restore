@@ -50,6 +50,7 @@ test ! -d $final_path \
 #=================================================
 # RESTORE THE NGINX CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the NGINX configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
@@ -81,6 +82,7 @@ chown -R $app:www-data "$final_path"
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the PHP-FPM configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
@@ -115,6 +117,7 @@ ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./
 #=================================================
 # RESTORE VARIOUS FILES
 #=================================================
+ynh_script_progression --message="Restoring various files..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/cron.d/$app"
 
@@ -145,6 +148,7 @@ ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$ap
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
 #=================================================
+ynh_script_progression --message="Restoring the logrotate configuration..." --time --weight=1
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 
