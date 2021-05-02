@@ -163,6 +163,7 @@ ynh_add_fpm_config
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
+ynh_script_progression --message="Updating a configuration file..." --time --weight=1
 
 ### Same as during install
 ###
