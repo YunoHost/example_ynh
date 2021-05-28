@@ -26,14 +26,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
-app=$YNH_APP_INSTANCE_NAME
-
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-path_url=$(ynh_app_setting_get --app=$app --key=path)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-db_name=$(ynh_app_setting_get --app=$app --key=db_name)
-db_user=$db_name
-phpversion=$(ynh_app_setting_get --app=$app --key=phpversion)
+load_settings
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -42,8 +35,8 @@ ynh_script_progression --message="Validating restoration parameters..." --time -
 
 ynh_webpath_available --domain=$domain --path_url=$path_url \
 	|| ynh_die --message="Path not available: ${domain}${path_url}"
-test ! -d $final_path \
-	|| ynh_die --message="There is already a directory: $final_path "
+
+test_folder
 
 #=================================================
 # STANDARD RESTORATION STEPS
@@ -60,7 +53,7 @@ ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 ynh_script_progression --message="Recreating the dedicated system user..." --time --weight=1
 
 # Create the dedicated user (if not existing)
-ynh_system_user_create --username=$app --home_dir="$final_path"
+configure_system_user
 
 #=================================================
 # RESTORE THE APP MAIN DIR
@@ -69,15 +62,7 @@ ynh_script_progression --message="Restoring the app main directory..." --time --
 
 ynh_restore_file --origin_path="$final_path"
 
-# FIXME: this should be managed by the core in the future
-# Here, as a packager, you may have to tweak the ownerhsip/permissions
-# such that the appropriate users (e.g. maybe www-data) can access
-# files in some cases.
-# But FOR THE LOVE OF GOD, do not allow r/x for "others" on the entire folder -
-# this will be treated as a security issue.
-chmod 750 "$final_path"
-chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+set_permissions
 
 #=================================================
 # RESTORE THE PHP-FPM CONFIGURATION
@@ -103,7 +88,7 @@ ynh_systemd_action --action=restart --service_name=fail2ban
 ynh_script_progression --message="Reinstalling dependencies..." --time --weight=1
 
 # Define and install dependencies
-ynh_install_app_dependencies $pkg_dependencies
+install_dependencies
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
@@ -136,14 +121,14 @@ systemctl enable $app.service --quiet
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
 
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+integrate_service
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+start_service
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION
