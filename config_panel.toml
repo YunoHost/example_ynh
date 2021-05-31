@@ -12,21 +12,21 @@ name = "Main configuration"
         
         [main.config_file.from_email]
         ask = "Outgoing email From"
-        type = "string"
+        type = "email"
         help = "Email from which comes email from this app"
         pattern = "^[^@]+@[^@]+$"
-        source = "__FINALPATH__/conf/config.php"
+        source = "email:__FINALPATH__/conf/config.php"
         
         [main.config_file.expiration]
         ask = "Default expiration"
         type = "date"
         pattern = "^\d\d\d\d-\d\d-\d\d$"
-        source = "__FINALPATH__/conf/config.php"
+        source = ":__FINALPATH__/conf/config.php"
         
         [main.config_file.logo]
-        ask = "Outgoing email From"
+        ask = "Logo"
         type = "file"
-        default = ""
+        accept = ".png"
         optional = true
         help = "You should upload a CA certificate to start"
         source="__FINALPATH__/img/logo.png"
@@ -37,19 +37,20 @@ name = "Main configuration"
         [main.auth.user]
         ask = "Username"
         type = "string"
-        default = ""
+        example = "camille"
         optional = true
         pattern = "^[^/ ]+$"
         
         [main.auth.passphrase]
         ask = "Password"
         type = "password"
-        default = ""
         optional = true
+        visibleIf = "user"
 
         
 [advanced]
 name = "Advanced configuration"
+collapsed = true
 
     [advanced.dns]
     name = "DNS"
@@ -57,13 +58,11 @@ name = "Advanced configuration"
         [manual.dns.dns0]
         ask = "First resolver"
         type = "string"
-        default = ""
         optional = true
         pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
 
         [manual.dns.dns1]
         ask = "Second resolver"
         type = "string"
-        default = ""
         optional = true
         pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
