@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #=================================================
 # GENERIC STARTING
@@ -27,7 +27,7 @@ app=$YNH_APP_INSTANCE_NAME
 ynh_script_progression --message="Loading installation settings..." --time --weight=1
 
 # Needed for helper "ynh_add_nginx_config"
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+final_path=$(ynh_app_setting_get --app="$app" --key=final_path)
 
 # Add settings here as needed by your application
 #db_name=$(ynh_app_setting_get --app=$app --key=db_name)
@@ -74,7 +74,7 @@ fi
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -100,7 +100,7 @@ if [ $change_domain -eq 1 ]
 then
 	# Delete file checksum for the old conf file location
 	ynh_delete_file_checksum --file="$nginx_conf_path"
-	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
+	mv "$nginx_conf_path" "/etc/nginx/conf.d/$new_domain.d/$app.conf"
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 fi
@@ -118,7 +118,7 @@ fi
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # RELOAD NGINX

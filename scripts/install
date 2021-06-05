@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #=================================================
 # GENERIC START
@@ -62,17 +62,17 @@ final_path=/var/www/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
 
 # Register (book) web path
-ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
+ynh_webpath_register --app="$app" --domain="$domain" --path_url="$path_url"
 
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
 ynh_script_progression --message="Storing installation settings..." --time --weight=1
 
-ynh_app_setting_set --app=$app --key=domain --value=$domain
-ynh_app_setting_set --app=$app --key=path --value=$path_url
-ynh_app_setting_set --app=$app --key=admin --value=$admin
-ynh_app_setting_set --app=$app --key=language --value=$language
+ynh_app_setting_set --app="$app" --key=domain --value="$domain"
+ynh_app_setting_set --app="$app" --key=path --value="$path_url"
+ynh_app_setting_set --app="$app" --key=admin --value="$admin"
+ynh_app_setting_set --app="$app" --key=language --value="$language"
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -88,7 +88,7 @@ ynh_script_progression --message="Finding an available port..." --time --weight=
 
 # Find an available port
 port=$(ynh_find_port --port=8095)
-ynh_app_setting_set --app=$app --key=port --value=$port
+ynh_app_setting_set --app="$app" --key=port --value="$port"
 
 # Optional: Expose this port publicly
 # (N.B.: you only need to do this if the app actually needs to expose the port publicly.
@@ -111,7 +111,7 @@ ynh_script_progression --message="Installing dependencies..." --time --weight=1
 ###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
 ###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
 
-ynh_install_app_dependencies $pkg_dependencies
+ynh_install_app_dependencies "${pkg_dependencies[@]}"
 
 #=================================================
 # CREATE DEDICATED USER
@@ -119,7 +119,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Configuring system user..." --time --weight=1
 
 # Create a system user
-ynh_system_user_create --username=$app --home_dir="$final_path"
+ynh_system_user_create --username="$app" --home_dir="$final_path"
 
 #=================================================
 # CREATE A MYSQL DATABASE
@@ -135,10 +135,10 @@ ynh_script_progression --message="Creating a MySQL database..." --time --weight=
 ###		- Remove also the section "REMOVE THE MYSQL DATABASE" in the remove script
 ###		- As well as the section "RESTORE THE MYSQL DATABASE" in the restore script
 
-db_name=$(ynh_sanitize_dbid --db_name=$app)
+db_name=$(ynh_sanitize_dbid --db_name="$app")
 db_user=$db_name
-ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-ynh_mysql_setup_db --db_user=$db_user --db_name=$db_name
+ynh_app_setting_set --app="$app" --key=db_name --value="$db_name"
+ynh_mysql_setup_db --db_user="$db_user" --db_name="$db_name"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -149,7 +149,7 @@ ynh_script_progression --message="Setting up source files..." --time --weight=1
 ### downloaded from an upstream source, like a git repository.
 ### `ynh_setup_source` use the file conf/app.src
 
-ynh_app_setting_set --app=$app --key=final_path --value=$final_path
+ynh_app_setting_set --app="$app" --key=final_path --value="$final_path"
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path"
 
@@ -161,7 +161,7 @@ ynh_setup_source --dest_dir="$final_path"
 # this will be treated as a security issue.
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
-chown -R $app:www-data "$final_path"
+chown -R "$app:www-data" "$final_path"
 
 #=================================================
 # NGINX CONFIGURATION
@@ -221,7 +221,7 @@ ynh_add_config --template="some_config_file" --destination="$final_path/some_con
 # You may need to use chmod 600 instead of 400,
 # for example if the app is expected to be able to modify its own config
 chmod 400 "$final_path/some_config_file"
-chown $app:$app "$final_path/some_config_file"
+chown "$app:$app" "$final_path/some_config_file"
 
 ### For more complex cases where you want to replace stuff using regexes,
 ### you shoud rely on ynh_replace_string (which is basically a wrapper for sed)
@@ -302,7 +302,7 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 ### Additional options starting with 3.8:
 ###
@@ -334,7 +334,7 @@ ynh_script_progression --message="Starting a systemd service..." --time --weight
 ###		- And the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the change_url script
 
 # Start a systemd service
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # SETUP FAIL2BAN
@@ -350,7 +350,7 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failreg
 ynh_script_progression --message="Configuring permissions..." --time --weight=1
 
 # Make app public if necessary
-if [ $is_public -eq 1 ]
+if [ "$is_public" -eq 1 ]
 then
 	# Everyone can access the app.
 	# The "main" permission is automatically created before the install script.
@@ -361,7 +361,7 @@ fi
 ### does have for example an admin interface or an api.
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
-ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+ynh_permission_create --permission="admin" --url="/admin" --allowed="$admin"
 
 # Everyone can access to the api part
 # We don't want to display the tile in the sso so we put --show_tile="false"
