@@ -10,7 +10,7 @@
 		admin="john"
 		language="fr"
 		is_public=1
-		password="pass"
+		password="strong-password"
 		port="666"
 	; Checks
 		pkg_linter=1
