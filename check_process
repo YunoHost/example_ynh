@@ -10,7 +10,7 @@
 		admin="john"
 		language="fr"
 		is_public=1
-		password="pass"
+		password="1Strong-Password"
 		port="666"
 	; Checks
 		pkg_linter=1
@@ -32,4 +32,3 @@ Notification=none
 	; commit=CommitHash
 		name=Name and date of the commit.
 		manifest_arg=domain=DOMAIN&path=PATH&admin=USER&language=fr&is_public=1&password=pass&port=666&
-
