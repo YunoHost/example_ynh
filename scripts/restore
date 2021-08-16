@@ -152,6 +152,13 @@ ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
 systemctl enable $app.service --quiet
 
 #=================================================
+# RESTORE THE LOGROTATE CONFIGURATION
+#=================================================
+ynh_script_progression --message="Restoring the logrotate configuration..." --time --weight=1
+
+ynh_restore_file --origin_path="/etc/logrotate.d/$app"
+
+#=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
@@ -164,13 +171,6 @@ yunohost service add $app --description="A short description of the app" --log="
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
 ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-
-#=================================================
-# RESTORE THE LOGROTATE CONFIGURATION
-#=================================================
-ynh_script_progression --message="Restoring the logrotate configuration..." --time --weight=1
-
-ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 
 #=================================================
 # GENERIC FINALIZATION
