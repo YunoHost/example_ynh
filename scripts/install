@@ -205,10 +205,11 @@ ynh_script_progression --message="Creating a data directory..." --time --weight=
 
 ### Use these lines if you need to create a directory to store "persistent files" for the application.
 ### Usually this directory is used to store uploaded files or any file that won't be updated during 
-### an upgrade and that won't be deleted during app removal
+### an upgrade and that won't be deleted during app removal unless "--purge" option is used.
 ### If you're not using these lines:
 ###		- Remove the section "BACKUP THE DATA DIR" in the backup script
-###		- As well as the section "RESTORE THE DATA DIRECTORY" in the restore script
+###		- Remove the section "RESTORE THE DATA DIRECTORY" in the restore script
+###     - As well as the section "REMOVE DATA DIR" in the remove script
 
 datadir=/home/yunohost.app/$app
 ynh_app_setting_set --app=$app --key=datadir --value=$datadir
