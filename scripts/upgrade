@@ -38,16 +38,19 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
-ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
 
-# Backup the current version of the app
-ynh_backup_before_upgrade
-ynh_clean_setup () {
-	# Restore it if the upgrade fails
-	ynh_restore_upgradebackup
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
+# Backup the current version of the app unless --no_safety_backup option is used
+if [ "$NO_BACKUP_UPGRADE" -eq 0 ]
+then
+	ynh_script_progression --message="Backing up the app before upgrading (may take a while)..." --time --weight=1
+	ynh_backup_before_upgrade
+	ynh_clean_setup () {
+		# Restore it if the upgrade fails
+		ynh_restore_upgradebackup
+	}
+	# Exit if an error occurs during the execution of the script
+	ynh_abort_if_errors
+fi
 
 #=================================================
 # STANDARD UPGRADE STEPS
