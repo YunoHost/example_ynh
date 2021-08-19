@@ -81,7 +81,7 @@ ynh_secure_remove --file="$final_path"
 #=================================================
 
 # Remove the data directory if --purge option is used
-if [ "$YNH_APP_PURGE" == true ]
+if [ "$YNH_APP_PURGE" == 1 ]
 then
 	ynh_script_progression --message="Removing app data directory..." --time --weight=1
 	ynh_secure_remove --file="$datadir"
