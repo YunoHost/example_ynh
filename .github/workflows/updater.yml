@@ -36,31 +36,37 @@ jobs:
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "ASSETS=$assets" >> $GITHUB_ENV
           if ! dpkg --compare-versions "$current_version" "lt" "$version" ; then
-            echo ::set-output name=to_update::false
+            echo "PROCEED=false" >> $GITHUB_ENV
             echo "::warning ::No new version available"
           elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
-            echo ::set-output name=to_update::false
-            echo "::warning ::A branch already exists for that"
+            echo "PROCEED=false" >> $GITHUB_ENV
+            echo "::warning ::A branch already exists for this update"
           else
-            echo ::set-output name=to_update::true
+            echo "PROCEED=true" >> $GITHUB_ENV
           fi
       - name: Update package files
         id: update_files
-        if: steps.check_version.outputs.to_update == 'true'
+        if: ${{ env.PROCEED == 'true' }}
         run: |
           # Setting up Git user
           git config --global user.name 'yunohost-bot'
           git config --global user.email 'yunohost-bot@users.noreply.github.com'
           # Run the version updater script
           ./.github/workflows/updater.sh
+          retval=$?
+          # Check
+          if [ $retval -neq 0 ]; then
+              echo "PROCEED=false" >> $GITHUB_ENV
+              echo "::warning ::The updater script failed (exit code $retval)"
+          fi
           # Replace new version in manifest
           jq -s --indent 4 ".[] | .version = \"$VERSION~ynh1\"" manifest.json | sponge manifest.json
           # Commit
           git commit -am "Upgrade to v$VERSION"
       - name: Create Pull Request
         id: cpr
+        if: ${{ env.PROCEED == 'true' }}
         uses: peter-evans/create-pull-request@v3
-        if: steps.check_version.outputs.to_update == 'true'
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Update to version ${{ env.VERSION }}
@@ -74,6 +80,7 @@ jobs:
             Upgrade to v${{ env.VERSION }}
           draft: false
       - name: Check outputs
+        if: ${{ env.PROCEED == 'true' }}
         run: |
           echo "Pull Request Number - ${{ steps.cpr.outputs.pull-request-number }}"
           echo "Pull Request URL - ${{ steps.cpr.outputs.pull-request-url }}"
