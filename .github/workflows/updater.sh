@@ -9,13 +9,6 @@
 # Since each app is different, maintainers can adapt its contents so as to perform
 # automatic actions when a new upstream release is detected.
 
-# GitHub Actions should have made available the following environment variables:
-# $ASSETS:
-#   The ASSETS environment variable is a space-separated list of urls
-#   of assets published with the latest upstream release.
-# $VERSION:
-#   The new version of the app
-
 # Remove this exit command when you are ready to run this Action
 exit 1
 
