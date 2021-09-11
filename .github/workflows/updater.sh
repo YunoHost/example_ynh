@@ -27,15 +27,17 @@ assets=($(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '[
 echo "Current version: $current_version"
 echo "Latest release from upstream: $version"
 echo "VERSION=$version" >> $GITHUB_ENV
+# For the time being, let's assume the script will fail
+echo "PROCEED=false" >> $GITHUB_ENV
 
 # Proceed only if the retrieved version is greater than the current one
 if ! dpkg --compare-versions "$current_version" "lt" "$version" ; then
     echo "::warning ::No new version available"
-    exit 1
+    exit 0
 # Proceed only if a PR for this new version does not already exist
 elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
     echo "::warning ::A branch already exists for this update"
-    exit 1
+    exit 0
 fi
 
 # Each release can hold multiple assets (e.g. binaries for different architectures, source code, etc.)
@@ -125,5 +127,6 @@ jq -s --indent 4 ".[] | .version = \"$VERSION~ynh1\"" manifest.json | sponge man
 
 # No need to update the README, yunohost-bot takes care of it
 
-# The Action will proceed only if a 0 exit code is returned
+# The Action will proceed only if the PROCEED environment variable is set to true
+echo "PROCEED=true" >> $GITHUB_ENV
 exit 0
