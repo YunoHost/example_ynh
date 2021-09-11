@@ -4,7 +4,8 @@
 # PACKAGE UPDATING HELPER
 #=================================================
 
-# This script is meant to be run by GitHub actions: check out .github/workflows/updater.yml
+# This script is meant to be run by GitHub Actions
+# The YunoHost-Apps organisation offers a template Action to run this script periodically
 # Since each app is different, maintainers can adapt its contents so as to perform
 # automatic actions when a new upstream release is detected.
 
@@ -15,21 +16,47 @@
 # $VERSION:
 #   The new version of the app
 
-# Let's convert $ASSETS into an array.
-eval "ASSETS=($ASSETS)"
-echo "${#ASSETS[@]} available asset(s)"
+# Remove this exit command when you are ready to run this Action
+exit 1
+
+#=================================================
+# FETCHING LATEST RELEASE AND ITS ASSETS
+#=================================================
+
+# Fetching information
+current_version=$(cat manifest.json | jq -j '.version|split("~")[0]')
+repo=$(cat manifest.json | jq -j '.upstream.code|split("https://github.com/")[1]')
+# Some jq magic is needed, because the latest upstream release is not always the latest version (e.g. security patches for older versions)
+version=$(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '.[] | .tag_name' | sort -V | tail -1)
+assets=($(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '[ .[] | select(.tag_name=="'$version'").assets[].browser_download_url ] | join(" ") | @sh' | tr -d "'"))
+
+# Setting up the environment variables
+echo "Current version: $current_version"
+echo "Latest release from upstream: $version"
+echo "VERSION=$version" >> $GITHUB_ENV
+
+# Proceed only if the retrieved version is greater than the current one
+if ! dpkg --compare-versions "$current_version" "lt" "$version" ; then
+    echo "::warning ::No new version available"
+    exit 1
+# Proceed only if a PR for this new version does not already exist
+elif git ls-remote -q --exit-code --heads https://github.com/$GITHUB_REPOSITORY.git ci-auto-update-v$version ; then
+    echo "::warning ::A branch already exists for this update"
+    exit 1
+fi
+
+# Each release can hold multiple assets (e.g. binaries for different architectures, source code, etc.)
+echo "${#assets[@]} available asset(s)"
 
 #=================================================
 # UPDATE SOURCE FILES
 #=================================================
 
-# Here we use the $ASSETS variable to get the resources published
-# in the upstream release.
-# Here is an example for Grav, it has to be adapted in accordance with
-# how the upstream releases look like.
+# Here we use the $assets variable to get the resources published in the upstream release.
+# Here is an example for Grav, it has to be adapted in accordance with how the upstream releases look like.
 
 # Let's loop over the array of assets URLs
-for asset_url in ${ASSETS[@]}; do
+for asset_url in ${assets[@]}; do
 
 echo "Handling asset at $asset_url"
 
@@ -91,14 +118,19 @@ done
 #=================================================
 
 # Any action on the app's source code can be done.
-# The GitHub Action workflow takes care of committing all changes
-# after this script ends.
-
-# Note that there should be no need to tune manifest.json or the READMEs, since
-# the GitHub Action workflow and yunohost-bot take care of them, respectively.
+# The GitHub Action workflow takes care of committing all changes after this script ends.
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
 
-echo "Done!"
+# Install moreutils, needed for sponge
+sudo apt-get install moreutils
+
+# Replace new version in manifest
+jq -s --indent 4 ".[] | .version = \"$VERSION~ynh1\"" manifest.json | sponge manifest.json
+
+# No need to update the README, yunohost-bot takes care of it
+
+# The Action will proceed only if a 0 exit code is returned
+exit 0
