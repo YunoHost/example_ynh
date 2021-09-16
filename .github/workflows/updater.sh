@@ -23,6 +23,13 @@ repo=$(cat manifest.json | jq -j '.upstream.code|split("https://github.com/")[1]
 version=$(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '.[] | select( .prerelease != true ) | .tag_name' | sort -V | tail -1)
 assets=($(curl --silent "https://api.github.com/repos/$repo/releases" | jq -r '[ .[] | select(.tag_name=="'$version'").assets[].browser_download_url ] | join(" ") | @sh' | tr -d "'"))
 
+# Later down the script, we assume the version has only digits and dots
+# Sometimes the release name starts with a "v", so let's filter it out.
+# You may need more tweaks here if the upstream repository has different naming conventions. 
+if [[ ${version:0:1} == "v" || ${version:0:1} == "V" ]]; then
+    version=${version:1}
+fi
+
 # Setting up the environment variables
 echo "Current version: $current_version"
 echo "Latest release from upstream: $version"
