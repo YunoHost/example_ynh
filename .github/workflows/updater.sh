@@ -123,7 +123,7 @@ done
 sudo apt-get install moreutils
 
 # Replace new version in manifest
-jq -s --indent 4 ".[] | .version = \"$VERSION~ynh1\"" manifest.json | sponge manifest.json
+jq -s --indent 4 ".[] | .version = \"$version~ynh1\"" manifest.json | sponge manifest.json
 
 # No need to update the README, yunohost-bot takes care of it
 
