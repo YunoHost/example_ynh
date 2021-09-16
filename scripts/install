@@ -385,14 +385,14 @@ then
 fi
 
 ### N.B. : the following extra permissions only make sense if your app
-### does have for example an admin interface or an api.
+### does have for example an admin interface or an API.
 
 # Only the admin can access the admin panel of the app (if the app has an admin panel)
 ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
 
-# Everyone can access to the api part
-# We don't want to display the tile in the sso so we put --show_tile="false"
-# And we don't want that the YunoHost Admin can remove visitors group to this permission, so we put --protected="true"
+# Everyone can access the API part
+# We don't want to display the tile in the SSO so we put --show_tile="false"
+# And we don't want the YunoHost admin to be able to remove visitors group to this permission, so we put --protected="true"
 ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
 
 #=================================================
