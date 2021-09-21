@@ -14,7 +14,7 @@
         "email": ""
     },
     "requirements": {
-        "yunohost": ">> 4.1.7"
+        "yunohost": ">> 4.2.4"
     },
     "multi_instance": true,
     "services": [
@@ -24,8 +24,7 @@
         "install" : [
             {
                 "name": "domain",
-                "type": "domain",
-                "example": "example.com"
+                "type": "domain"
             },
             {
                 "name": "path",
