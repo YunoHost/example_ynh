@@ -1,0 +1,68 @@
+version = "1.0"
+
+[main]
+name = "Main configuration"
+
+    [main.config_file]
+    name = ""
+        
+        [main.config_file.warning]
+        ask = "Here you can display a warning to user."
+        type = "warning"
+        
+        [main.config_file.from_email]
+        ask = "Outgoing email From"
+        type = "email"
+        help = "Email from which comes email from this app"
+        pattern = "^[^@]+@[^@]+$"
+        source = "email:__FINALPATH__/conf/config.php"
+        
+        [main.config_file.expiration]
+        ask = "Default expiration"
+        type = "date"
+        pattern = "^\d\d\d\d-\d\d-\d\d$"
+        source = ":__FINALPATH__/conf/config.php"
+        
+        [main.config_file.logo]
+        ask = "Logo"
+        type = "file"
+        accept = ".png"
+        optional = true
+        help = "You should upload a CA certificate to start"
+        source="__FINALPATH__/img/logo.png"
+
+    [main.auth]
+    name = "Authentication"
+        
+        [main.auth.user]
+        ask = "Username"
+        type = "string"
+        example = "camille"
+        optional = true
+        pattern = "^[^/ ]+$"
+        
+        [main.auth.passphrase]
+        ask = "Password"
+        type = "password"
+        optional = true
+        visibleIf = "user"
+
+        
+[advanced]
+name = "Advanced configuration"
+collapsed = true
+
+    [advanced.dns]
+    name = "DNS"
+
+        [manual.dns.dns0]
+        ask = "First resolver"
+        type = "string"
+        optional = true
+        pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
+
+        [manual.dns.dns1]
+        ask = "Second resolver"
+        type = "string"
+        optional = true
+        pattern = "^([0-9.]{8,16}|[0-9a-fA-F:]+)$"
