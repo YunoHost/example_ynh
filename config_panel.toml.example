@@ -82,7 +82,7 @@ services = ["nginx", "__APP__"]
     
     ## (optional) By default all questions are optionals, but you can specify a
     ## default behaviour for question in the section
-    # optional = true
+    optional = false
         
     ## (optional) It's also possible with the 'visible' property to display the
     ## question only if the user answer the form in a specific way.
@@ -232,15 +232,15 @@ services = ["nginx", "__APP__"]
         source="__FINALPATH__/img/favicon.png"
 
         
-        [main.config_file.logo]
-        ask = "Logo"
-        type = "file"
-        accept = ".png"
-        optional = true
-        help = "You should upload a CA certificate to start"
-
     [main.stripe]
     name = "Stripe general info"
+    optional = false
+
+        # The next alert is overwrited with a getter from the config script
+        [main.stripe.amount]
+        ask = "Donation in the month : XX €
+        type = "alert"
+        style = "success"
 
         [main.stripe.publishable_key]
         ask = "Publishable key"
@@ -269,4 +269,3 @@ services = ["nginx", "__APP__"]
         """
         pattern.regexp = '^(one_time|recuring)/(EUR|USD)/price_.*$'
         pattern.error = "Please respect the format describe in help text for each price ID"
-        bind = ":/var/www/__APP__/settings.py"
