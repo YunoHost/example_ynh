@@ -1,12 +1,16 @@
 
 ## Config panel are available from webadmin > Apps > YOUR_APP > Config Panel Button
-## Those panels let user configure some params on there apps to avoid them to change
-## its by hand in configuration file and be abliged to reapply their changes at each 
-## app upgrade.
+## Those panels let user configure some params on their apps using a friendly interface,
+## and remove the need to manually edit files from the command line.
+ 
+## From a packager perspective, this .toml is coupled to the scripts/config script,
+## which may be used to define custom getters/setters. However, most use cases
+## should be covered automagically by the core, thus it may not be necessary
+## to define a scripts/config at all!
  
 ## -----------------------------------------------------------------------------
-## IMPORTANT: YunoHost spirits is simplicity, please don't expose here tons of 
-## misunderstanble app settings or not really useful feature.
+## IMPORTANT: In accordance with YunoHost's spirit, please keep things simple and 
+## do not overwhelm the admin with tons of misunderstandable or advanced settings.
 ## -----------------------------------------------------------------------------
 
 ## The top level describe the entire config panels screen.
@@ -33,21 +37,18 @@ version = "1.0"
 ## You have to choose an ID for each panel, in this example the ID is "main"
 ## Keep in mind this id will be used in cli to refer to your question, so choose
 ## something short and meaningfull.
-## Note: each panel is a distinct HTML form.
+## In the webadmin, each panel corresponds to a distinct tab / form
 [main]
 
-## (recommended) You should define the label of your panel (and associated tab) 
-## If you don't define it, the ID will be used as title
-name = "Main configuration"
-
-## To internationalize the name, and other textual properties you can suggest
-## translation like this:
+## Define the label for your panel
+## Internationalization works similarly to the 'description' and 'ask' questions in the manifest
 # name.en = "Main configuration"
 # name.fr = "Configuration principale"
 
 ## (optional) If you need to trigger a service reload-or-restart after the user
 ## change a question in this panel, you can add your service in the list.
-services = ["nginx", "__APP__"]
+services = ["__APP__"]
+# or services = ["nginx", "__APP__"] to also reload-or-restart nginx
 
 ## (optional) This help properties is a short help displayed on the same line
 ## than the panel title but not displayed in the tab.
@@ -57,21 +58,27 @@ services = ["nginx", "__APP__"]
     #### ABOUT SECTIONS
     ############################################################################
 
-    ## A panel is compound of one or several sections.
-    ## You have to choose an ID for your section and prefix it with the panel ID
-    ## Be sure to not make a typo in panel prefix, or you will get an unwanted 
-    ## panel in more.
-    ## For this example we imagine, we package the pepettes_ynh app. 
-    ## It's a really simple donation form without administration panel, so we 
-    ## want to expose some settings
+    ## A panel is composed of one or several sections.
+    ##
+    ## Sections are meant to group questions together when they correspond to
+    ## a same subtopic. This impacts the rendering in terms of CLI prompts
+    ## and HTML forms
+    ##
+    ## You should choose an ID for your section, and prefix it with the panel ID
+    ## (Be sure to not make a typo in the panel ID, which would implicitly create
+    ## an other entire panel)
+    ##
+    ## We use the context of pepettes_ynh as an example,
+    ## which is a simple donation form app written in python,
+    ## and for which the admin will want to edit the configuration
     [main.customization]
 
-    ## (optional) A section could have a title, or not. It depends of what you
-    ## are doing exactly. In web admin it will display an <h3> title.
+    ## (optional) Defining a proper title for sections is not mandatory
+    ## and depends on the exact rendering you're aiming for the CLI / webadmin
     name = ""
 
     ## (optional) This help properties is a short help displayed on the same line
-    ## than the section title.
+    ## than the section title, meant to provide additional details
     # help = ""
     
     ## (optional) As for panel, you can specify to trigger a service 
@@ -84,13 +91,14 @@ services = ["nginx", "__APP__"]
     ## default behaviour for question in the section
     optional = false
         
-    ## (optional) It's also possible with the 'visible' property to display the
-    ## question only if the user answer the form in a specific way.
-    ## However, you should not refer to questions after the point where you put
-    ## the visible property. SO the first section should never have a visible
-    ## property
-    ## In more this feature is available in webadmin but not in cli, so keep in
-    ## mind cli user could be prompted for the question...
+    ## (optional) It's also possible with the 'visible' property to only
+    ## display the section depending on the user's answers to previous questions.
+    ##
+    ## Be careful that the 'visible' property should only refer to **previous** questions
+    ## Hence, it should not make sense to have a "visible" property on the very first section.
+    ##
+    ## Also, keep in mind that this feature only works in the webadmin and not in CLI
+    ## (therefore a user could be prompted in CLI for a question that may not be relevant)
     # visible = true
 
         ########################################################################
@@ -113,9 +121,11 @@ services = ["nginx", "__APP__"]
         [main.customization.project_name]
         
         ## (required) The ask property is equivalent to the ask property in 
-        ## manifest.yml. However, in config panel questions are displayed on the
-        ## left. So, it's more a label than a complete question, make short.
-        ask = "Name of the project"
+        ## the manifest. However, in config panels, questions are displayed on the
+        ## left side and therefore have less space to be rendered. Therefore, 
+        ## it is better to use a short question, and use the "help" property to
+        ## provide additional details if necessary.
+        ask.en = "Name of the project"
 
         ## (required) The type property indicates how the question should be 
         ## displayed, validated and managed. Some types have specific properties.
@@ -131,47 +141,60 @@ services = ["nginx", "__APP__"]
         ########################################################################
 
         ## (recommended) 'bind' property is a powerful feature that let you 
-        ## configure how the data will be read, validated and write. 
+        ## configure how and where the data will be read, validated and written. 
 
         ## By default, 'bind property is in "settings" mode, it means it will 
-        ## read / write the value in application settings file.
+        ## **only** read and write the value in application settings file.
         ## bind = "settings"
 
-        ## But in general, you prefer use the ":FILE" mode to read/write a 
-        ## specific variable in a file. 
+        ## However, settings usually correspond to key/values in actual app configurations
+        ## Hence, a more useful mode is to have bind = ":FILENAME". In that case, YunoHost
+        ## will automagically find a line with "KEY=VALUE" in FILENAME
+        ## (with the adequate separator between KEY and VALUE)
+        ##
+        ## YunoHost will then use this value for the read/get operation.
+        ## During write/set operations, YunoHost will overwrite the value
+        ## in **both** FILENAME and in the app's settings.yml
 
         ## Configuration file format supported: yaml, toml, json, ini, env, php,
-        ## python. The feature probably works with others formats, but you need
-        ## to test it carefully.
+        ## python. The feature probably works with others formats, but should be tested carefully.
 
-        ## Unsupported: XML format, custom config function call, php define(), 
-        ## array/list on several lines.
+        ## Note that this feature only works with relatively simple cases
+        ## such as `KEY: VALUE`, but won't properly work with
+        ## complex data structures like multilin array/lists or dictionnaries.
+        ## It also doesn't work with XML format, custom config function call, php define(), ...
 
         ## More info on TODO
         # bind = ":/var/www/__APP__/settings.py"
 
-        ## NOTE: in pepettes, the python variable is called 'name' and not 
-        ## 'project_name', wo here we need to specify the variable name by hand
-        ## before columns
-        ## Here pepettes config file to understand: https://github.com/YunoHost-Apps/pepettes_ynh/blob/5cc2d3ffd6529cc7356ff93af92dbb6785c3ab9a/conf/settings.py##L11
+
+        ## By default, bind = ":FILENAME" will use the question ID as KEY
+        ## ... but the question ID may sometime not be the exact KEY name in the configuration file.
+        ## 
+        ## In particular, in pepettes, the python variable is 'name' and not 'project_name'
+        ## (c.f. https://github.com/YunoHost-Apps/pepettes_ynh/blob/5cc2d3ffd6529cc7356ff93af92dbb6785c3ab9a/conf/settings.py##L11 )
+        ##
+        ## In that case, the key name can be specified before the column ':'
         
         bind = "name:/var/www/__APP__/settings.py"
 
         ## ---------------------------------------------------------------------
         ## IMPORTANT: other 'bind' mode exists:
         ## 
-        ## The null mode, to explicitly disable default read / write in settings.
-        #  bind = "null"
+        ## bind = "FILENAME" (with no column character before FILENAME)
+        ## may be used to bind to the **entire file content** (instead of a single KEY/VALUE)
+        ## This could be used to expose an entire configuration file, or binary files such as images
+        ## For example:
+        ## bind = "/var/www/__APP__/img/logo.png"
         ##
-        ## Without columns before the path it means all the file will be replaced
-        ## by the value (reserved for file and multiline text question):
-        #  bind = "/var/www/__APP__/img/logo.png"
-        ## 
-        ## Finally, if you define a custom getter, setter or validator in config
-        ## script it will use it instead of apply default bind behaviour.
-        ## getter: get__PROPERTY()
-        ## setter: set__PROPERTY()
-        ## validator: validate__PROPERTY()
+        ## bind = "null" can be used to disable reading / writing in settings.
+        ## This creates sort of a "virtual" or "ephemeral" question which is not related to any actual setting
+        ## In this mode, you are expected to define custom getter/setters/validators in scripts/config:
+        ##
+        ## getter: get__QUESTIONID()
+        ## setter: set__QUESTIONID()
+        ## validator: validate__QUESTIONID()
+        ##
         ## You can also specify a common getter / setter / validator, with the 
         ## function 'bind' mode, for example here it will try to run 
         ## get__array_settings() first.
@@ -179,10 +202,11 @@ services = ["nginx", "__APP__"]
         ## ---------------------------------------------------------------------
         
         ## ---------------------------------------------------------------------
-        ## IMPORTANT: during install/upgrade you should save a first value in 
-        ## the source of the bind key and in app settings.
-        ## During upgrade you should reset values in template files based on 
-        ## value saved in app settings.
+        ## IMPORTANT: with the exception of bind=null questions,
+        ## question IDs should almost **always** correspond to an app setting
+        ## initialized / reused during install/upgrade.
+        ## Not doing so may result in inconsistencies between the config panel mechanism
+        ## and the use of ynh_add_config
         ## ---------------------------------------------------------------------
 
         ########################################################################
@@ -213,7 +237,7 @@ services = ["nginx", "__APP__"]
         type = "url"
         example = "mailto: contact@example.org"
         help = "mailto: accepted"
-        pattern.regexp = "^mailto:[^@]+@[^@]+|https://$"
+        pattern.regexp = '^mailto:[^@]+@[^@]+|https://$'
         pattern.error = "Should be https or mailto:"
         bind = ":/var/www/__APP__/settings.py"
 
@@ -222,14 +246,14 @@ services = ["nginx", "__APP__"]
         type = "file"
         accept = ".png"
         help = "Fill with an already resized logo"
-        source="__FINALPATH__/img/logo.png"
+        bind = "__FINALPATH__/img/logo.png"
         
         [main.customization.favicon]
         ask = "Favicon"
         type = "file"
         accept = ".png"
         help = "Fill with an already sized favicon"
-        source="__FINALPATH__/img/favicon.png"
+        bind = "__FINALPATH__/img/favicon.png"
 
         
     [main.stripe]
