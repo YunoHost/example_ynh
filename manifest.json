@@ -3,8 +3,8 @@
     "id": "laverna",
     "packaging_format": 1,
     "description": {
-        "en": "Taking note application with Markdown editor and encryption support.",
-        "fr": "Application de Prise de note avec éditeur Markdown et chiffrement."
+        "en": "Taking note application with Markdown editor and encryption support",
+        "fr": "Application de Prise de note avec éditeur Markdown et chiffrement"
     },
         "version": "0.7.51~ynh5",
     "url": "https://laverna.cc/index.html",
