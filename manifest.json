@@ -8,6 +8,13 @@
     },
         "version": "0.7.51~ynh5",
     "url": "https://laverna.cc/index.html",
+    "upstream": {
+        "license": "MPL-2.0",
+        "website": "https://laverna.cc/index.html",
+        "demo": "https://laverna.cc/app/",
+        "admindoc": "https://github.com/Laverna/laverna/wiki",
+        "code": "https://github.com/Laverna/laverna"
+    },
     "license": "MPL-2.0",
     "maintainer": {
         "name": "",
