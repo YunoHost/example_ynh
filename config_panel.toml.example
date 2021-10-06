@@ -35,7 +35,7 @@ version = "1.0"
 
 ## The next level describes web admin panels
 ## You have to choose an ID for each panel, in this example the ID is "main"
-## Keep in mind this id will be used in cli to refer to your question, so choose
+## Keep in mind this ID will be used in CLI to refer to your question, so choose
 ## something short and meaningfull.
 ## In the webadmin, each panel corresponds to a distinct tab / form
 [main]
