@@ -1,0 +1,295 @@
+
+## Config panel are available from webadmin > Apps > YOUR_APP > Config Panel Button
+## Those panels let user configure some params on their apps using a friendly interface,
+## and remove the need to manually edit files from the command line.
+ 
+## From a packager perspective, this .toml is coupled to the scripts/config script,
+## which may be used to define custom getters/setters. However, most use cases
+## should be covered automagically by the core, thus it may not be necessary
+## to define a scripts/config at all!
+ 
+## -----------------------------------------------------------------------------
+## IMPORTANT: In accordance with YunoHost's spirit, please keep things simple and 
+## do not overwhelm the admin with tons of misunderstandable or advanced settings.
+## -----------------------------------------------------------------------------
+
+## The top level describe the entire config panels screen.
+
+## The version is a required property. 
+## Here a small reminder to associate config panel version with YunoHost version
+## | Config | YNH    | Config panel small change log                           |
+## | ------ | ---    | ------------------------------------------------------- |
+## | 0.1    | 3.x    | 0.1 config script not compatible with YNH >= 4.3        |
+## | 1.0    | 4.3.x  | The new config panel system with 'bind' property        |
+version = "1.0"
+
+## (optional) i18n property let you internationalize questions, however this feature 
+## is only available in core configuration panel (like yunohost domain config).
+## So in app config panel this key is ignored for now, but you can internationalize
+## by using a lang dictionary (see property name bellow)
+# i18n = "prefix_translation_key"
+
+################################################################################
+#### ABOUT PANELS
+################################################################################
+
+## The next level describes web admin panels
+## You have to choose an ID for each panel, in this example the ID is "main"
+## Keep in mind this ID will be used in CLI to refer to your question, so choose
+## something short and meaningfull.
+## In the webadmin, each panel corresponds to a distinct tab / form
+[main]
+
+## Define the label for your panel
+## Internationalization works similarly to the 'description' and 'ask' questions in the manifest
+# name.en = "Main configuration"
+# name.fr = "Configuration principale"
+
+## (optional) If you need to trigger a service reload-or-restart after the user
+## change a question in this panel, you can add your service in the list.
+services = ["__APP__"]
+# or services = ["nginx", "__APP__"] to also reload-or-restart nginx
+
+## (optional) This help properties is a short help displayed on the same line
+## than the panel title but not displayed in the tab.
+# help = ""
+    
+    ############################################################################
+    #### ABOUT SECTIONS
+    ############################################################################
+
+    ## A panel is composed of one or several sections.
+    ##
+    ## Sections are meant to group questions together when they correspond to
+    ## a same subtopic. This impacts the rendering in terms of CLI prompts
+    ## and HTML forms
+    ##
+    ## You should choose an ID for your section, and prefix it with the panel ID
+    ## (Be sure to not make a typo in the panel ID, which would implicitly create
+    ## an other entire panel)
+    ##
+    ## We use the context of pepettes_ynh as an example,
+    ## which is a simple donation form app written in python,
+    ## and for which the admin will want to edit the configuration
+    [main.customization]
+
+    ## (optional) Defining a proper title for sections is not mandatory
+    ## and depends on the exact rendering you're aiming for the CLI / webadmin
+    name = ""
+
+    ## (optional) This help properties is a short help displayed on the same line
+    ## than the section title, meant to provide additional details
+    # help = ""
+    
+    ## (optional) As for panel, you can specify to trigger a service 
+    ## reload-or-restart after the user change a question in this section.
+    ## This property is added to the panel property, it doesn't deactivate it.
+    ## So no need to replicate, the service list from panel services property.
+    # services = []
+    
+    ## (optional) By default all questions are optionals, but you can specify a
+    ## default behaviour for question in the section
+    optional = false
+        
+    ## (optional) It's also possible with the 'visible' property to only
+    ## display the section depending on the user's answers to previous questions.
+    ##
+    ## Be careful that the 'visible' property should only refer to **previous** questions
+    ## Hence, it should not make sense to have a "visible" property on the very first section.
+    ##
+    ## Also, keep in mind that this feature only works in the webadmin and not in CLI
+    ## (therefore a user could be prompted in CLI for a question that may not be relevant)
+    # visible = true
+
+        ########################################################################
+        #### ABOUT QUESTIONS
+        ########################################################################
+
+        ## A section is compound of one or several questions.
+
+        ## ---------------------------------------------------------------------
+        ## IMPORTANT: as for panel and section you have to choose an ID, but this
+        ## one should be unique in all this document, even if the question is in
+        ## an other panel.
+        ## ---------------------------------------------------------------------
+        
+        ## You can use same questions types and properties than in manifest.yml 
+        ## install part. However, in YNH 4.3, a lot of change has been made to
+        ## extend availables questions types list.
+        ## See: TODO DOC LINK
+        
+        [main.customization.project_name]
+        
+        ## (required) The ask property is equivalent to the ask property in 
+        ## the manifest. However, in config panels, questions are displayed on the
+        ## left side and therefore have less space to be rendered. Therefore, 
+        ## it is better to use a short question, and use the "help" property to
+        ## provide additional details if necessary.
+        ask.en = "Name of the project"
+
+        ## (required) The type property indicates how the question should be 
+        ## displayed, validated and managed. Some types have specific properties.
+        ## 
+        ## Types available: string, boolean, number, range, text, password, path
+        ## email, url, date, time, color, select, domain, user, tags, file.
+        ##
+        ## For a complete list with specific properties, see: TODO DOC LINK
+        type = "string"
+        
+        ########################################################################
+        #### ABOUT THE BIND PROPERTY
+        ########################################################################
+
+        ## (recommended) 'bind' property is a powerful feature that let you 
+        ## configure how and where the data will be read, validated and written. 
+
+        ## By default, 'bind property is in "settings" mode, it means it will 
+        ## **only** read and write the value in application settings file.
+        ## bind = "settings"
+
+        ## However, settings usually correspond to key/values in actual app configurations
+        ## Hence, a more useful mode is to have bind = ":FILENAME". In that case, YunoHost
+        ## will automagically find a line with "KEY=VALUE" in FILENAME
+        ## (with the adequate separator between KEY and VALUE)
+        ##
+        ## YunoHost will then use this value for the read/get operation.
+        ## During write/set operations, YunoHost will overwrite the value
+        ## in **both** FILENAME and in the app's settings.yml
+
+        ## Configuration file format supported: yaml, toml, json, ini, env, php,
+        ## python. The feature probably works with others formats, but should be tested carefully.
+
+        ## Note that this feature only works with relatively simple cases
+        ## such as `KEY: VALUE`, but won't properly work with
+        ## complex data structures like multilin array/lists or dictionnaries.
+        ## It also doesn't work with XML format, custom config function call, php define(), ...
+
+        ## More info on TODO
+        # bind = ":/var/www/__APP__/settings.py"
+
+
+        ## By default, bind = ":FILENAME" will use the question ID as KEY
+        ## ... but the question ID may sometime not be the exact KEY name in the configuration file.
+        ## 
+        ## In particular, in pepettes, the python variable is 'name' and not 'project_name'
+        ## (c.f. https://github.com/YunoHost-Apps/pepettes_ynh/blob/5cc2d3ffd6529cc7356ff93af92dbb6785c3ab9a/conf/settings.py##L11 )
+        ##
+        ## In that case, the key name can be specified before the column ':'
+        
+        bind = "name:/var/www/__APP__/settings.py"
+
+        ## ---------------------------------------------------------------------
+        ## IMPORTANT: other 'bind' mode exists:
+        ## 
+        ## bind = "FILENAME" (with no column character before FILENAME)
+        ## may be used to bind to the **entire file content** (instead of a single KEY/VALUE)
+        ## This could be used to expose an entire configuration file, or binary files such as images
+        ## For example:
+        ## bind = "/var/www/__APP__/img/logo.png"
+        ##
+        ## bind = "null" can be used to disable reading / writing in settings.
+        ## This creates sort of a "virtual" or "ephemeral" question which is not related to any actual setting
+        ## In this mode, you are expected to define custom getter/setters/validators in scripts/config:
+        ##
+        ## getter: get__QUESTIONID()
+        ## setter: set__QUESTIONID()
+        ## validator: validate__QUESTIONID()
+        ##
+        ## You can also specify a common getter / setter / validator, with the 
+        ## function 'bind' mode, for example here it will try to run 
+        ## get__array_settings() first.
+        #  bind = "array_settings()"
+        ## ---------------------------------------------------------------------
+        
+        ## ---------------------------------------------------------------------
+        ## IMPORTANT: with the exception of bind=null questions,
+        ## question IDs should almost **always** correspond to an app setting
+        ## initialized / reused during install/upgrade.
+        ## Not doing so may result in inconsistencies between the config panel mechanism
+        ## and the use of ynh_add_config
+        ## ---------------------------------------------------------------------
+
+        ########################################################################
+        #### OTHER GENERIC PROPERTY FOR QUESTIONS
+        ########################################################################
+        
+        ## (optional) An help text for the question
+        help = "Fill the name of the project which will received donation"
+
+        ## (optional) An example display as placeholder in web form
+        # example = "YunoHost"
+
+        ## (optional) set to true in order to redact the value in operation logs
+        # redact = false
+
+        ## (optional) A validation pattern
+        ## ---------------------------------------------------------------------
+        ## IMPORTANT: your pattern should be between simple quote, not double.
+        ## ---------------------------------------------------------------------
+        pattern.regexp = '^\w{3,30}$'
+        pattern.error = "The name should be at least 3 chars and less than 30 chars. Alphanumeric chars are accepted"
+
+        ## Note: visible and optional properties are also available for questions
+
+
+        [main.customization.contact_url]
+        ask = "Contact url"
+        type = "url"
+        example = "mailto: contact@example.org"
+        help = "mailto: accepted"
+        pattern.regexp = '^mailto:[^@]+@[^@]+|https://$'
+        pattern.error = "Should be https or mailto:"
+        bind = ":/var/www/__APP__/settings.py"
+
+        [main.customization.logo]
+        ask = "Logo"
+        type = "file"
+        accept = ".png"
+        help = "Fill with an already resized logo"
+        bind = "__FINALPATH__/img/logo.png"
+        
+        [main.customization.favicon]
+        ask = "Favicon"
+        type = "file"
+        accept = ".png"
+        help = "Fill with an already sized favicon"
+        bind = "__FINALPATH__/img/favicon.png"
+
+        
+    [main.stripe]
+    name = "Stripe general info"
+    optional = false
+
+        # The next alert is overwrited with a getter from the config script
+        [main.stripe.amount]
+        ask = "Donation in the month : XX €
+        type = "alert"
+        style = "success"
+
+        [main.stripe.publishable_key]
+        ask = "Publishable key"
+        type = "string"
+        redact = true
+        help = "Indicate here the stripe publishable key"
+        bind = ":/var/www/__APP__/settings.py"
+
+        [main.stripe.secret_key]
+        ask = "Secret key"
+        type = "string"
+        redact = true
+        help = "Indicate here the stripe secret key"
+        bind = ":/var/www/__APP__/settings.py"
+        
+        [main.stripe.prices]
+        ask = "Prices ID"
+        type = "tags"
+        help = """\
+        Indicates here the prices ID of donation products you created in stripe interfaces. \
+        Go on [Stripe products](https://dashboard.stripe.com/products) to create those donation products. \
+        Fill it tag with 'FREQUENCY/CURRENCY/PRICE_ID' \
+        FREQUENCY: 'one_time' or 'recuring' \
+        CURRENCY: 'EUR' or 'USD' \
+        PRICE_ID: ID from stripe interfaces starting with 'price_' \
+        """
+        pattern.regexp = '^(one_time|recuring)/(EUR|USD)/price_.*$'
+        pattern.error = "Please respect the format describe in help text for each price ID"
