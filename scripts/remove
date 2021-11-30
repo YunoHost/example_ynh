@@ -61,14 +61,6 @@ ynh_script_progression --message="Removing the MySQL database..." --time --weigh
 ynh_mysql_remove_db --db_user=$db_user --db_name=$db_name
 
 #=================================================
-# REMOVE DEPENDENCIES
-#=================================================
-ynh_script_progression --message="Removing dependencies..." --time --weight=1
-
-# Remove metapackage and its dependencies
-ynh_remove_app_dependencies
-
-#=================================================
 # REMOVE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Removing app main directory..." --time --weight=1
@@ -102,6 +94,14 @@ ynh_script_progression --message="Removing PHP-FPM configuration..." --time --we
 
 # Remove the dedicated PHP-FPM config
 ynh_remove_fpm_config
+
+#=================================================
+# REMOVE DEPENDENCIES
+#=================================================
+ynh_script_progression --message="Removing dependencies..." --time --weight=1
+
+# Remove metapackage and its dependencies
+ynh_remove_app_dependencies
 
 #=================================================
 # CLOSE A PORT
