@@ -43,10 +43,6 @@
                 "default": "/example"
             },
             {
-                "name": "admin",
-                "type": "user"
-            },
-            {
                 "name": "is_public",
                 "type": "boolean",
                 "default": true
@@ -60,6 +56,10 @@
                 },
                 "choices": ["fr", "en"],
                 "default": "fr"
+            },
+            {
+                "name": "admin",
+                "type": "user"
             },
             {
                 "name": "password",
