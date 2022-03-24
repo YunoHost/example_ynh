@@ -34,6 +34,7 @@ fi
 echo "Current version: $current_version"
 echo "Latest release from upstream: $version"
 echo "VERSION=$version" >> $GITHUB_ENV
+echo "REPO=$repo" >> $GITHUB_ENV
 # For the time being, let's assume the script will fail
 echo "PROCEED=false" >> $GITHUB_ENV
 
