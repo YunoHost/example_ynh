@@ -21,7 +21,7 @@
 php_dependencies="php$YNH_DEFAULT_PHP_VERSION-deb1 php$YNH_DEFAULT_PHP_VERSION-deb2"
 
 # dependencies used by the app (must be on a single line)
-pkg_dependencies="deb1 deb2 php$YNH_PHP_VERSION-deb1 php$YNH_PHP_VERSION-deb2"
+pkg_dependencies="deb1 deb2 $php_dependencies"
 
 #=================================================
 # PERSONAL HELPERS
