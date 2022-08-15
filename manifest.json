@@ -31,7 +31,7 @@
         "mysql"
     ],
     "arguments": {
-        "install" : [
+        "install": [
             {
                 "name": "domain",
                 "type": "domain"
@@ -41,10 +41,6 @@
                 "type": "path",
                 "example": "/example",
                 "default": "/example"
-            },
-            {
-                "name": "admin",
-                "type": "user"
             },
             {
                 "name": "is_public",
@@ -60,6 +56,10 @@
                 },
                 "choices": ["fr", "en"],
                 "default": "fr"
+            },
+            {
+                "name": "admin",
+                "type": "user"
             },
             {
                 "name": "password",
