@@ -100,7 +100,7 @@ ynh_remove_fpm_config
 #=================================================
 ynh_script_progression --message="Removing dependencies..." --weight=1
 
-# Remove metapackage and its dependencies
+# Remove metapackage and its dependencies if no other package need them
 ynh_remove_app_dependencies
 
 #=================================================
