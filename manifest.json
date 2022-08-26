@@ -45,7 +45,11 @@
             {
                 "name": "is_public",
                 "type": "boolean",
-                "default": true
+                "default": true,
+                "help": {
+                    "en": "Use the help field to explain to the admin what it means for *this* app to be public or private",
+                    "fr": "Utilisez le champ d'aide pour expliquer à l'administrateur ce que signifie le fait que *cette* application soit publique ou privée"
+                }
             },
             {
                 "name": "language",
