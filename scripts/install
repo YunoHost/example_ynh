@@ -170,7 +170,9 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 
 ### `ynh_add_fpm_config` is used to set up a PHP config.
 ### You can remove it if your app doesn't use PHP.
-### `ynh_add_fpm_config` will use the files conf/php-fpm.conf
+### `ynh_add_fpm_config` will create a 'config' then add 'extra_php-fpm.conf'
+### It can use be overwritten by 'conf/php-fpm.conf' but not by default
+### See helper code https://github.com/YunoHost/yunohost/blob/dev/helpers/php
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
 ###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
@@ -178,9 +180,24 @@ ynh_script_progression --message="Configuring PHP-FPM..." --weight=1
 ###		- As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
 ###		  with the reload at the end of the script.
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
+###     - and references to 'fpm_footprint' and 'fpm_usage' in the upgrade script
+###       in sections "LOAD SETTINGS" and "ENSURE DOWNWARD COMPATIBILITY"
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config
+# default setup: should be fine for most application and in a small server usage
+fpm_usage=low
+fpm_footprint=low
+### to ajust values, if you have more users like in a NGO or small compagny, see:
+### https://github.com/YunoHost/yunohost/blob/dev/helpers/php#L18-L31
+### If the app is more ressources consumming too
+ynh_add_fpm_config --usage="$fpm_usage" --footprint="$fpm_footprint"
+
+#TODO: should this setup should be done directly by the helper? (which default setting then?)
+#TODO: or the packager has to decide by its own? (how to decide between 'low' or 'high'?)
+#TODO: depending of the app, only the packager can decide the 'default setup' IMO and server admin wil change it if needed. Using 'config panel' I guess?
+### alternative setup if you need to use the specific 'conf/php-fpm.conf' file:
+### Note that 'conf/extra_php-fpm.conf' will not be used in this scenario!
+### ynh_add_fpm_config --use_template
 
 #=================================================
 # NGINX CONFIGURATION

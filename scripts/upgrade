@@ -23,6 +23,9 @@ admin=$(ynh_app_setting_get --app=$app --key=admin)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 
+fpm_footprint=$(ynh_app_setting_get --app=$app --key=fpm_footprint)
+fpm_usage=$(ynh_app_setting_get --app=$app --key=fpm_usage)
+
 #=================================================
 # CHECK VERSION
 #=================================================
@@ -101,6 +104,21 @@ if ! ynh_permission_exists --permission="api"; then
 	ynh_permission_create --permission="api" --url="/api" --allowed="visitors" --show_tile="false" --protected="true"
 fi
 
+### Use these functions if the package was released
+### without "php fpm footprint" and you are implementing it
+### Take values from 'install' script
+#If fpm_footprint doesn't exist, create it
+if [ -z "$fpm_footprint" ]; then
+	fpm_footprint=low
+	ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+fi
+
+# If fpm_usage doesn't exist, create it
+if [ -z "$fpm_usage" ]; then
+	fpm_usage=low
+	ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+fi
+
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
@@ -144,7 +162,7 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Upgrading PHP-FPM configuration..." --weight=1
 
 # Create a dedicated PHP-FPM config
-ynh_add_fpm_config
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 
 #=================================================
 # NGINX CONFIGURATION
