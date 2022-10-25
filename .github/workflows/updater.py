@@ -115,7 +115,7 @@ def main():
         return
 
     # Proceed only if a PR for this new version does not already exist
-    branch = f"ci-auto-update-v${latest_version}"
+    branch = f"ci-auto-update-v{latest_version}"
     command = ["git", "ls-remote", "--exit-code", "-h", repo, branch]
     if run(command, stderr=PIPE, stdout=PIPE, check=False).returncode == 0:
         logging.warning("A branch already exists for this update")
