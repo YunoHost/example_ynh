@@ -155,6 +155,7 @@ systemctl enable $app.service --quiet
 ynh_script_progression --message="Restoring the logrotate configuration..." --weight=1
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
+mkdir --parents /var/log/$app
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
