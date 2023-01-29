@@ -13,10 +13,9 @@ import hashlib
 import json
 import logging
 import os
-import re
 from subprocess import run, PIPE
 import textwrap
-from typing import List, Tuple, Any
+from typing import Tuple, Any
 import requests
 from packaging import version
 
@@ -35,7 +34,7 @@ def get_latest_version(repo: str) -> Tuple[version.Version, Any]:
     api_url = repo.replace("github.com", "api.github.com/repos")
 
     # Maintainer: use either releases or tags
-    tags = requests.get(f"{api_url}/tags").json()
+    tags = requests.get(f"{api_url}/tags", timeout=3).json()
     tag_info = next(
         tag for tag in tags
         if "-rc" not in tag["name"] and "REL" not in tag["name"]
@@ -43,7 +42,7 @@ def get_latest_version(repo: str) -> Tuple[version.Version, Any]:
     return version.Version(tag_info["name"]), tag_info
 
     # Maintainer: use either releases or tags
-    releases = requests.get(f"{api_url}/releases").json()
+    releases = requests.get(f"{api_url}/releases", timeout=3).json()
     release_info = next(
         release for release in releases
         if not release["prerelease"]
@@ -67,9 +66,10 @@ def generate_src_files(repo: str, release: Any):
 def sha256sum_of_url(url: str) -> str:
     """Compute checksum without saving the file"""
     checksum = hashlib.sha256()
-    for chunk in requests.get(url, stream=True).iter_content():
+    for chunk in requests.get(url, stream=True, timeout=1000).iter_content(10*1024):
         checksum.update(chunk)
     return checksum.hexdigest()
+
 
 def write_src_file(name: str, asset_url: str, extension: str,
                    extract: bool = True, subdir: bool = True) -> None:
@@ -86,6 +86,7 @@ def write_src_file(name: str, asset_url: str, extension: str,
             SOURCE_EXTRACT={str(extract).lower()}
         """))
 
+
 def write_github_env(proceed: bool, new_version: str, branch: str):
     """Those values will be used later in the workflow"""
     if "GITHUB_ENV" not in os.environ:
@@ -97,6 +98,7 @@ def write_github_env(proceed: bool, new_version: str, branch: str):
             BRANCH={branch}
             PROCEED={str(proceed).lower()}
         """))
+
 
 def main():
     with open("manifest.json", "r", encoding="utf-8") as manifest_file:
