@@ -246,14 +246,14 @@ services = ["__APP__"]
         type = "file"
         accept = ".png"
         help = "Fill with an already resized logo"
-        bind = "__FINALPATH__/img/logo.png"
+        bind = "__INSTALL_DIR__/img/logo.png"
         
         [main.customization.favicon]
         ask = "Favicon"
         type = "file"
         accept = ".png"
         help = "Fill with an already sized favicon"
-        bind = "__FINALPATH__/img/favicon.png"
+        bind = "__INSTALL_DIR__/img/favicon.png"
 
         
     [main.stripe]
