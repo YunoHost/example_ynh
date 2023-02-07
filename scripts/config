@@ -22,7 +22,7 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS
 #=================================================
 
-final_path=$(ynh_app_setting_get $app final_path)
+install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 #=================================================
 # SPECIFIC GETTERS FOR TOML SHORT KEY
@@ -52,7 +52,7 @@ EOF
 }
 
 get__prices() {
-    local prices = "$(grep "DONATION\['" "$final_path/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
+    local prices = "$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
     if [ "$prices" == "," ];
     then
         # Return YNH_NULL if you prefer to not return a value at all.
@@ -85,9 +85,9 @@ set__prices() {
         frequency=$(echo $price | cut -d/ -f1)
         currency=$(echo $price | cut -d/ -f2)
         price_id=$(echo $price | cut -d/ -f3)
-        sed "d/DONATION\['$frequency'\]\['$currency'\]" "$final_path/settings.py"
+        sed "d/DONATION\['$frequency'\]\['$currency'\]" "$install_dir/settings.py"
 
-        echo "DONATION['$frequency']['$currency'] = '$price_id'" >> "$final_path/settings.py"
+        echo "DONATION['$frequency']['$currency'] = '$price_id'" >> "$install_dir/settings.py"
     done
     
     #---------------------------------------------
