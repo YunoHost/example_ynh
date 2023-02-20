@@ -35,7 +35,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-#ynh_script_progression --message="Ensuring downward compatibility..." --time --weight=1
+#ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 #
 # N.B. : the followings setting migrations snippets are provided as *EXAMPLES*
@@ -81,7 +81,6 @@ fi
 # ownership to all files such as after the ynh_setup_source step
 chown -R $app:www-data "$install_dir"
 
-
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
@@ -100,7 +99,6 @@ yunohost service add $app --description="A short description of the app" --log="
 ynh_use_logrotate --non-append
 
 ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
-
 
 #=================================================
 # RECONFIGURE THE APP (UPDATE CONF, APPLY MIGRATIONS, ...)
