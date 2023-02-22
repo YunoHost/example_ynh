@@ -1,7 +1,7 @@
 # Packaging an app, starting from this example
 
 * Copy this app before working on it, using the ['Use this template'](https://github.com/YunoHost/example_ynh/generate) button on the Github repo.
-* Edit the `manifest.json` with app specific info.
+* Edit the `manifest.toml` with app specific info.
 * Edit the `install`, `upgrade`, `remove`, `backup` and `restore` scripts, and any relevant conf files in `conf/`.
   * Using the [script helpers documentation.](https://yunohost.org/packaging_apps_helpers)
 * Edit the `change_url` and `config` scripts too, or remove them if you have no use of them
