@@ -13,7 +13,8 @@ test_format = 1.0
     #
     # You can also decide (though this is discouraged!) to ban/ignore some tests,
 
-    exclude = ["install.private", "install.multi"]  # NB : you should NOT need this except if you really have a good reason ...
+    exclude = ["install.private", "install.multi"]  # The test IDs to be used in only/exclude statements are: install.root, install.subdir, install.nourl, install.multi, backup_restore, upgrade, upgrade.someCommitId change_url
+    # NB : you should NOT need this except if you really have a good reason...
 
     # For special usecases, sometimes you need to setup other things on the machine
     # prior to installing the app (such as installing another app)
@@ -32,7 +33,7 @@ test_format = 1.0
     # and also install args with a "default" provided in the manifest..
     # It should only make sense to declare custom args here for args with no default values
 
-    args.language = "fr_FR"    # NB : you should NOT need those lines unless for custom questions with no obvious/default value
+    args.language = "fr_FR"    # NB: you should NOT need those lines unless for custom questions with no obvious/default value
     args.multisite = 0
 
     # -------------------------------
