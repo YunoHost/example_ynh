@@ -14,7 +14,7 @@ test_format = 1.0
     # You can also decide (though this is discouraged!) to ban/ignore some tests,
 
     exclude = ["install.private", "install.multi"]  # The test IDs to be used in only/exclude statements are: install.root, install.subdir, install.nourl, install.multi, backup_restore, upgrade, upgrade.someCommitId change_url
-    # NB : you should NOT need this except if you really have a good reason...
+    # NB: you should NOT need this except if you really have a good reason...
 
     # For special usecases, sometimes you need to setup other things on the machine
     # prior to installing the app (such as installing another app)
