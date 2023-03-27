@@ -87,7 +87,8 @@ ram.runtime = "50M"
         # to auto-update the previous asset urls and sha256sum + manifest version
         # assuming the upstream's code repo is on github and relies on tags or releases
         # See the 'sources' resource documentation for more details
-        autoupdate.strategy = "latest_github_tag"
+
+        # autoupdate.strategy = "latest_github_tag"
 
     [resources.system_user]
     # This will provision/deprovision a unix system user
