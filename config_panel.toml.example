@@ -222,6 +222,13 @@ services = ["__APP__"]
         ## (optional) set to true in order to redact the value in operation logs
         # redact = false
 
+        ## (optional) for boolean questions you can specify replacement values 
+        ## bound to true and false, in case property is bound to config file
+        # useful if bound property in config file expects something else than integer 1
+        yes = "Enable" 
+        # useful if bound property in config file expects something else than integer 0
+        no = "Disable" 
+
         ## (optional) A validation pattern
         ## ---------------------------------------------------------------------
         ## IMPORTANT: your pattern should be between simple quote, not double.
