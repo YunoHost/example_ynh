@@ -88,7 +88,7 @@ ynh_script_progression --message="Upgrading system configurations related to $ap
 
 # This should be a literal copypasta of what happened in the install's "System configuration" section
 
-ynh_add_fpm_config
+ynh_add_fpm_config --usage=low --footprint=low
 
 ynh_add_nginx_config
 
