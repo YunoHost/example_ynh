@@ -31,6 +31,20 @@ source /usr/share/yunohost/helpers
 #
 
 #=================================================
+# RETRIEVE ARGUMENTS FROM THE MANIFEST
+#=================================================
+
+fpm_usage=low
+fpm_footprint=low
+
+#=================================================
+# STORE SETTINGS FROM MANIFEST
+#=================================================
+
+ynh_app_setting_set --app=$app --key=fpm_footprint --value=$fpm_footprint
+ynh_app_setting_set --app=$app --key=fpm_usage --value=$fpm_usage
+
+#=================================================
 # APP "BUILD" (DEPLOYING SOURCES, VENV, COMPILING ETC)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -66,7 +80,7 @@ ynh_script_progression --message="Adding system configurations related to $app..
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated PHP-FPM config using the conf/php-fpm.conf or conf/extra_php-fpm.conf
-ynh_add_fpm_config --usage=low --footprint=low
+ynh_add_fpm_config --usage=$fpm_usage --footprint=$fpm_footprint
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_add_nginx_config
