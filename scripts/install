@@ -66,7 +66,7 @@ ynh_script_progression --message="Adding system configurations related to $app..
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated PHP-FPM config using the conf/php-fpm.conf or conf/extra_php-fpm.conf
-ynh_add_fpm_config
+ynh_add_fpm_config --usage=low --footprint=low
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_add_nginx_config
