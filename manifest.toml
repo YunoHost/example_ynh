@@ -23,7 +23,7 @@ cpe = "???"
 fund = "???"
 
 [integration]
-yunohost = ">= 11.1.14"
+yunohost = ">= 11.1.21"
 # FIXME: can be replaced by a list of supported archs using the dpkg --print-architecture nomenclature (amd64/i386/armhf/arm64), for example: ["amd64", "i386"]
 architectures = "all"
 multi_instance = true
@@ -55,8 +55,8 @@ ram.runtime = "50M"
     [install.language]
     ask.en = "Choose the application language"
     ask.fr = "Choisissez la langue de l'application"
-    type = "string"
-    select = ["fr", "en"]
+    type = "select"
+    choices = ["fr", "en"]
     default = "fr"
 
     [install.admin]
