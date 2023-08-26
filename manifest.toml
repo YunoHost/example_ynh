@@ -19,9 +19,16 @@ demo = "https://demo.example.com"
 admindoc = "https://yunohost.org/packaging_apps"
 userdoc = "https://yunohost.org/apps"
 code = "https://some.forge.com/example/example"
-# FIXME: optional but recommended if relevant, this is meant to contain the Common Platform Enumeration, which is sort of a standard id for applications defined by the NIST. In particular, YunoHost may use this is in the future to easily track CVE (=security reports) related to apps. The CPE may be obtained by searching here: https://nvd.nist.gov/products/cpe/search. For example, for Nextcloud, the CPE is 'cpe:2.3:a:nextcloud:nextcloud' (no need to include the version number)
+# FIXME: optional but recommended if relevant, this is meant to contain the Common Platform Enumeration, which is
+# sort of a standard id for applications defined by the NIST. In particular, YunoHost may use this is in the future
+# to easily track CVE (=security reports) related to apps. The CPE may be obtained by searching here:
+# https://nvd.nist.gov/products/cpe/search.
+# For example, for Nextcloud, the CPE is 'cpe:2.3:a:nextcloud:nextcloud' (no need to include the version number)
 cpe = "???"
-# FIXME: optional but recommended (or remove if irrelevant / not applicable). This is meant to be an URL where people can financially support this app, especially when its development is based on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
+
+# FIXME: optional but recommended (or remove if irrelevant / not applicable).
+# This is meant to be an URL where people can financially support this app, especially when its development is based
+# on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
 fund = "???"
 
 [integration]
@@ -29,10 +36,17 @@ yunohost = ">= 11.1.21"
 # FIXME: can be replaced by a list of supported archs using the dpkg --print-architecture nomenclature (amd64/i386/armhf/arm64), for example: ["amd64", "i386"]
 architectures = "all"
 multi_instance = true
-# FIXME: replace with true, false, or "not_relevant". Not to confuse with the "sso" key: the "ldap" key corresponds to wether or not a user *can* login on the app using its YunoHost credentials.
+
+# FIXME: replace with true, false, or "not_relevant".
+# Not to confuse with the "sso" key: the "ldap" key corresponds to wether or not a user *can* login on the app using
+# its YunoHost credentials.
 ldap = "?"
-# FIXME: replace with true, false, or "not_relevant". Not to confuse with the "ldap" key: the "sso" key corresponds to wether or not a user is *automatically logged-in* on the app when logged-in on the YunoHost portal.
+
+# FIXME: replace with true, false, or "not_relevant".
+# Not to confuse with the "ldap" key: the "sso" key corresponds to wether or not a user is *automatically logged-in*
+# on the app when logged-in on the YunoHost portal.
 sso = "?"
+
 # FIXME: replace with an **estimate** minimum disk and RAM requirements. e.g. 20M, 400M, 1G...
 disk = "50M"
 ram.build = "50M"
