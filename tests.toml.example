@@ -1,3 +1,5 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/master/schemas/tests.v1.schema.json
+
 test_format = 1.0
 
 [default]
@@ -27,7 +29,7 @@ test_format = 1.0
     # -------------------------------
     # Default args to use for install
     # -------------------------------
-    
+
     # By default, the CI will automagically fill the 'standard' args
     # such as domain, path, admin, is_public and password with relevant values
     # and also install args with a "default" provided in the manifest..
@@ -49,7 +51,7 @@ test_format = 1.0
 
     # On additional tests suites, you can decide to run only specific tests
 
-    only = ["install.subdir"]    
+    only = ["install.subdir"]
 
     args.language = "en_GB"
     args.multisite = 1
