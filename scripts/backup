@@ -17,8 +17,8 @@ ynh_print_info --message="Declaring files to be backed up..."
 
 ### N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
 ### to be backuped and not an actual copy of any file. The actual backup that
-### creates and fill the archive with the files happens in the core after this
-### script is called. Hence ynh_backups calls takes basically 0 seconds to run.
+### creates and fills the archive with the files happens in the core after this
+### script is called. Hence ynh_backups calls take basically 0 seconds to run.
 
 #=================================================
 # BACKUP THE APP MAIN DIR
