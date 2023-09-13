@@ -68,7 +68,7 @@ get__prices() {
 #=================================================
 validate__publishable_key() {
 
-    # We can imagine here we test if the key is really a publisheable key
+    # We can imagine here we test if the key is really a publishable key
     (is_secret_key $publishable_key) &&
         echo 'This key seems to be a secret key'
 }
@@ -79,7 +79,7 @@ validate__publishable_key() {
 set__prices() {
 
     #---------------------------------------------
-    # IMPORTANT: setter are trigger only if a change is detected
+    # IMPORTANT: setters are triggered only if a change is detected
     #---------------------------------------------
     for price in $(echo $prices | sed "s/,/ /"); do
         frequency=$(echo $price | cut -d/ -f1)
@@ -91,7 +91,7 @@ set__prices() {
     done
     
     #---------------------------------------------
-    # IMPORTANT: to be able to upgrade properly, you have to saved the value in settings too
+    # IMPORTANT: to be able to upgrade properly, you have to save the value in settings too
     #---------------------------------------------
     ynh_app_setting_set $app prices $prices
 }

@@ -100,7 +100,7 @@ yunohost service add $app --description="A short description of the app" --log="
 ###
 ### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
 ###                               which will then be checked by YunoHost's diagnosis system
-###                               (N.B. DO NOT USE THIS is the port is only internal!!!)
+###                               (N.B. DO NOT USE THIS if the port is only internal!!!)
 ###
 ### --test_status "some command"  a custom command to check the status of the service
 ###                               (only relevant if 'systemctl status' doesn't do a good job)

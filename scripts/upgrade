@@ -38,7 +38,7 @@ upgrade_type=$(ynh_check_app_version_changed)
 #ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
 #
-# N.B. : the followings setting migrations snippets are provided as *EXAMPLES*
+# N.B. : the following setting migration snippets are provided as *EXAMPLES*
 # of what you may want to do in some cases (e.g. a setting was not defined on
 # some legacy installs and you therefore want to initiaze stuff during upgrade)
 #
@@ -77,7 +77,7 @@ then
 fi
 
 # $install_dir will automatically be initialized with some decent 
-# permission by default ... however, you may need to recursively reapply
+# permissions by default ... however, you may need to recursively reapply
 # ownership to all files such as after the ynh_setup_source step
 chown -R $app:www-data "$install_dir"
 
@@ -86,7 +86,7 @@ chown -R $app:www-data "$install_dir"
 #=================================================
 ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
 
-# This should be a literal copypasta of what happened in the install's "System configuration" section
+# This should be a literal copypaste of what happened in the install's "System configuration" section
 
 ynh_add_fpm_config
 
