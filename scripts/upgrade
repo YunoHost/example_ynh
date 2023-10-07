@@ -72,7 +72,7 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]
 then
 	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-	# Download, check integrity, uncompress and patch the source from app.src
+	# Download, check integrity, uncompress and patch the source from manifest.toml
 	ynh_setup_source --dest_dir="$install_dir"
 fi
 
