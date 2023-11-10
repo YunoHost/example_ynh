@@ -15,32 +15,26 @@ website = "https://laverna.cc/index.html"
 demo = "https://laverna.cc/app/"
 admindoc = "https://github.com/Laverna/laverna/wiki"
 code = "https://github.com/Laverna/laverna"
-cpe = "???" # FIXME: optional but recommended if relevant, this is meant to contain the Common Platform Enumeration, which is sort of a standard id for applications defined by the NIST. In particular, Yunohost may use this is in the future to easily track CVE (=security reports) related to apps. The CPE may be obtained by searching here: https://nvd.nist.gov/products/cpe/search. For example, for Nextcloud, the CPE is 'cpe:2.3:a:nextcloud:nextcloud' (no need to include the version number)
-fund = "???" # FIXME: optional but recommended (or remove if irrelevant / not applicable). This is meant to be an URL where people can financially support this app, especially when its development is based on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
 
 [integration]
-yunohost = ">> 4.3.0"
-architectures = "all" # FIXME: can be replaced by a list of supported archs using the dpkg --print-architecture nomenclature (amd64/i386/armhf/arm64), for example: ["amd64", "i386"]
+yunohost = ">> 11.2"
+architectures = "all"
 multi_instance = true
-ldap = "?" # FIXME: replace with true, false, or "not_relevant". Not to confuse with the "sso" key : the "ldap" key corresponds to wether or not a user *can* login on the app using its YunoHost credentials.
-sso = "?" # FIXME: replace with true, false, or "not_relevant". Not to confuse with the "ldap" key : the "sso" key corresponds to wether or not a user is *automatically logged-in* on the app when logged-in on the YunoHost portal.
-disk = "50M" # FIXME: replace with an **estimate** minimum disk requirement. e.g. 20M, 400M, 1G, ...
-ram.build = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
-ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requirement. e.g. 50M, 400M, 1G, ...
+ldap = false
+sso = false
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
 
 [install]
     [install.domain]
-    # this is a generic question - ask strings are automatically handled by Yunohost's core
     type = "domain"
 
     [install.path]
-    # this is a generic question - ask strings are automatically handled by Yunohost's core
     type = "path"
     default = "/laverna"
 
     [install.init_main_permission]
-    help.en = "If enabled, Laverna will be accessible by people who do not have an account. This can be changed later via the webadmin."
-    help.fr = "Si cette case est cochée, Laverna sera accessible aux personnes n’ayant pas de compte. Vous pourrez changer ceci plus tard via la webadmin."
     type = "group"
     default = "visitors"
 
@@ -48,7 +42,6 @@ ram.runtime = "50M" # FIXME: replace with an **estimate** minimum ram requiremen
         [resources.sources.main]
         url = "https://github.com/Laverna/static-laverna/archive/gh-pages.zip"
         sha256 = "226224a141eeefefcf446e8ba4bda3f9ea7be6e96cd1992b185d44d5ef58e7d3"
-
 
     [resources.system_user]
 

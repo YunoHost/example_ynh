@@ -9,57 +9,21 @@
 source /usr/share/yunohost/helpers
 
 #=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-# Exit if an error occurs during the execution of the script
-#REMOVEME? ynh_abort_if_errors
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_script_progression --message="Loading settings..." --weight=1
-
-#REMOVEME? app=$YNH_APP_INSTANCE_NAME
-
-#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
-#REMOVEME? path=$(ynh_app_setting_get --app=$app --key=path)
-#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
-
-#=================================================
-# CHECK IF THE APP CAN BE RESTORED
-#=================================================
-#REMOVEME? ynh_script_progression --message="Validating restoration parameters..." --weight=1
-
-#REMOVEME? test ! -d $install_dir \
-	|| ynh_die --message="There is already a directory: $install_dir "
-
-#=================================================
-# STANDARD RESTORATION STEPS
-#=================================================
-# RESTORE THE NGINX CONFIGURATION
-#=================================================
-
-ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
-
-#=================================================
-# RECREATE THE DEDICATED USER
-#=================================================
-#REMOVEME? ynh_script_progression --message="Recreating the dedicated system user..." --weight=1
-
-# Create the dedicated user (if not existing)
-#REMOVEME? ynh_system_user_create --username=$app --home_dir="$install_dir"
-
-#=================================================
 # RESTORE THE APP MAIN DIR
 #=================================================
 ynh_script_progression --message="Restoring Laverna main directory..." --weight=2
 
 ynh_restore_file --origin_path="$install_dir"
 
-chmod 750 "$install_dir"
 chmod -R o-rwx "$install_dir"
 chown -R $app:www-data "$install_dir"
+
+#=================================================
+# RESTORE SYSTEM CONFIGURATIONS
+#=================================================
+ynh_script_progression --message="Restoring system configurations related to $app..." --weight=1
+
+ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
 # GENERIC FINALIZATION
