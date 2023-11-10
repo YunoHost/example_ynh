@@ -11,12 +11,12 @@ source /usr/share/yunohost/helpers
 #=================================================
 # LOAD SETTINGS
 #=================================================
-ynh_script_progression --message="Loading installation settings..." --weight=1
+#REMOVEME? ynh_script_progression --message="Loading installation settings..." --weight=1
 
-app=$YNH_APP_INSTANCE_NAME
+#REMOVEME? app=$YNH_APP_INSTANCE_NAME
 
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+#REMOVEME? domain=$(ynh_app_setting_get --app=$app --key=domain)
+#REMOVEME? #REMOVEME? install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 #=================================================
 # STANDARD REMOVE
@@ -26,7 +26,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ynh_script_progression --message="Removing Laverna main directory..." --weight=3
 
 # Remove the app directory securely
-ynh_secure_remove --file="$final_path"
+#REMOVEME? ynh_secure_remove --file="$install_dir"
 
 #=================================================
 # REMOVE NGINX CONFIGURATION
@@ -41,10 +41,10 @@ ynh_remove_nginx_config
 #=================================================
 # REMOVE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Removing the dedicated system user..." --weight=1
+#REMOVEME? ynh_script_progression --message="Removing the dedicated system user..." --weight=1
 
 # Delete a system user
-ynh_system_user_delete --username=$app
+#REMOVEME? ynh_system_user_delete --username=$app
 
 #=================================================
 # END OF SCRIPT
