@@ -1,0 +1,15 @@
+# ~/.shellcheckrc
+
+# follow source _common.sh
+external-sources=true
+
+# disable common errors with yunohost scripting:
+
+# Not following: (error message here)
+disable=SC1091
+
+# foo appears unused. Verify it or export it.
+disable=SC2034
+
+# var is referenced but not assigned.
+disable=SC2154
