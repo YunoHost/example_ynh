@@ -30,7 +30,7 @@ install_dir=$(ynh_app_setting_get --app="$app" --key=install_dir)
 
 get__amount() {
     # Here we can imagine to have an API call to stripe to know the amount of donation during a month
-    local amount = 200
+    local amount=200
 
     # It's possible to change some properties of the question by overriding it:
     if [ "$amount" -gt 100 ]
@@ -52,7 +52,7 @@ EOF
 }
 
 get__prices() {
-    local prices = "$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
+    local prices="$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
     if [ "$prices" == "," ];
     then
         # Return YNH_NULL if you prefer to not return a value at all.
