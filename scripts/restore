@@ -20,7 +20,7 @@ ynh_restore_file --origin_path="$install_dir"
 # $install_dir will automatically be initialized with some decent 
 # permissions by default ... however, you may need to recursively reapply
 # ownership to all files such as after the ynh_setup_source step
-chown -R $app:www-data "$install_dir"
+chown -R "$app:www-data" "$install_dir"
 
 #=================================================
 # RESTORE THE DATA DIRECTORY
@@ -30,14 +30,14 @@ ynh_script_progression --message="Restoring the data directory..." --weight=1
 ynh_restore_file --origin_path="$data_dir" --not_mandatory
 
 # (Same as for install dir)
-chown -R $app:www-data "$data_dir"
+chown -R "$app:www-data" "$data_dir"
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
 #=================================================
 ynh_script_progression --message="Restoring the MySQL database..." --weight=1
 
-ynh_mysql_connect_as --user=$db_user --password=$db_pwd --database=$db_name < ./db.sql
+ynh_mysql_connect_as --user="$db_user" --password="$db_pwd" --database="$db_name" < ./db.sql
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATIONS
@@ -53,9 +53,9 @@ ynh_restore_file --origin_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 ynh_restore_file --origin_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore_file --origin_path="/etc/systemd/system/$app.service"
-systemctl enable $app.service --quiet
+systemctl enable "$app.service" --quiet
 
-yunohost service add $app --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 ynh_restore_file --origin_path="/etc/logrotate.d/$app"
 
@@ -76,8 +76,8 @@ ynh_restore_file --origin_path="/etc/$app/"
 ynh_script_progression --message="Reloading NGINX web server and $app's service..." --weight=1
 
 # Typically you only have either $app or php-fpm but not both at the same time...
-ynh_systemd_action --service_name=$app --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name=php$phpversion-fpm --action=reload
+ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="php$phpversion-fpm" --action=reload
 
 ynh_systemd_action --service_name=nginx --action=reload
 
