@@ -94,7 +94,7 @@ set__prices() {
     #---------------------------------------------
     # IMPORTANT: to be able to upgrade properly, you have to save the value in settings too
     #---------------------------------------------
-    ynh_app_setting_set "$app" prices "$prices"
+    ynh_app_setting_set --app="$app" --key=prices --value="$prices"
 }
 
 #=================================================
