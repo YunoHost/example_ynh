@@ -1,6 +1,6 @@
 This is a dummy disclaimer to display after the install
 
-The app url is `__DOMAIN____PATH__`
+The app url is <https://__DOMAIN____PATH__>
 
 The app install dir is `__INSTALL_DIR__`
 
