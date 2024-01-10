@@ -22,7 +22,7 @@ ynh_abort_if_errors
 # RETRIEVE ARGUMENTS
 #=================================================
 
-install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
+install_dir=$(ynh_app_setting_get --app="$app" --key=install_dir)
 
 #=================================================
 # SPECIFIC GETTERS FOR TOML SHORT KEY
@@ -30,10 +30,10 @@ install_dir=$(ynh_app_setting_get --app=$app --key=install_dir)
 
 get__amount() {
     # Here we can imagine to have an API call to stripe to know the amount of donation during a month
-    local amount = 200
+    local amount=200
 
     # It's possible to change some properties of the question by overriding it:
-    if [ $amount -gt 100 ]
+    if [ "$amount" -gt 100 ]
     then
     cat << EOF
 style: success
@@ -52,13 +52,14 @@ EOF
 }
 
 get__prices() {
-    local prices = "$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
+    local prices
+    prices="$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
     if [ "$prices" == "," ];
     then
         # Return YNH_NULL if you prefer to not return a value at all.
         echo YNH_NULL
     else
-        echo $prices
+        echo "$prices"
     fi
 }
 
@@ -69,7 +70,7 @@ get__prices() {
 validate__publishable_key() {
 
     # We can imagine here we test if the key is really a publishable key
-    (is_secret_key $publishable_key) &&
+    (is_secret_key "$publishable_key") &&
         echo 'This key seems to be a secret key'
 }
 
@@ -81,10 +82,10 @@ set__prices() {
     #---------------------------------------------
     # IMPORTANT: setters are triggered only if a change is detected
     #---------------------------------------------
-    for price in $(echo $prices | sed "s/,/ /"); do
-        frequency=$(echo $price | cut -d/ -f1)
-        currency=$(echo $price | cut -d/ -f2)
-        price_id=$(echo $price | cut -d/ -f3)
+    for price in $(echo "$prices" | sed "s/,/ /"); do
+        frequency=$(echo "$price" | cut -d/ -f1)
+        currency=$(echo "$price" | cut -d/ -f2)
+        price_id=$(echo "$price" | cut -d/ -f3)
         sed "d/DONATION\['$frequency'\]\['$currency'\]" "$install_dir/settings.py"
 
         echo "DONATION['$frequency']['$currency'] = '$price_id'" >> "$install_dir/settings.py"
@@ -93,10 +94,10 @@ set__prices() {
     #---------------------------------------------
     # IMPORTANT: to be able to upgrade properly, you have to save the value in settings too
     #---------------------------------------------
-    ynh_app_setting_set --app=$app --key=prices --value="$prices"
+    ynh_app_setting_set --app="$app" --key=prices --value="$prices"
 }
 
 #=================================================
 # GENERIC FINALIZATION
 #=================================================
-ynh_app_config_run $1
+ynh_app_config_run "$1"
