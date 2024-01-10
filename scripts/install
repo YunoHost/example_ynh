@@ -31,6 +31,15 @@ source /usr/share/yunohost/helpers
 #
 
 #=================================================
+# INITIALIZE AND STORE SETTINGS
+#=================================================
+
+# If you need to, you can define custom settings
+# (or remove this section entirely if not relevant for you)
+foo="bar"
+ynh_app_setting_set --app=$app --key=foo --value=$foo
+
+#=================================================
 # APP "BUILD" (DEPLOYING SOURCES, VENV, COMPILING ETC)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -56,7 +65,7 @@ ynh_script_progression --message="Adding system configurations related to $app..
 
 ### `ynh_add_fpm_config` is used to set up a PHP config.
 ### You can remove it if your app doesn't use PHP.
-### `ynh_add_fpm_config` will use the files conf/php-fpm.conf
+### `ynh_add_fpm_config` will use the files conf/extra_php-fpm.conf
 ### If you're not using these lines:
 ###		- You can remove these files in conf/.
 ###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
@@ -65,7 +74,7 @@ ynh_script_progression --message="Adding system configurations related to $app..
 ###		  with the reload at the end of the script.
 ###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
-# Create a dedicated PHP-FPM config using the conf/php-fpm.conf or conf/extra_php-fpm.conf
+# Create a PHP-FPM config (with conf/extra_php-fpm.conf being appended to it)
 ynh_add_fpm_config
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
