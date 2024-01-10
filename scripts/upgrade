@@ -44,16 +44,16 @@ upgrade_type=$(ynh_check_app_version_changed)
 #
 
 # If db_name doesn't exist, create it
-#if [ -z "$db_name" ]; then
-#	db_name=$(ynh_sanitize_dbid --db_name=$app)
-#	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-#fi
+# if [ -z "$db_name" ]; then
+#     db_name=$(ynh_sanitize_dbid --db_name=$app)
+#     ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+# fi
 
 # If install_dir doesn't exist, create it
-#if [ -z "$install_dir" ]; then
-#	install_dir=/var/www/$app
-#	ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
-#fi
+# if [ -z "$install_dir" ]; then
+#     install_dir=/var/www/$app
+#     ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
+# fi
 
 #=================================================
 # STOP SYSTEMD SERVICE
@@ -68,15 +68,14 @@ ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$a
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..." --weight=1
+if [ "$upgrade_type" == "UPGRADE_APP" ]; then
+    ynh_script_progression --message="Upgrading source files..." --weight=1
 
-	# Download, check integrity, uncompress and patch the source from manifest.toml
-	ynh_setup_source --dest_dir="$install_dir"
+    # Download, check integrity, uncompress and patch the source from manifest.toml
+    ynh_setup_source --dest_dir="$install_dir"
 fi
 
-# $install_dir will automatically be initialized with some decent 
+# $install_dir will automatically be initialized with some decent
 # permissions by default ... however, you may need to recursively reapply
 # ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"

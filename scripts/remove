@@ -30,10 +30,9 @@ ynh_script_progression --message="Removing system configurations related to $app
 # This should be a symetric version of what happens in the install script
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app" >/dev/null
-then
-	ynh_script_progression --message="Removing $app service integration..." --weight=1
-	yunohost service remove "$app"
+if ynh_exec_warn_less yunohost service status "$app" >/dev/null; then
+    ynh_script_progression --message="Removing $app service integration..." --weight=1
+    yunohost service remove "$app"
 fi
 
 ynh_remove_fail2ban_config

@@ -1,10 +1,10 @@
 #!/bin/bash
-# In simple cases, you don't need a config script. 
+# In simple cases, you don't need a config script.
 
-# With a simple config_panel.toml, you can write in the app settings, in the 
+# With a simple config_panel.toml, you can write in the app settings, in the
 # upstream config file or replace complete files (logo ...) and restart services.
 
-# The config scripts allows you to go further, to handle specific cases 
+# The config scripts allows you to go further, to handle specific cases
 # (validation of several interdependent fields, specific getter/setter for a value,
 # display dynamic informations or choices, pre-loading of config type .cube... ).
 
@@ -33,8 +33,7 @@ get__amount() {
     local amount=200
 
     # It's possible to change some properties of the question by overriding it:
-    if [ "$amount" -gt 100 ]
-    then
+    if [ "$amount" -gt 100 ]; then
     cat << EOF
 style: success
 value: $amount
@@ -54,8 +53,7 @@ EOF
 get__prices() {
     local prices
     prices="$(grep "DONATION\['" "$install_dir/settings.py" | sed -r "s@^DONATION\['([^']*)'\]\['([^']*)'\] = '([^']*)'@\1/\2/\3@g" | sed -z 's/\n/,/g;s/,$/\n/')"
-    if [ "$prices" == "," ];
-    then
+    if [ "$prices" == "," ]; then
         # Return YNH_NULL if you prefer to not return a value at all.
         echo YNH_NULL
     else
@@ -90,7 +88,7 @@ set__prices() {
 
         echo "DONATION['$frequency']['$currency'] = '$price_id'" >> "$install_dir/settings.py"
     done
-    
+
     #---------------------------------------------
     # IMPORTANT: to be able to upgrade properly, you have to save the value in settings too
     #---------------------------------------------

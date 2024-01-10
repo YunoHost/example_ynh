@@ -58,12 +58,12 @@ ynh_script_progression --message="Adding system configurations related to $app..
 ### You can remove it if your app doesn't use PHP.
 ### `ynh_add_fpm_config` will use the files conf/php-fpm.conf
 ### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
-###		- Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
-###		  with the reload at the end of the script.
-###		- And the section "PHP-FPM CONFIGURATION" in the upgrade script
+###   - You can remove these files in conf/.
+###   - Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
+###   - Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
+###   - As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
+###     with the reload at the end of the script.
+###   - And the section "PHP-FPM CONFIGURATION" in the upgrade script
 
 # Create a dedicated PHP-FPM config using the conf/php-fpm.conf or conf/extra_php-fpm.conf
 ynh_add_fpm_config
@@ -76,11 +76,11 @@ ynh_add_nginx_config
 ### Have a look at the app to be sure this app needs a systemd script.
 ### `ynh_systemd_config` will use the file conf/systemd.service
 ### If you're not using these lines:
-###		- You can remove those files in conf/.
-###		- Remove the section "BACKUP SYSTEMD" in the backup script
-###		- Remove also the section "STOP AND REMOVE SERVICE" in the remove script
-###		- As well as the section "RESTORE SYSTEMD" in the restore script
-###		- And the section "SETUP SYSTEMD" in the upgrade script
+###   - You can remove those files in conf/.
+###   - Remove the section "BACKUP SYSTEMD" in the backup script
+###   - Remove also the section "STOP AND REMOVE SERVICE" in the remove script
+###   - As well as the section "RESTORE SYSTEMD" in the restore script
+###   - And the section "SETUP SYSTEMD" in the upgrade script
 
 # Create a dedicated systemd config
 ynh_add_systemd_config
@@ -89,10 +89,10 @@ ynh_add_systemd_config
 ### displayed in the admin interface and through the others `yunohost service` commands.
 ### (N.B.: this line only makes sense if the app adds a service to the system!)
 ### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
-###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
-###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
+###   - You can remove these files in conf/.
+###   - Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
+###   - As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
+###   - And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
 yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
@@ -115,10 +115,10 @@ yunohost service add "$app" --description="A short description of the app" --log
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
 ### If you're not using this helper:
-###		- Remove the section "BACKUP LOGROTATE" in the backup script
-###		- Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
-###		- And the section "SETUP LOGROTATE" in the upgrade script
+###   - Remove the section "BACKUP LOGROTATE" in the backup script
+###   - Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
+###   - As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
+###   - And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
@@ -183,10 +183,10 @@ ynh_script_progression --message="Starting a systemd service..." --weight=1
 ### `ynh_systemd_action` is used to start a systemd service for an app.
 ### Only needed if you have configure a systemd service
 ### If you're not using these lines:
-###		- Remove the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the backup script
-###		- As well as the section "START SYSTEMD SERVICE" in the restore script
-###		- As well as the section"STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the upgrade script
-###		- And the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the change_url script
+###   - Remove the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the backup script
+###   - As well as the section "START SYSTEMD SERVICE" in the restore script
+###   - As well as the section"STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the upgrade script
+###   - And the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the change_url script
 
 # Start a systemd service
 ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
