@@ -92,19 +92,19 @@ ram.runtime = "50M"
 
     [resources.sources]
 
-        [resources.sources.main]
-        # This will pre-fetch the asset which can then be deployed during the install/upgrade scripts with :
-        #    ynh_setup_source --dest_dir="$install_dir"
-        # You can also define other assets than "main" and add --source_id="foobar" in the previous command
-        url = "https://github.com/foo/bar/archive/refs/tags/v1.2.3.tar.gz"
-        sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    [resources.sources.main]
+    # This will pre-fetch the asset which can then be deployed during the install/upgrade scripts with :
+    #    ynh_setup_source --dest_dir="$install_dir"
+    # You can also define other assets than "main" and add --source_id="foobar" in the previous command
+    url = "https://github.com/foo/bar/archive/refs/tags/v1.2.3.tar.gz"
+    sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 
-        # These infos are used by https://github.com/YunoHost/apps/blob/master/tools/autoupdate_app_sources/autoupdate_app_sources.py
-        # to auto-update the previous asset urls and sha256sum + manifest version
-        # assuming the upstream's code repo is on github and relies on tags or releases
-        # See the 'sources' resource documentation for more details
+    # These infos are used by https://github.com/YunoHost/apps/blob/master/tools/autoupdate_app_sources/autoupdate_app_sources.py
+    # to auto-update the previous asset urls and sha256sum + manifest version
+    # assuming the upstream's code repo is on github and relies on tags or releases
+    # See the 'sources' resource documentation for more details
 
-        # autoupdate.strategy = "latest_github_tag"
+    # autoupdate.strategy = "latest_github_tag"
 
     [resources.system_user]
     # This will provision/deprovision a unix system user
