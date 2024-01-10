@@ -9,18 +9,18 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-# Settings are automatically loaded as bash variables
-# in every app script context, therefore typically these will exist:
-# - $domain
-# - $path
-# - $language
-# - $install_dir
-# - $port
-# ...
+### Settings are automatically loaded as bash variables
+### in every app script context, therefore typically these will exist:
+### - $domain
+### - $path
+### - $language
+### - $install_dir
+### - $port
+### ...
 
-# In the context of upgrade,
-# - resources are automatically provisioned / updated / deleted (depending on existing resources)
-# - a safety backup is automatically created by the core and will be restored if the upgrade fails
+### In the context of upgrade,
+### - resources are automatically provisioned / updated / deleted (depending on existing resources)
+### - a safety backup is automatically created by the core and will be restored if the upgrade fails
 
 ### This helper will compare the version of the currently installed app and the version of the upstream package.
 ### $upgrade_type can have 2 different values
@@ -37,11 +37,9 @@ upgrade_type=$(ynh_check_app_version_changed)
 #=================================================
 #ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
 
-#
-# N.B. : the following setting migration snippets are provided as *EXAMPLES*
-# of what you may want to do in some cases (e.g. a setting was not defined on
-# some legacy installs and you therefore want to initiaze stuff during upgrade)
-#
+### N.B. : the following setting migration snippets are provided as *EXAMPLES*
+### of what you may want to do in some cases (e.g. a setting was not defined on
+### some legacy installs and you therefore want to initiaze stuff during upgrade)
 
 # If db_name doesn't exist, create it
 # if [ -z "$db_name" ]; then
@@ -75,9 +73,9 @@ if [ "$upgrade_type" == "UPGRADE_APP" ]; then
     ynh_setup_source --dest_dir="$install_dir"
 fi
 
-# $install_dir will automatically be initialized with some decent
-# permissions by default ... however, you may need to recursively reapply
-# ownership to all files such as after the ynh_setup_source step
+### $install_dir will automatically be initialized with some decent
+### permissions by default ... however, you may need to recursively reapply
+### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -85,7 +83,7 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
 
-# This should be a literal copypaste of what happened in the install's "System configuration" section
+### This should be a literal copypaste of what happened in the install's "System configuration" section
 
 ynh_add_fpm_config
 
@@ -114,8 +112,8 @@ ynh_script_progression --message="Updating a configuration file..." --weight=1
 ynh_add_config --template="some_config_file" --destination="$install_dir/some_config_file"
 
 # FIXME: this should be handled by the core in the future
-# You may need to use chmod 600 instead of 400,
-# for example if the app is expected to be able to modify its own config
+### You may need to use chmod 600 instead of 400,
+### for example if the app is expected to be able to modify its own config
 chmod 400 "$install_dir/some_config_file"
 chown "$app:$app" "$install_dir/some_config_file"
 

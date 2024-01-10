@@ -9,26 +9,24 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-# Install parameters are automatically saved as settings
-#
-# Settings are automatically loaded as bash variables
-# in every app script context, therefore typically these will exist:
-# - $domain
-# - $path
-# - $language
-# ... etc
-#
-# Resources defined in the manifest are provisioned prior to this script
-# and corresponding settings are also available, such as:
-# - $install_dir
-# - $port
-# - $db_name
-# ...
-
-#
-# $app is the app id (i.e. 'example' for first install,
-# or 'example__2', '__3', ... for multi-instance installs)
-#
+### Install parameters are automatically saved as settings
+###
+### Settings are automatically loaded as bash variables
+### in every app script context, therefore typically these will exist:
+### - $domain
+### - $path
+### - $language
+### ... etc
+###
+### Resources defined in the manifest are provisioned prior to this script
+### and corresponding settings are also available, such as:
+### - $install_dir
+### - $port
+### - $db_name
+### ...
+###
+### $app is the app id (i.e. 'example' for first install,
+### or 'example__2', '__3', ... for multi-instance installs)
 
 #=================================================
 # APP "BUILD" (DEPLOYING SOURCES, VENV, COMPILING ETC)
@@ -44,9 +42,9 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir"
 
-# $install_dir will automatically be initialized with some decent
-# permission by default ... however, you may need to recursively reapply
-# ownership to all files such as after the ynh_setup_source step
+### $install_dir will automatically be initialized with some decent
+### permission by default ... however, you may need to recursively reapply
+### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -94,8 +92,6 @@ ynh_add_systemd_config
 ###   - As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###   - And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
-
 ### Additional options starting with 3.8:
 ###
 ### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
@@ -111,6 +107,7 @@ yunohost service add "$app" --description="A short description of the app" --log
 ### to proceed if you later realize that you need to enable some flags that
 ### weren't enabled on old installs (be careful it'll override the existing
 ### service though so you should re-provide all relevant flags when doing so)
+yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
@@ -148,8 +145,8 @@ ynh_script_progression --message="Adding a configuration file..." --weight=1
 ynh_add_config --template="some_config_file" --destination="$install_dir/some_config_file"
 
 # FIXME: this should be handled by the core in the future
-# You may need to use chmod 600 instead of 400,
-# for example if the app is expected to be able to modify its own config
+### You may need to use chmod 600 instead of 400,
+### for example if the app is expected to be able to modify its own config
 chmod 400 "$install_dir/some_config_file"
 chown "$app:$app" "$install_dir/some_config_file"
 
