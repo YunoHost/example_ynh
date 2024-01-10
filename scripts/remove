@@ -9,31 +9,30 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-# Settings are automatically loaded as bash variables
-# in every app script context, therefore typically these will exist:
-# - $domain
-# - $path
-# - $language
-# - $install_dir
-# - $port
-# ...
+### Settings are automatically loaded as bash variables
+### in every app script context, therefore typically these will exist:
+### - $domain
+### - $path
+### - $language
+### - $install_dir
+### - $port
+### ...
 
-# For remove operations :
-# - the core will deprovision every resource defined in the manifest **after** this script is ran
-# this includes removing the install directory, and data directory (if --purge was used)
+### For remove operations :
+### - the core will deprovision every resource defined in the manifest **after** this script is ran
+### this includes removing the install directory, and data directory (if --purge was used)
 
 #=================================================
 # REMOVE SYSTEM CONFIGURATIONS
 #=================================================
 ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
 
-# This should be a symetric version of what happens in the install script
+### This should be a symetric version of what happens in the install script
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app" >/dev/null
-then
-	ynh_script_progression --message="Removing $app service integration..." --weight=1
-	yunohost service remove "$app"
+if ynh_exec_warn_less yunohost service status "$app" >/dev/null; then
+    ynh_script_progression --message="Removing $app service integration..." --weight=1
+    yunohost service remove "$app"
 fi
 
 ynh_remove_fail2ban_config

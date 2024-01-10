@@ -11,9 +11,9 @@ ExecStart=__INSTALL_DIR__/script
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 
+### Depending on specificities of your service/app, you may need to tweak these
+### .. but this should be a good baseline
 # Sandboxing options to harden security
-# Depending on specificities of your service/app, you may need to tweak these
-# .. but this should be a good baseline
 # Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
 NoNewPrivileges=yes
 PrivateTmp=yes
