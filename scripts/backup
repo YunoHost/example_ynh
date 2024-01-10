@@ -34,37 +34,25 @@ ynh_backup --src_path="$install_dir"
 ynh_backup --src_path="$data_dir" --is_big
 
 #=================================================
-# BACKUP THE NGINX CONFIGURATION
+# SYSTEM CONFIGURATION
 #=================================================
 
-ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
-
-#=================================================
-# BACKUP THE PHP-FPM CONFIGURATION
-#=================================================
-
+# Backup the PHP-FPM configuration
 ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
 
-#=================================================
-# BACKUP FAIL2BAN CONFIGURATION
-#=================================================
 
-ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
-ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
+# Backup the nginx configuration
+ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
-#=================================================
-# SPECIFIC BACKUP
-#=================================================
-# BACKUP LOGROTATE
-#=================================================
+# Backup the systemd service unit
+ynh_backup --src_path="/etc/systemd/system/$app.service"
 
+# Backup the logrotate configuration
 ynh_backup --src_path="/etc/logrotate.d/$app"
 
-#=================================================
-# BACKUP SYSTEMD
-#=================================================
-
-ynh_backup --src_path="/etc/systemd/system/$app.service"
+# Backup the Fail2Ban config
+ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
+ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
 
 #=================================================
 # BACKUP VARIOUS FILES
