@@ -62,6 +62,10 @@ ynh_backup --src_path="/etc/cron.d/$app"
 
 ynh_backup --src_path="/etc/$app/"
 
+# For apps with huge logs, you might want to pass --is_big,
+# and in restore script, mkdir and pass --not_mandatory to ynh_restore_file.
+ynh_backup --src_path="/var/log/$app/"
+
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
