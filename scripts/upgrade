@@ -69,8 +69,13 @@ ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$a
 if [ "$upgrade_type" == "UPGRADE_APP" ]; then
     ynh_script_progression --message="Upgrading source files..." --weight=1
 
+    ### ynh_setup_source can wipe the destination dir if called with --full_replace.
+    ### On upgrade, that is certainly what you want, to remove any old source file that
+    ### does not exist in the new version of the software.
+    ### You can list with --keep every file/directory to *not* wipe or overwrite,
+    ### useful for configuration files, data directories, or plugins.
     # Download, check integrity, uncompress and patch the source from manifest.toml
-    ynh_setup_source --dest_dir="$install_dir"
+    ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep=".env data"
 fi
 
 ### $install_dir will automatically be initialized with some decent
