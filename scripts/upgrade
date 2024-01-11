@@ -22,13 +22,12 @@ source /usr/share/yunohost/helpers
 ### - resources are automatically provisioned / updated / deleted (depending on existing resources)
 ### - a safety backup is automatically created by the core and will be restored if the upgrade fails
 
-### This helper will compare the version of the currently installed app and the version of the upstream package.
-### $upgrade_type can have 2 different values
-### - UPGRADE_APP if the upstream app version has changed
+### This variable describes which upgrade type is occurring, allowing the script to handle different modes:
 ### - UPGRADE_PACKAGE if only the YunoHost package has changed
-### ynh_check_app_version_changed will stop the upgrade if the app is up to date.
-### UPGRADE_APP should be used to upgrade the core app only if there's an upgrade to do.
-upgrade_type=$(ynh_check_app_version_changed)
+### - UPGRADE_APP if the upstream app version has changed
+### If your package needs to handle other things, like same-version upgrades or downgrades, please
+### check out the $YNH_APP_UPGRADE_TYPE variable that can contain DOWNGRADE and UPGRADE_SAME too.
+# upgrade_type=$(ynh_check_app_version_changed)
 
 #=================================================
 # STANDARD UPGRADE STEPS
@@ -66,12 +65,10 @@ ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$a
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 
-if [ "$upgrade_type" == "UPGRADE_APP" ]; then
-    ynh_script_progression --message="Upgrading source files..." --weight=1
+ynh_script_progression --message="Upgrading source files..." --weight=1
 
-    # Download, check integrity, uncompress and patch the source from manifest.toml
-    ynh_setup_source --dest_dir="$install_dir"
-fi
+# Download, check integrity, uncompress and patch the source from manifest.toml
+ynh_setup_source --dest_dir="$install_dir"
 
 ### $install_dir will automatically be initialized with some decent
 ### permissions by default ... however, you may need to recursively reapply
