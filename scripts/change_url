@@ -1,5 +1,9 @@
 #!/bin/bash
 
+## this script is only run if actual change to domain/path is detected, if you're here either $domain or $path changed
+## new location is available via $domain and $path (or $new_domain and $new_path variables if you want to be explicit)
+## old values are available via, you guessed it, $old_domain and $old_path
+
 #=================================================
 # GENERIC STARTING
 #=================================================
@@ -23,6 +27,7 @@ ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$a
 #=================================================
 ynh_script_progression --message="Updating NGINX web server configuration..." --weight=1
 
+# this will most likely adjust NGINX config correctly
 ynh_change_url_nginx_config
 
 #=================================================
@@ -30,6 +35,8 @@ ynh_change_url_nginx_config
 #=================================================
 # ...
 #=================================================
+
+## do any changes to files that reference specific installation domain/path, i.e. regenerate configs etc
 
 #=================================================
 # GENERIC FINALISATION
