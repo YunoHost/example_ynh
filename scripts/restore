@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -77,8 +75,6 @@ ynh_restore_file --origin_path="/etc/$app/"
 ### For other apps, the simple way is better:
 ynh_restore_file --origin_path="/var/log/$app/"
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
 #=================================================
