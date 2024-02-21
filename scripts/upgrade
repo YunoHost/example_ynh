@@ -55,7 +55,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping a systemd service..." --weight=1
+ynh_script_progression --message="Stopping $app's systemd service..." --weight=1
 
 ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$app/$app.log"
 
@@ -98,7 +98,7 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failreg
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating a configuration file..." --weight=1
+ynh_script_progression --message="Updating $app's configuration files..." --weight=1
 
 ### Same as during install
 ###
@@ -123,7 +123,7 @@ chown "$app:$app" "$install_dir/some_config_file"
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --weight=1
+ynh_script_progression --message="Starting $app's systemd service..." --weight=1
 
 ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
 
