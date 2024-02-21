@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -37,8 +35,6 @@ source /usr/share/yunohost/helpers
 foo="bar"
 ynh_app_setting_set --app=$app --key=foo --value=$foo
 
-#=================================================
-# APP "BUILD" (DEPLOYING SOURCES, VENV, COMPILING ETC)
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
@@ -135,8 +131,6 @@ ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failreg
 #=================================================
 # APP INITIAL CONFIGURATION
 #=================================================
-# ADD A CONFIGURATION
-#=================================================
 ynh_script_progression --message="Adding $app's configuration files..." --weight=1
 
 ### You can add specific configuration files.
@@ -179,8 +173,6 @@ chown "$app:$app" "$install_dir/some_config_file"
 ynh_script_progression --message="Finalizing installation..." --weight=1
 ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
-#=================================================
-# GENERIC FINALIZATION
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================

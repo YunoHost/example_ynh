@@ -5,16 +5,12 @@
 ## old values are available via, you guessed it, $old_domain and $old_path
 
 #=================================================
-# GENERIC STARTING
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
 source _common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# STANDARD MODIFICATIONS
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
@@ -33,13 +29,9 @@ ynh_change_url_nginx_config
 #=================================================
 # SPECIFIC MODIFICATIONS
 #=================================================
-# ...
-#=================================================
 
 ## do any changes to files that reference specific installation domain/path, i.e. regenerate configs etc
 
-#=================================================
-# GENERIC FINALISATION
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
