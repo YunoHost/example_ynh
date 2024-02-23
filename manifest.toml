@@ -13,7 +13,7 @@ maintainers = ["johndoe"]
 
 [upstream]
 # NB: Only the "license" key is mandatory. Remove entries for which there's no relevant data
-license = "free"
+license = "free" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
 website = "https://example.com"
 demo = "https://demo.example.com"
 admindoc = "https://yunohost.org/packaging_apps"
