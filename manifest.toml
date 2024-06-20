@@ -96,7 +96,7 @@ ram.runtime = "50M"
     [resources.sources.main]
     # This will pre-fetch the asset which can then be deployed during the install/upgrade scripts with :
     #    ynh_setup_source --dest_dir="$install_dir"
-    # You can also define other assets than "main" and add --source_id="yunohost" in the previous command
+    # You can also define other assets than "main" and add --source_id="foobar" in the previous command
     url = "https://github.com/foo/bar/archive/refs/tags/v1.2.3.tar.gz"
     sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
 
@@ -128,7 +128,7 @@ ram.runtime = "50M"
 
     [resources.apt]
     # This will automatically install/uninstall the following apt packages
-    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-yunohost dependencies are listed)
+    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
     packages = "mariadb-server, deb1, deb2, php8.0-foo, php8.0-bar"
 
     [resources.database]
