@@ -16,7 +16,7 @@ source /usr/share/yunohost/helpers
 ### - $port
 ### ...
 
-### For remove operations :
+### For remove operations:
 ### - the core will deprovision every resource defined in the manifest **after** this script is ran
 ### this includes removing the install directory, and data directory (if --purge was used)
 
@@ -41,7 +41,7 @@ ynh_config_remove_nginx
 
 ynh_config_remove_phpfpm
 
-# Remove other various files specific to the app... such as :
+# Remove other various files specific to the app... such as:
 
 ynh_safe_rm "/etc/cron.d/$app"
 

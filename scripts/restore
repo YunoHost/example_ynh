@@ -16,7 +16,7 @@ ynh_script_progression "Restoring the app main directory..."
 ynh_restore "$install_dir"
 
 ### $install_dir will automatically be initialized with some decent
-### permissions by default ... however, you may need to recursively reapply
+### permissions by default... however, you may need to recursively reapply
 ### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
@@ -80,7 +80,7 @@ ynh_restore "/var/log/$app/"
 #=================================================
 ynh_script_progression "Reloading NGINX web server and $app's service..."
 
-### Typically you only have either $app or php-fpm but not both at the same time...
+### Typically you only have either $app or PHP-FPM but not both at the same time...
 ynh_systemctl --service="$app" --action="start"
 
 ynh_systemctl --service="php$php_version-fpm" --action=reload

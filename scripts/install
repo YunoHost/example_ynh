@@ -24,7 +24,7 @@ source /usr/share/yunohost/helpers
 ### ...
 ###
 ### $app is the app id (i.e. 'example' for first install,
-### or 'example__2', '__3', ... for multi-instance installs)
+### or 'example__2', '__3'... for multi-instance installs)
 
 #=================================================
 # INITIALIZE AND STORE SETTINGS
@@ -48,7 +48,7 @@ ynh_script_progression "Setting up source files..."
 ynh_setup_source --dest_dir="$install_dir"
 
 ### $install_dir will automatically be initialized with some decent
-### permission by default ... however, you may need to recursively reapply
+### permission by default... however, you may need to recursively reapply
 ### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
