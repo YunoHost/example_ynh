@@ -8,10 +8,7 @@
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# DECLARE DATA AND CONF FILES TO BACKUP
-#=================================================
-ynh_print_info --message="Declaring files to be backed up..."
+ynh_print_info "Declaring files to be backed up..."
 
 ### N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
 ### to be backuped and not an actual copy of any file. The actual backup that
@@ -22,59 +19,62 @@ ynh_print_info --message="Declaring files to be backed up..."
 # BACKUP THE APP MAIN DIR
 #=================================================
 
-ynh_backup --src_path="$install_dir"
+ynh_backup "$install_dir"
 
 #=================================================
 # BACKUP THE DATA DIR
 #=================================================
 
-### Only relevant if there is a "data_dir" resource for this app
-ynh_backup --src_path="$data_dir" --is_big
+# Only relevant if there is a "data_dir" resource for this app
+# NB: $data_dir is not backuped during safety-backup-before-upgrades,
+# because the data dir may be huge and we don't want to just yolo-create a 10+ GB archive just for upgrades.
+# On the other hand, $data_dir is also *not* removed by default in the "app remove" step unless --purge is used
+# This means that even if the upgrade fails and the backup is restored, the data are still there.
+ynh_backup "$data_dir"
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 
 # Backup the PHP-FPM configuration
-ynh_backup --src_path="/etc/php/$phpversion/fpm/pool.d/$app.conf"
+ynh_backup "/etc/php/$php_version/fpm/pool.d/$app.conf"
 
 # Backup the nginx configuration
-ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 # Backup the systemd service unit
-ynh_backup --src_path="/etc/systemd/system/$app.service"
+ynh_backup "/etc/systemd/system/$app.service"
 
 # Backup the logrotate configuration
-ynh_backup --src_path="/etc/logrotate.d/$app"
+ynh_backup "/etc/logrotate.d/$app"
 
 # Backup the Fail2Ban config
-ynh_backup --src_path="/etc/fail2ban/jail.d/$app.conf"
-ynh_backup --src_path="/etc/fail2ban/filter.d/$app.conf"
+ynh_backup "/etc/fail2ban/jail.d/$app.conf"
+ynh_backup "/etc/fail2ban/filter.d/$app.conf"
 
 #=================================================
 # BACKUP VARIOUS FILES
 #=================================================
 
-ynh_backup --src_path="/etc/cron.d/$app"
+ynh_backup "/etc/cron.d/$app"
 
-ynh_backup --src_path="/etc/$app/"
+ynh_backup "/etc/$app/"
 
-### For apps with huge logs, you might want to pass --is_big,
-### and in restore script, mkdir and pass --not_mandatory to ynh_restore_file.
-ynh_backup --src_path="/var/log/$app/"
+# NB: /var/log is not backuped during safety-backup-before-upgrades, same as $data_dir
+ynh_backup "/var/log/$app/"
 
 #=================================================
 # BACKUP THE MYSQL DATABASE
 #=================================================
-ynh_print_info --message="Backing up the MySQL database..."
+ynh_print_info "Backing up the MySQL database..."
 
 ### (However, things like MySQL dumps *do* take some time to run, though the
 ### copy of the generated dump to the archive still happens later)
 
-ynh_mysql_dump_db --database="$db_name" > db.sql
+ynh_mysql_dump_db > db.sql
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
+ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."

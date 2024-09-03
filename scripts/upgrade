@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
@@ -21,24 +20,17 @@ source /usr/share/yunohost/helpers
 ### - resources are automatically provisioned / updated / deleted (depending on existing resources)
 ### - a safety backup is automatically created by the core and will be restored if the upgrade fails
 
-### This variable describes which upgrade type is occurring, allowing the script to handle different modes:
-### - UPGRADE_PACKAGE if only the YunoHost package has changed
-### - UPGRADE_APP if the upstream app version has changed
-### If your package needs to handle other things, like same-version upgrades or downgrades, please
-### check out the $YNH_APP_UPGRADE_TYPE variable that can contain DOWNGRADE and UPGRADE_SAME too.
-# upgrade_type=$(ynh_check_app_version_changed)
-
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Stopping $app's systemd service..." --weight=1
+ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service="$app" --action="stop"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-#ynh_script_progression --message="Ensuring downward compatibility..." --weight=1
+#ynh_script_progression "Ensuring downward compatibility..."
 
 ### N.B. : the following setting migration snippets are provided as *EXAMPLES*
 ### of what you may want to do in some cases (e.g. a setting was not defined on
@@ -47,19 +39,19 @@ ynh_systemd_action --service_name="$app" --action="stop" --log_path="/var/log/$a
 # If db_name doesn't exist, create it
 # if [ -z "$db_name" ]; then
 #     db_name=$(ynh_sanitize_dbid --db_name=$app)
-#     ynh_app_setting_set --app=$app --key=db_name --value=$db_name
+#     ynh_app_setting_set --key=db_name --value=$db_name
 # fi
 
 # If install_dir doesn't exist, create it
 # if [ -z "$install_dir" ]; then
 #     install_dir=/var/www/$app
-#     ynh_app_setting_set --app=$app --key=install_dir --value=$install_dir
+#     ynh_app_setting_set --key=install_dir --value=$install_dir
 # fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Upgrading source files..." --weight=1
+ynh_script_progression "Upgrading source files..."
 
 ### ynh_setup_source can wipe the destination dir if called with --full_replace.
 ### On upgrade, that is certainly what you want, to remove any old source file that
@@ -77,14 +69,14 @@ chown -R "$app:www-data" "$install_dir"
 #=================================================
 # UPDATE A CONFIG FILE
 #=================================================
-ynh_script_progression --message="Updating $app's configuration files..." --weight=1
+ynh_script_progression "Updating $app's configuration files..."
 
 ### Same as during install
 ###
 ### The file will automatically be backed-up if it's found to be manually modified (because
-### ynh_add_config keeps track of the file's checksum)
+### ynh_config_add keeps track of the file's checksum)
 
-ynh_add_config --template="some_config_file" --destination="$install_dir/some_config_file"
+ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
 
 # FIXME: this should be handled by the core in the future
 ### You may need to use chmod 600 instead of 400,
@@ -93,40 +85,40 @@ chmod 400 "$install_dir/some_config_file"
 chown "$app:$app" "$install_dir/some_config_file"
 
 ### For more complex cases where you want to replace stuff using regexes,
-### you shoud rely on ynh_replace_string (which is basically a wrapper for sed)
+### you shoud rely on ynh_replace (which is basically a wrapper for sed)
 ### When doing so, you also need to manually call ynh_store_file_checksum
 ###
-### ynh_replace_string --match_string="match_string" --replace_string="replace_string" --target_file="$install_dir/some_config_file"
-### ynh_store_file_checksum --file="$install_dir/some_config_file"
+### ynh_replace --match="match_string" --replace="replace_string" --file="$install_dir/some_config_file"
+### ynh_store_file_checksum "$install_dir/some_config_file"
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Upgrading system configurations related to $app..." --weight=1
+ynh_script_progression "Upgrading system configurations related to $app..."
 
 ### This should be a literal copypaste of what happened in the install's "System configuration" section
 
-ynh_add_fpm_config
+ynh_config_add_phpfpm
 
-ynh_add_nginx_config
+ynh_config_add_nginx
 
-ynh_add_systemd_config
+ynh_config_add_systemd
 
 yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
 
-ynh_use_logrotate --non-append
+ynh_config_add_logrotate
 
-ynh_add_fail2ban_config --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting $app's systemd service..." --weight=1
+ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemd_action --service_name="$app" --action="start" --log_path="/var/log/$app/$app.log"
+ynh_systemctl --service="$app" --action="start"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Upgrade of $app completed" --last
+ynh_script_progression "Upgrade of $app completed"
