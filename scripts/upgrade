@@ -37,16 +37,10 @@ ynh_systemctl --service="$app" --action="stop"
 ### some legacy installs and you therefore want to initiaze stuff during upgrade)
 
 # If db_name doesn't exist, create it
-# if [ -z "$db_name" ]; then
-#     db_name=$(ynh_sanitize_dbid --db_name=$app)
-#     ynh_app_setting_set --key=db_name --value=$db_name
-# fi
+# ynh_app_setting_set_default --key=db_name --value="$(ynh_sanitize_dbid --db_name=$app)"
 
 # If install_dir doesn't exist, create it
-# if [ -z "$install_dir" ]; then
-#     install_dir=/var/www/$app
-#     ynh_app_setting_set --key=install_dir --value=$install_dir
-# fi
+# ynh_app_setting_set_default --key=install_dir --value="/var/www/$app"
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
