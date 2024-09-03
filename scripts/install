@@ -106,10 +106,10 @@ ynh_config_add_phpfpm
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_config_add_nginx
 
-### `ynh_systemd_config` is used to configure a systemd script for an app.
+### `ynh_config_add_systemd` is used to configure a systemd script for an app.
 ### It can be used for apps that use sysvinit (with adaptation) or systemd.
 ### Have a look at the app to be sure this app needs a systemd script.
-### `ynh_systemd_config` will use the file conf/systemd.service
+### `ynh_config_add_systemd` will use the file conf/systemd.service
 ### If you're not using these lines:
 ###   - You can remove those files in conf/.
 ###   - Remove the section "BACKUP SYSTEMD" in the backup script
