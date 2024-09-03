@@ -47,8 +47,6 @@ ynh_safe_rm "/etc/cron.d/$app"
 
 ynh_safe_rm "/etc/$app"
 
-#REMOVEME? (Apps should not remove their log dir during remove ... this should only happen if --purge is used, and be handled by the core...) ynh_safe_rm "/var/log/$app"
-
 #=================================================
 # END OF SCRIPT
 #=================================================
