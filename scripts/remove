@@ -16,39 +16,39 @@ source /usr/share/yunohost/helpers
 ### - $port
 ### ...
 
-### For remove operations :
+### For remove operations:
 ### - the core will deprovision every resource defined in the manifest **after** this script is ran
 ### this includes removing the install directory, and data directory (if --purge was used)
 
 #=================================================
 # REMOVE SYSTEM CONFIGURATIONS
 #=================================================
-ynh_script_progression --message="Removing system configurations related to $app..." --weight=1
+ynh_script_progression "Removing system configurations related to $app..."
 
 ### This should be a symetric version of what happens in the install script
 
-ynh_remove_fail2ban_config
+ynh_config_remove_fail2ban
 
-ynh_remove_logrotate
+ynh_config_remove_logrotate
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status "$app" >/dev/null; then
+if ynh_hide_warnings yunohost service status "$app" >/dev/null; then
     yunohost service remove "$app"
 fi
-ynh_remove_systemd_config
+ynh_config_remove_systemd
 
-ynh_remove_nginx_config
+ynh_config_remove_nginx
 
-ynh_remove_fpm_config
+ynh_config_remove_phpfpm
 
-# Remove other various files specific to the app... such as :
+# Remove other various files specific to the app... such as:
 
-ynh_secure_remove --file="/etc/cron.d/$app"
+ynh_safe_rm "/etc/cron.d/$app"
 
-ynh_secure_remove --file="/etc/$app"
+ynh_safe_rm "/etc/$app"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Removal of $app completed" --last
+ynh_script_progression "Removal of $app completed"
