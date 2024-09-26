@@ -28,7 +28,7 @@ ynh_script_progression "Restoring the data directory..."
 ynh_restore "$data_dir"
 
 ### (Same as for install dir)
-chown -R "$app:www-data" "$data_dir"
+chown -R "$app:$app" "$data_dir"
 
 #=================================================
 # RESTORE THE MYSQL DATABASE
