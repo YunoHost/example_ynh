@@ -33,7 +33,7 @@ ynh_backup "$install_dir"
 ynh_backup "$data_dir"
 
 #=================================================
-# SYSTEM CONFIGURATION
+# BACKUP SYSTEM CONFIGURATION
 #=================================================
 
 # Backup the PHP-FPM configuration
