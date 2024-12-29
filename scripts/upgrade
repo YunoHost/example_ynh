@@ -53,7 +53,7 @@ ynh_script_progression "Upgrading source files..."
 ### You can list with --keep every file/directory to *not* wipe or overwrite,
 ### useful for configuration files, data directories, or plugins.
 # Download, check integrity, uncompress and patch the source from manifest.toml
-ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env data"
+ynh_setup_source --dest_dir="$install_dir" --full_replace=1 --keep=".env data"
 
 ### $install_dir will automatically be initialized with some decent
 ### permissions by default... however, you may need to recursively reapply
