@@ -30,7 +30,10 @@ ynh_systemctl --service="$app" --action="stop"
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
 #=================================================
-#ynh_script_progression "Ensuring downward compatibility..."
+ynh_script_progression "Ensuring downward compatibility..."
+
+ynh_app_setting_set_default --key=php_upload_max_filesize --value=50M
+ynh_app_setting_set_default --key=php_post_max_size --value=50M
 
 ### N.B. : the following setting migration snippets are provided as *EXAMPLES*
 ### of what you may want to do in some cases (e.g. a setting was not defined on
