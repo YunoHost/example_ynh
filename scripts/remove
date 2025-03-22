@@ -21,7 +21,7 @@ source /usr/share/yunohost/helpers
 ### this includes removing the install directory, and data directory (if --purge was used)
 
 #=================================================
-# REMOVE SYSTEM CONFIGURATIONS
+# REMOVE SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Removing system configurations related to $app..."
 
