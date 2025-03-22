@@ -38,7 +38,7 @@ ynh_script_progression "Restoring the MySQL database..."
 ynh_mysql_db_shell < ./db.sql
 
 #=================================================
-# RESTORE SYSTEM CONFIGURATIONS
+# RESTORE SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Restoring system configurations related to $app..."
 

@@ -89,7 +89,7 @@ chown "$app:$app" "$install_dir/some_config_file"
 ### ynh_store_file_checksum "$install_dir/some_config_file"
 
 #=================================================
-# REAPPLY SYSTEM CONFIGURATIONS
+# REAPPLY SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Upgrading system configurations related to $app..."
 
