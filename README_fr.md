@@ -7,11 +7,11 @@
 * Éditez aussi les scripts `change_url` et `config`, ou supprimez-les si vous n'en avez pas l'utilité.
 * Ajouter un fichier `LICENSE` pour le paquet. NB : ce fichier LICENSE n'est pas nécessairement la LICENSE de l'application en amont - c'est seulement la LICENSE avec laquelle vous voulez que le code de ce paquet soit publié ;). Nous recommandons d'utiliser [l'AGPL-3] (https://www.gnu.org/licenses/agpl-3.0.txt).
 * Editer les fichiers dans le répertoire `doc/`.
-* Les fichiers `README.md` doivent être générés automatiquement par <https://github.com/YunoHost/apps/tree/master/tools/readme_generator>
+* Les fichiers `README.md` doivent être générés automatiquement par <https://github.com/YunoHost/apps/tree/main/tools/readme_generator>
 
 ---
 <!--
-N.B. : Ce README a été généré automatiquement par https://github.com/YunoHost/apps/tree/master/tools/readme_generator
+N.B. : Ce README a été généré automatiquement par https://github.com/YunoHost/apps/tree/main/tools/readme_generator
 Il ne doit PAS être édité à la main.
 -->
 

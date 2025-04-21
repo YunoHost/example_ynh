@@ -1,4 +1,4 @@
-#:schema https://github.com/YunoHost/apps/raw/master/schemas/config_panel.v1.schema.json
+#:schema https://github.com/YunoHost/apps/raw/main/schemas/config_panel.v1.schema.json
 
 ## Config panel are available from webadmin > Apps > YOUR_APP > Config Panel Button
 ## Those panels let user configure some params on their apps using a friendly interface,
