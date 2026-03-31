@@ -26,6 +26,7 @@ ProtectClock=yes
 ProtectHostname=yes
 ProtectProc=invisible
 ProtectSystem=full
+ReadWritePaths=__INSTALL_DIR__
 ProtectControlGroups=yes
 ProtectKernelModules=yes
 ProtectKernelTunables=yes
