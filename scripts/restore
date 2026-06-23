@@ -15,9 +15,6 @@ ynh_script_progression "Restoring the app main directory..."
 
 ynh_restore "$install_dir"
 
-### $install_dir will automatically be initialized with some decent
-### permissions by default... however, you may need to recursively reapply
-### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
@@ -27,63 +24,37 @@ ynh_script_progression "Restoring the data directory..."
 
 ynh_restore "$data_dir"
 
-### (Same as for install dir)
 chown -R "$app:$app" "$data_dir"
 
 #=================================================
-# RESTORE THE MYSQL DATABASE
+# RESTORE THE POSTGRESQL DATABASE
 #=================================================
-ynh_script_progression "Restoring the MySQL database..."
+ynh_script_progression "Restoring the PostgreSQL database..."
 
-ynh_mysql_db_shell < ./db.sql
+ynh_psql_db_shell < ./db.sql
 
 #=================================================
 # RESTORE SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Restoring system configurations related to $app..."
 
-### This should be a symetric version of what happens in the install script
-
-ynh_restore "/etc/php/$php_version/fpm/pool.d/$app.conf"
-
 ynh_restore "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 ynh_restore "/etc/systemd/system/$app.service"
 systemctl enable "$app.service" --quiet
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="FediMod FIRES server" --log="/var/log/$app/$app.log"
 
 ynh_restore "/etc/logrotate.d/$app"
 
-ynh_restore "/etc/fail2ban/jail.d/$app.conf"
-ynh_restore "/etc/fail2ban/filter.d/$app.conf"
-ynh_systemctl --action=restart --service=fail2ban
-
-#=================================================
-# RESTORE VARIOUS FILES
-#=================================================
-
-ynh_restore "/etc/cron.d/$app"
-ynh_restore "/etc/$app/"
-
-### For apps with huge logs, you might want to not backup logs every time:
-### The mkdir call is just here in case the log directory was not backed up.
-### mkdir -p "/var/log/$app"
-### chown $app:www-data "/var/log/$app"
-### ynh_restore "/var/log/$app/" || true
-###
-### For other apps, the simple way is better:
 ynh_restore "/var/log/$app/"
 
 #=================================================
-# RELOAD NGINX AND PHP-FPM OR THE APP SERVICE
+# START THE SERVICE AND RELOAD NGINX
 #=================================================
-ynh_script_progression "Reloading NGINX web server and $app's service..."
+ynh_script_progression "Starting $app's service and reloading NGINX..."
 
-### Typically you only have either $app or PHP-FPM but not both at the same time...
-ynh_systemctl --service="$app" --action="start"
-
-ynh_systemctl --service="php$php_version-fpm" --action=reload
+ynh_systemctl --service="$app" --action="start" --wait_until="started HTTP server" --log_path="/var/log/$app/$app.log"
 
 ynh_systemctl --service=nginx --action=reload
 

@@ -23,21 +23,22 @@ ynh_systemctl --service="$app" --action="stop"
 #=================================================
 ynh_script_progression "Updating NGINX web server configuration..."
 
-# this will most likely adjust NGINX config correctly
 ynh_config_change_url_nginx
 
 #=================================================
-# SPECIFIC MODIFICATIONS
+# UPDATE PUBLIC_URL IN THE FIRES ENVIRONMENT
 #=================================================
+ynh_script_progression "Updating $app's PUBLIC_URL..."
 
-## do any changes to files that reference specific installation domain/path, i.e. regenerate configs etc
+public_url="https://${domain}${path%/}/"
+ynh_write_var_in_file --file="$workdir/.env" --key="PUBLIC_URL" --value="$public_url"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start"
+ynh_systemctl --service="$app" --action="start" --wait_until="started HTTP server" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # END OF SCRIPT

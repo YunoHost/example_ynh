@@ -7,19 +7,6 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-### Settings are automatically loaded as bash variables
-### in every app script context, therefore typically these will exist:
-### - $domain
-### - $path
-### - $language
-### - $install_dir
-### - $port
-### ...
-
-### In the context of upgrade,
-### - resources are automatically provisioned / updated / deleted (depending on existing resources)
-### - a safety backup is automatically created by the core and will be restored if the upgrade fails
-
 #=================================================
 # STOP SYSTEMD SERVICE
 #=================================================
@@ -32,87 +19,84 @@ ynh_systemctl --service="$app" --action="stop"
 #=================================================
 ynh_script_progression "Ensuring downward compatibility..."
 
-ynh_app_setting_set_default --key=php_upload_max_filesize --value=50M
-ynh_app_setting_set_default --key=php_post_max_size --value=50M
+# Seed FIRES env settings on installs that predate them
+ynh_app_setting_set_default --key=log_level --value="$default_log_level"
+ynh_app_setting_set_default --key=database_pool_min --value="$default_database_pool_min"
+ynh_app_setting_set_default --key=database_pool_max --value="$default_database_pool_max"
 
-### N.B. : the following setting migration snippets are provided as *EXAMPLES*
-### of what you may want to do in some cases (e.g. a setting was not defined on
-### some legacy installs and you therefore want to initiaze stuff during upgrade)
+# Recompute the compiled-output working directory in case it wasn't stored
+workdir="$install_dir/$fires_dir/build"
+ynh_app_setting_set_default --key=workdir --value="$workdir"
 
-# If db_name doesn't exist, create it
-# ynh_app_setting_set_default --key=db_name --value="$(ynh_sanitize_dbid --db_name=$app)"
-
-# If install_dir doesn't exist, create it
-# ynh_app_setting_set_default --key=install_dir --value="/var/www/$app"
+# Make sure an APP_KEY exists (must stay stable to avoid invalidating tokens)
+if [ -z "${app_key:-}" ]; then
+    app_key=$(ynh_string_random --length=64)
+    ynh_app_setting_set --key=app_key --value="$app_key"
+fi
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-### ynh_setup_source can wipe the destination dir if called with --full_replace.
-### On upgrade, that is certainly what you want, to remove any old source file that
-### does not exist in the new version of the software.
-### You can list with --keep every file/directory to *not* wipe or overwrite,
-### useful for configuration files, data directories, or plugins.
-# Download, check integrity, uncompress and patch the source from manifest.toml
-ynh_setup_source --dest_dir="$install_dir" --full_replace --keep=".env data"
+# FIRES keeps all of its state in PostgreSQL, so the source tree can be fully
+# replaced; the build/ output and its .env are regenerated below.
+ynh_setup_source --dest_dir="$install_dir" --full_replace
 
-### $install_dir will automatically be initialized with some decent
-### permissions by default... however, you may need to recursively reapply
-### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
 
 #=================================================
-# UPDATE A CONFIG FILE
+# BUILD APP
 #=================================================
-ynh_script_progression "Updating $app's configuration files..."
+ynh_script_progression "Rebuilding $app (this may take a while)..."
 
-### Same as during install
-###
-### The file will automatically be backed-up if it's found to be manually modified (because
-### ynh_config_add keeps track of the file's checksum)
+build_fires
+chown -R "$app:www-data" "$install_dir"
 
-ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
+#=================================================
+# UPDATE THE CONFIG FILE
+#=================================================
+ynh_script_progression "Updating $app's configuration..."
 
-# FIXME: this should be handled by the core in the future
-### You may need to use chmod 600 instead of 400,
-### for example if the app is expected to be able to modify its own config
-chmod 400 "$install_dir/some_config_file"
-chown "$app:$app" "$install_dir/some_config_file"
+public_url="https://${domain}${path%/}/"
 
-### For more complex cases where you want to replace stuff using regexes,
-### you shoud rely on ynh_replace (which is basically a wrapper for sed)
-### When doing so, you also need to manually call ynh_store_file_checksum
-###
-### ynh_replace --match="match_string" --replace="replace_string" --file="$install_dir/some_config_file"
-### ynh_store_file_checksum "$install_dir/some_config_file"
+# The bootstrap admin password ($password) is only available at install time and
+# is not needed on upgrade: FIRES only creates the initial admin when no users
+# exist yet, which is never the case here. Leave it empty (the field is optional).
+# $admin_email, $default_locale, $app_key, $log_level and the pool sizes are all
+# loaded automatically from the app settings.
+admin_password=""
+
+ynh_config_add --template=".env" --destination="$workdir/.env"
+chmod 600 "$workdir/.env"
+chown "$app:$app" "$workdir/.env"
+
+#=================================================
+# RUN DATABASE MIGRATIONS
+#=================================================
+ynh_script_progression "Running database migrations..."
+
+migrate_fires
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Upgrading system configurations related to $app..."
 
-### This should be a literal copypaste of what happened in the install's "System configuration" section
-
-ynh_config_add_phpfpm
-
 ynh_config_add_nginx
 
 ynh_config_add_systemd
 
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app" --description="FediMod FIRES server" --log="/var/log/$app/$app.log"
 
 ynh_config_add_logrotate
-
-ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start"
+ynh_systemctl --service="$app" --action="start" --wait_until="started HTTP server" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # END OF SCRIPT

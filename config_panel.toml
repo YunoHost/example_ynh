@@ -1,0 +1,49 @@
+#:schema https://github.com/YunoHost/apps/raw/main/schemas/config_panel.v1.schema.json
+
+version = "1.0"
+
+[main]
+name.en = "FIRES configuration"
+name.fr = "Configuration FIRES"
+services = ["__APP__"]
+
+    [main.environment]
+    name.en = "Environment variables"
+    name.fr = "Variables d'environnement"
+    help.en = "These map directly to the FediMod FIRES environment variables. See https://fires.fedimod.org/manuals/reference-server/environment.html"
+
+        [main.environment.log_level]
+        ask.en = "Log level"
+        ask.fr = "Niveau de journalisation"
+        type = "select"
+        choices = ["fatal", "error", "warn", "info", "debug", "trace"]
+        # Reads/writes LOG_LEVEL in the live .env (and the app setting)
+        bind = "LOG_LEVEL:__INSTALL_DIR__/components/fires-server/build/.env"
+
+        [main.environment.default_locale]
+        ask.en = "Default locale"
+        ask.fr = "Langue par défaut"
+        help.en = "A full BCP-47 tag that exists in FIRES' config/locales (e.g. en-US, en-GB, fr-FR). A bare 'en' or 'fr' is not accepted."
+        type = "string"
+        pattern.regexp = '^[a-zA-Z]{2,3}-[a-zA-Z0-9]{2,}$'
+        pattern.error = "Must be a full locale tag such as en-US or fr-FR."
+        bind = "DEFAULT_LOCALE:__INSTALL_DIR__/components/fires-server/build/.env"
+
+        [main.environment.database_pool_min]
+        ask.en = "Database pool — minimum connections"
+        type = "number"
+        min = 0
+        bind = "DATABASE_POOL_MIN:__INSTALL_DIR__/components/fires-server/build/.env"
+
+        [main.environment.database_pool_max]
+        ask.en = "Database pool — maximum connections"
+        type = "number"
+        min = 1
+        bind = "DATABASE_POOL_MAX:__INSTALL_DIR__/components/fires-server/build/.env"
+
+        [main.environment.app_key]
+        ask.en = "Application key (APP_KEY)"
+        help.en = "Used for encryption, signing and hashing. Changing this invalidates all existing access tokens."
+        type = "string"
+        redact = true
+        bind = "APP_KEY:__INSTALL_DIR__/components/fires-server/build/.env"

@@ -56,6 +56,9 @@ test_format = 1.0
     # args.language = "fr_FR"
     # args.multisite = 0
 
+    # admin_email has no default in the manifest, so provide one for the CI
+    args.admin_email = "admin@example.com"
+
     # -------------------------------
     # Commits to test upgrade from
     # -------------------------------

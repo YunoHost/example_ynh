@@ -1,13 +1,18 @@
 [Unit]
-Description=Small description of the service
-After=network.target
+Description=FediMod FIRES server (__APP__)
+After=network.target postgresql.service
+Requires=postgresql.service
 
 [Service]
 Type=simple
 User=__APP__
 Group=__APP__
-WorkingDirectory=__INSTALL_DIR__/
-ExecStart=__INSTALL_DIR__/script
+# AdonisJS compiles to the build/ directory; it loads .env from the working dir.
+WorkingDirectory=__WORKDIR__/
+Environment=NODE_ENV=production
+ExecStart=__NODEJS_DIR__/node __WORKDIR__/bin/server.js
+Restart=on-failure
+RestartSec=5
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
 
@@ -26,6 +31,7 @@ ProtectClock=yes
 ProtectHostname=yes
 ProtectProc=invisible
 ProtectSystem=full
+ReadWritePaths=__INSTALL_DIR__ __DATA_DIR__ /var/log/__APP__
 ProtectControlGroups=yes
 ProtectKernelModules=yes
 ProtectKernelTunables=yes

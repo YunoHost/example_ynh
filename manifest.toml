@@ -4,54 +4,35 @@ packaging_format = 2
 
 id = "fedimodfires"
 name = "FediMod FIRES"
-description.en = "Explain in *a few (10~15) words* the purpose of the app or what it actually does (it is meant to give a rough idea to users browsing a catalog of 100+ apps)"
-description.fr = "Expliquez en *quelques* (10~15) mots l'utilité de l'app ou ce qu'elle fait (l'objectif est de donner une idée grossière pour des utilisateurs qui naviguent dans un catalogue de 100+ apps)"
+description.en = "Share and replicate fediverse moderation recommendations and threat intelligence between servers"
+description.fr = "Partager et répliquer des recommandations de modération et du renseignement sur les menaces entre serveurs du fédiverse"
 
-version = "0.1~ynh1"
+version = "0.8.0~ynh1"
 
 maintainers = ["johndoe"]
 
 [upstream]
-# NB: Only the "license" key is mandatory. Remove entries for which there's no relevant data
-license = "free" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
-website = "https://example.com"
-demo = "https://demo.example.com"
-admindoc = "https://doc.yunohost.org/dev/packaging/"
+license = "AGPL-3.0-only"
+website = "https://fires.fedimod.org"
+admindoc = "https://fires.fedimod.org/manuals/reference-server/"
 userdoc = "https://fires.fedimod.org/concepts/"
-code = "https://some.forge.com/example/example"
-# FIXME: optional but recommended if relevant, this is meant to contain the Common Platform Enumeration, which is
-# sort of a standard id for applications defined by the NIST. In particular, YunoHost may use this is in the future
-# to easily track CVE (=security reports) related to apps. The CPE may be obtained by searching here:
-# https://nvd.nist.gov/products/cpe/search.
-# For example, for Nextcloud, the CPE is 'cpe:2.3:a:nextcloud:nextcloud' (no need to include the version number)
+code = "https://github.com/fedimod/fires"
 cpe = "???"
-
-# FIXME: optional but recommended (or remove if irrelevant / not applicable).
-# This is meant to be an URL where people can financially support this app, especially when its development is based
-# on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
-fund = "???"
+fund = "https://nlnet.nl/project/FediMod/"
 
 [integration]
 yunohost = ">= 12.1.17"
 helpers_version = "2.1"
-# FIXME: can be replaced by a list of supported archs using the dpkg --print-architecture nomenclature (amd64/i386/armhf/arm64), for example: ["amd64", "i386"]
 architectures = "all"
 multi_instance = true
 
-# FIXME: replace with true, false, or "not_relevant".
-# Not to confuse with the "sso" key: the "ldap" key corresponds to wether or not a user *can* login on the app using
-# its YunoHost credentials.
-ldap = "?"
+# FIRES has its own admin authentication; it does not log users in via LDAP/SSO.
+ldap = false
+sso = false
 
-# FIXME: replace with true, false, or "not_relevant".
-# Not to confuse with the "ldap" key: the "sso" key corresponds to wether or not a user is *automatically logged-in*
-# on the app when logged-in on the YunoHost portal.
-sso = "?"
-
-# FIXME: replace with an **estimate** minimum disk and RAM requirements. e.g. 20M, 400M, 1G...
-disk = "50M"
-ram.build = "50M"
-ram.runtime = "50M"
+disk = "500M"
+ram.build = "1G"
+ram.runtime = "256M"
 
 [install]
     [install.domain]
@@ -61,51 +42,52 @@ ram.runtime = "50M"
     [install.path]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "path"
-    default = "/example"
+    default = "/"
 
     [install.init_main_permission]
-    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # FIRES exposes a public federation/replication API, so default to visitors.
     # This won't be saved as setting and will instead be used to initialize the SSOwat permission
     type = "group"
     default = "visitors"
 
     [install.language]
-    ask.en = "Choose the application language"
-    ask.fr = "Choisissez la langue de l'application"
+    # Maps to the FIRES DEFAULT_LOCALE environment variable (BCP-47 language tag)
+    ask.en = "Default server language"
+    ask.fr = "Langue par défaut du serveur"
     type = "select"
-    choices = ["fr", "en"]
-    default = "fr"
+    choices = ["en", "fr"]
+    default = "en"
 
     [install.admin]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "user"
 
+    [install.admin_email]
+    # Maps to FIRES_ADMIN_USERNAME: the login of the bootstrap admin account
+    ask.en = "Email address of the FIRES administrator account"
+    ask.fr = "Adresse e-mail du compte administrateur FIRES"
+    type = "email"
+
     [install.password]
-    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # Maps to FIRES_ADMIN_PASSWORD: the password of the bootstrap admin account.
+    # FIRES only creates the initial admin when this password is longer than 16
+    # characters, so require at least 17.
     # Note that user-provided passwords questions are not automatically saved as setting
-    help.en = "Use the help field to add an information for the admin about this question."
-    help.fr = "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+    help.en = "Password for the initial FIRES administrator account (must be longer than 16 characters). It is only used to bootstrap the first admin on first boot."
+    help.fr = "Mot de passe du compte administrateur FIRES initial (plus de 16 caractères). Il sert uniquement à créer le premier admin au premier démarrage."
     type = "password"
+    pattern.regexp = '^.{17,}$'
+    pattern.error = "The FIRES admin password must be longer than 16 characters."
 
 [resources]
-    # See the packaging documentation for the full set
-    # of explanation regarding the behavior and properties for each of those
-
-    [resources.sources]
-
     [resources.sources.main]
-    # This will pre-fetch the asset which can then be deployed during the install/upgrade scripts with :
+    # Pre-fetched and deployed during install/upgrade with:
     #    ynh_setup_source --dest_dir="$install_dir"
-    # You can also define other assets than "main" and add --source_id="foobar" in the previous command
-    url = "https://github.com/foo/bar/archive/refs/tags/v1.2.3.tar.gz"
-    sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
-
-    # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
-    # to auto-update the previous asset urls and sha256sum + manifest version
-    # assuming the upstream's code repo is on github and relies on tags or releases
-    # See the 'sources' resource documentation for more details
-
-    # autoupdate.strategy = "latest_github_tag"
+    # FIRES is a monorepo; releases are tagged as `@fedimod/fires-server@X.Y.Z`.
+    url = "https://github.com/fedimod/fires/archive/refs/tags/@fedimod/fires-server@0.8.0.tar.gz"
+    sha256 = "198f6042f4ea735c97d461e4b5c1ae7af6b29886cb36abe1c613460bd235a334"
+    autoupdate.strategy = "latest_github_tag"
+    autoupdate.version_regex = '^@fedimod/fires-server@(.*)$'
 
     [resources.system_user]
     # This will provision/deprovision a unix system user
@@ -120,20 +102,15 @@ ram.runtime = "50M"
 
     [resources.permissions]
     # This will configure SSOwat permission for $domain/$path/
-    # The initial allowed group of user is configured via the init_main_permission question (public=visitors, private=all_users)
     main.url = "/"
 
     [resources.ports]
-    # This will pick a random port for reverse-proxying and store it as the $port setting
+    # Random internal port for reverse-proxying, stored as the $port setting.
+    # FIRES (HOST=127.0.0.1, PORT=$port) is only reachable through NGINX.
 
-    [resources.apt]
-    # This will automatically install/uninstall the following apt packages
-    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
-    packages = "mariadb-server, deb1, deb2, php8.3-foo, php8.3-bar"
+    [resources.database]
+    # FIRES requires PostgreSQL 17+. Provisions $db_name, $db_user, $db_pwd.
+    type = "postgresql"
 
-[resources.database]
-type = "postgresql"
-
-[resources.nodejs]
-version = "20" # AdonisJS requires Node 20+
-
+    [resources.nodejs]
+    version = "22" # Matches the upstream Dockerfile (Node 22)
