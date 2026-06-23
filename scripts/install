@@ -13,6 +13,17 @@ source /usr/share/yunohost/helpers
 ### Note: $password (the FIRES admin password question) is NOT saved as a setting.
 
 #=================================================
+# VALIDATE INPUT
+#=================================================
+
+# FIRES only bootstraps the initial admin when the password is longer than 16
+# characters (see start/migrations.ts upstream); the "password" question type
+# doesn't support a "pattern" property, so enforce this here instead.
+if [ "${#password}" -le 16 ]; then
+    ynh_die "The FIRES admin password must be longer than 16 characters."
+fi
+
+#=================================================
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 ynh_script_progression "Storing installation settings..."

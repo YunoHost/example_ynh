@@ -71,13 +71,12 @@ ram.runtime = "256M"
     [install.password]
     # Maps to FIRES_ADMIN_PASSWORD: the password of the bootstrap admin account.
     # FIRES only creates the initial admin when this password is longer than 16
-    # characters, so require at least 17.
+    # characters (enforced in scripts/install, since the "password" question
+    # type does not support a "pattern" property).
     # Note that user-provided passwords questions are not automatically saved as setting
     help.en = "Password for the initial FIRES administrator account (must be longer than 16 characters). It is only used to bootstrap the first admin on first boot."
     help.fr = "Mot de passe du compte administrateur FIRES initial (plus de 16 caractères). Il sert uniquement à créer le premier admin au premier démarrage."
     type = "password"
-    pattern.regexp = '^.{17,}$'
-    pattern.error = "The FIRES admin password must be longer than 16 characters."
 
 [resources]
     [resources.sources.main]
