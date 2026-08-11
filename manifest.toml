@@ -99,6 +99,11 @@ ram.runtime = "50M"
     # You can also define other assets than "main" and add --source_id="foobar" in the previous command
     url = "https://github.com/foo/bar/archive/refs/tags/v1.2.3.tar.gz"
     sha256 = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    # Format usually doesn't need to be set explicitly as it's automatically guessed from the extension of the URL
+    # format = "tar.gz"
+    # Is set to true by default, indicating that there's an intermediate subdir in the archive before accessing the actual files
+    # Explicitly needs to be set to false if the sources are directly in the archive root
+    # in_subdir = false
 
     # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
     # to auto-update the previous asset urls and sha256sum + manifest version
